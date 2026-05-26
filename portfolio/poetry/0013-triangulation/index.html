@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Triangulation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { font-size: 16px; }
+
+  body {
+    background: #070709;
+    color: #a8a4a0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Subtle paper grain texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Ambient glow from beneath */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 60%;
+    left: 50%;
+    width: 800px;
+    height: 400px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse, rgba(40, 30, 20, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-header {
+    text-align: center;
+    padding: 3.5rem 2rem 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .page-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 300;
+    font-size: 0.8rem;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: #3a3835;
+    margin-bottom: 2rem;
+  }
+
+  .clock {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 300;
+    font-size: 2.2rem;
+    letter-spacing: 0.12em;
+    color: #1e1d1b;
+    transition: color 3s ease, text-shadow 3s ease;
+    line-height: 1;
+  }
+
+  .clock.elapsed {
+    color: #4a4540;
+    text-shadow: 0 0 30px rgba(70, 60, 45, 0.1);
+  }
+
+  .clock-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: #252320;
+    margin-top: 0.6rem;
+    text-transform: uppercase;
+  }
+
+  .progress-track {
+    width: 180px;
+    height: 1px;
+    background: #181715;
+    margin: 1.5rem auto 0;
+    position: relative;
+    border-radius: 1px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, transparent, #3a3530, #5a5545, #3a3530, transparent);
+    transition: width 2s ease;
+  }
+
+  .threshold-mark {
+    position: absolute;
+    top: -6px;
+    width: 1px;
+    height: 13px;
+    background: #1a1917;
+  }
+
+  .poems-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    max-width: 1200px;
+    margin: 2rem auto 0;
+    padding: 0 2rem 4rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .poem-col {
+    padding: 2rem 1.8rem;
+    border-top: 1px solid #131215;
+    position: relative;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .poem-col::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 15%;
+    right: 15%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--poem-accent-dim, #151413), transparent);
+    opacity: 0;
+    transition: opacity 3s ease;
+  }
+
+  .poem-col.revealed::before {
+    opacity: 1;
+  }
+
+  .poem-col.col-0 { --poem-accent: #5a4a38; --poem-accent-dim: #2a2418; }
+  .poem-col.col-1 { --poem-accent: #4a5a68; --poem-accent-dim: #1e2a35; }
+  .poem-col.col-2 { --poem-accent: #5a5a38; --poem-accent-dim: #2a2a18; }
+
+  .poem-col.col-0 { border-left: 1px solid #131215; }
+  .poem-col.col-1 { border-left: 1px solid #131215; }
+  .poem-col.col-2 { border-left: 1px solid #131215; border-right: 1px solid #131215; }
+
+  .witness-numeral {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: #2a2825;
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    transition: color 2s ease;
+  }
+
+  .poem-col.revealed .witness-numeral {
+    color: var(--poem-accent);
+  }
+
+  .witness-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 300;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: #222120;
+    margin-bottom: 2.5rem;
+    text-transform: uppercase;
+    transition: color 2s ease;
+  }
+
+  .poem-col.revealed .witness-title {
+    color: #4a4540;
+  }
+
+  .stanza {
+    margin-bottom: 1.8rem;
+  }
+
+  .stanza-time {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    color: #181715;
+    margin-bottom: 0.8rem;
+    padding-left: 0.2rem;
+    transition: color 2s ease;
+  }
+
+  .poem-col.revealed .stanza-time {
+    color: #353230;
+  }
+
+  .stanza-line {
+    font-size: 1.02rem;
+    line-height: 1.85;
+    margin-bottom: 0.15rem;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 2.5s ease, transform 2.5s ease, color 2s ease;
+  }
+
+  .stanza-line.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Witness I: Attendant — serif, warm */
+  .poem-col.col-0 .stanza-line {
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
+    font-weight: 300;
+    font-style: normal;
+    color: #9a918a;
+    letter-spacing: 0.01em;
+  }
+
+  /* Witness II: Woman — serif italic, cool */
+  .poem-col.col-1 .stanza-line {
+    font-family: 'Cormorant Garamond', 'Georgia', serif;
+    font-weight: 300;
+    font-style: italic;
+    color: #8a919a;
+    letter-spacing: 0.02em;
+  }
+
+  /* Witness III: Dashcam — mono, stark */
+  .poem-col.col-2 .stanza-line {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 300;
+    font-style: normal;
+    color: #8a8a70;
+    letter-spacing: 0.04em;
+    font-size: 0.88rem;
+  }
+
+  /* Overlap indicator */
+  .overlap-bar {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .overlap-inner {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+
+  .overlap-cell {
+    padding: 0.8rem 1.8rem;
+    border-top: 1px solid #131215;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+  }
+
+  .overlap-cell.visible {
+    opacity: 1;
+  }
+
+  .overlap-cell .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #1a1917;
+  }
+
+  .overlap-cell .value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    color: #3a3530;
+    margin-top: 0.3rem;
+  }
+
+  /* Footer controls */
+  .page-footer {
+    max-width: 1200px;
+    margin: 3rem auto 0;
+    padding: 2rem;
+    border-top: 1px solid #131215;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .control-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #1a1917;
+  }
+
+  .control-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 300;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #2a2825;
+    background: none;
+    border: 1px solid #1a1917;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.4s ease;
+  }
+
+  .control-btn:hover {
+    color: #5a5545;
+    border-color: #3a3530;
+  }
+
+  .control-btn:focus-visible {
+    outline: 1px solid #4a4540;
+    outline-offset: 2px;
+  }
+
+  .control-btn.active {
+    color: #7a7568;
+    border-color: #4a4540;
+  }
+
+  .instructions {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    line-height: 1.9;
+    color: #1e1d1b;
+    max-width: 360px;
+    transition: color 3s ease;
+  }
+
+  .instructions.faded-in {
+    color: #3a3530;
+  }
+
+  .instructions strong {
+    color: #4a4540;
+    font-weight: 400;
+  }
+
+  .divider {
+    width: 30px;
+    height: 1px;
+    background: #1a1917;
+    margin: 1rem 0;
+  }
+
+  /* Reveal overlay */
+  .reveal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 7, 0.97);
+    z-index: 1000;
+    overflow-y: auto;
+    padding: 3rem 2rem;
+  }
+
+  .reveal-overlay.open {
+    display: block;
+  }
+
+  .reveal-close {
+    position: fixed;
+    top: 1.5rem;
+    right: 2rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #3a3530;
+    background: none;
+    border: 1px solid #1a1917;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    z-index: 1001;
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .reveal-close:hover {
+    color: #6a6560;
+    border-color: #3a3530;
+  }
+
+  .reveal-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 300;
+    font-size: 0.75rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #2a2825;
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .reveal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+    gap: 3rem;
+  }
+
+  .reveal-poem {
+    padding: 0;
+  }
+
+  .reveal-poem .poem-col {
+    padding: 0;
+    border: none;
+  }
+
+  .reveal-poem .stanza-line {
+    opacity: 1;
+    transform: none;
+    font-size: 0.85rem;
+    line-height: 1.9;
+  }
+
+  .reveal-poem .stanza-time {
+    color: #252320;
+  }
+
+  .reveal-notes {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 0;
+    border-top: 1px solid #131215;
+  }
+
+  .reveal-notes p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    line-height: 2;
+    color: #252320;
+    margin-bottom: 0.5rem;
+  }
+
+  .reveal-notes .shared-num {
+    color: #3a3530;
+  }
+
+  /* Responsive */
+  @media (max-width: 860px) {
+    .poems-grid {
+      grid-template-columns: 1fr;
+      max-width: 500px;
+    }
+
+    .poem-col {
+      border-left: none !important;
+      border-right: none !important;
+      border-bottom: 1px solid #131215;
+      padding: 2rem 1.5rem;
+    }
+
+    .poem-col:last-child {
+      border-bottom: none;
+    }
+
+    .overlap-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .overlap-cell {
+      border-bottom: 1px solid #0f0e0d;
+    }
+
+    .reveal-grid {
+      grid-template-columns: 1fr;
+      max-width: 500px;
+      gap: 2.5rem;
+    }
+
+    .page-footer {
+      flex-direction: column;
+    }
+
+    .clock {
+      font-size: 1.6rem;
+    }
+  }
+
+  /* Subtle ambient pulse on the clock */
+  @keyframes clockPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+
+  .clock.elapsed {
+    animation: clockPulse 8s ease-in-out infinite;
+  }
+
+  /* Loading state for fonts */
+  .wf-loading .stanza-line,
+  .wf-loading .witness-title,
+  .wf-loading .clock {
+    visibility: hidden;
+  }
+
+  /* Accessible reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.1s !important;
+    }
+    .stanza-line {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #070709; }
+  ::-webkit-scrollbar-thumb { background: #1a1917; }
+  ::-webkit-scrollbar-thumb:hover { background: #2a2825; }
+
+  html { scrollbar-color: #1a1917 #070709; }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="page-title">Triangulation</div>
+  <div class="clock" id="clock" aria-label="Event clock">00:00</div>
+  <div class="clock-label">elapsed seconds</div>
+  <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="90" aria-valuenow="0">
+    <div class="progress-fill" id="progressFill"></div>
+    <div class="threshold-mark" style="left: 16.6%"></div>
+    <div class="threshold-mark" style="left: 33.3%"></div>
+    <div class="threshold-mark" style="left: 50%"></div>
+    <div class="threshold-mark" style="left: 66.6%"></div>
+    <div class="threshold-mark" style="left: 83.3%"></div>
+  </div>
+</header>
+
+<main>
+  <div class="poems-grid" id="poemsGrid">
+
+    <!-- Witness I: The Attendant -->
+    <article class="poem-col col-0" aria-label="Witness I: The Attendant">
+      <div class="witness-numeral">Witness I</div>
+      <div class="witness-title">The Attendant</div>
+
+      <div class="stanza" data-index="0">
+        <div class="stanza-time">03:47:15</div>
+        <div class="stanza-line">Rain blurs the smeared glass</div>
+        <div class="stanza-line">a silhouette lingers near my register</div>
+        <div class="stanza-line">his features dissolved by condensation</div>
+        <div class="stanza-line">I observe through water and distance</div>
+      </div>
+
+      <div class="stanza" data-index="1">
+        <div class="stanza-time">03:47:33</div>
+        <div class="stanza-line">She leans her skull against</div>
+        <div class="stanza-line">a chrome surface without choosing</div>
+        <div class="stanza-line">pale strands catching fluorescent glare</div>
+        <div class="stanza-line">fingers suspended above glowing keys</div>
+      </div>
+
+      <div class="stanza" data-index="2">
+        <div class="stanza-time">03:47:51</div>
+        <div class="stanza-line">He reaches beneath his coat</div>
+        <div class="stanza-line">and I note that shoulder</div>
+        <div class="stanza-line">angled wrong like a dislocation</div>
+        <div class="stanza-line">precipitation thickening against pane</div>
+      </div>
+
+      <div class="stanza" data-index="3">
+        <div class="stanza-time">03:48:09</div>
+        <div class="stanza-line">Her hand drops. She pivots</div>
+        <div class="stanza-line">and I witness something</div>
+        <div class="stanza-line">in his face fracture</div>
+        <div class="stanza-line">the window already broken</div>
+      </div>
+
+      <div class="stanza" data-index="4">
+        <div class="stanza-time">03:48:27</div>
+        <div class="stanza-line">The tube flickers out</div>
+        <div class="stanza-line">he pushes through my door</div>
+        <div class="stanza-line">a dark shape dissolving into downpour</div>
+        <div class="stanza-line">red glow bleeding across tarmac</div>
+      </div>
+    </article>
+
+    <!-- Witness II: The Woman -->
+    <article class="poem-col col-1" aria-label="Witness II: The Woman">
+      <div class="witness-numeral">Witness II</div>
+      <div class="witness-title">The Woman</div>
+
+      <div class="stanza" data-index="0">
+        <div class="stanza-time">03:47:15</div>
+        <div class="stanza-line">This machine thrums below notice</div>
+        <div class="stanza-line">Eleven minutes staring at coils</div>
+        <div class="stanza-line">D2 to D4 glowing orange</div>
+        <div class="stanza-line">for warmth only machines intend</div>
+      </div>
+
+      <div class="stanza" data-index="1">
+        <div class="stanza-time">03:47:33</div>
+        <div class="stanza-line">Headlights sweep across linoleum</div>
+        <div class="stanza-line">a driver descending from cab-height</div>
+        <div class="stanza-line">wet denim and heavy gait</div>
+        <div class="stanza-line">new shadow stretching toward me</div>
+      </div>
+
+      <div class="stanza" data-index="2">
+        <div class="stanza-time">03:47:51</div>
+        <div class="stanza-line">Close now. Too close</div>
+        <div class="stanza-line">breathing uneven behind me</div>
+        <div class="stanza-line">I count rhythm between</div>
+        <div class="stanza-line">each warm exhale on bare neck</div>
+      </div>
+
+      <div class="stanza" data-index="3">
+        <div class="stanza-time">03:48:09</div>
+        <div class="stanza-line">Palm flat against cool metal</div>
+        <div class="stanza-line">turning to find his arm</div>
+        <div class="stanza-line">raised frozen mid-swing</div>
+        <div class="stanza-line">then all velocity</div>
+      </div>
+
+      <div class="stanza" data-index="4">
+        <div class="stanza-time">03:48:27</div>
+        <div class="stanza-line">Two bodies fleeing</div>
+        <div class="stanza-line">motors waking in parking lot dark</div>
+        <div class="stanza-line">Finger lifts from plastic ridge</div>
+        <div class="stanza-line">nothing released</div>
+      </div>
+    </article>
+
+    <!-- Witness III: The Dashcam -->
+    <article class="poem-col col-2" aria-label="Witness III: The Dashcam">
+      <div class="witness-numeral">Witness III</div>
+      <div class="witness-title">The Dashcam</div>
+
+      <div class="stanza" data-index="0">
+        <div class="stanza-time">03:47:15</div>
+        <div class="stanza-line">SPLASH / tire hiss</div>
+        <div class="stanza-line">SPLASH / tire hiss</div>
+        <div class="stanza-line">automatic-door CHIME</div>
+        <div class="stanza-line">engine idle low constant</div>
+      </div>
+
+      <div class="stanza" data-index="1">
+        <div class="stanza-time">03:47:33</div>
+        <div class="stanza-line">coin CLATTER concrete</div>
+        <div class="stanza-line">coin CLATTER concrete</div>
+        <div class="stanza-line">coin CLATTER</div>
+        <div class="stanza-line">concrete silence 2.1s</div>
+      </div>
+
+      <div class="stanza" data-index="2">
+        <div class="stanza-time">03:47:51</div>
+        <div class="stanza-line">FOOTSTEP heavy left</div>
+        <div class="stanza-line">FOOTSTEP heavy right</div>
+        <div class="stanza-line">FOOTSTEP heavy left</div>
+        <div class="stanza-line">LEATHER creak</div>
+      </div>
+
+      <div class="stanza" data-index="3">
+        <div class="stanza-time">03:48:09</div>
+        <div class="stanza-line">VOICE low male 0.4s</div>
+        <div class="stanza-line">VOICE high female 0.2s</div>
+        <div class="stanza-line">VOICE male LOUDER</div>
+        <div class="stanza-line">METALLIC impact 0.8s</div>
+      </div>
+
+      <div class="stanza" data-index="4">
+        <div class="stanza-time">03:48:27</div>
+        <div class="stanza-line">RUNNING pair</div>
+        <div class="stanza-line">SPLASH SPLASH</div>
+        <div class="stanza-line">engine REV acceleration</div>
+        <div class="stanza-line">wet-tire SCREECH fade</div>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- Structural overlap indicators -->
+  <div class="overlap-bar" id="overlapBar">
+    <div class="overlap-inner">
+      <div class="overlap-cell" id="overlap0">
+        <div class="label">Form</div>
+        <div class="value">4 lines &times; 5 movements</div>
+      </div>
+      <div class="overlap-cell" id="overlap1">
+        <div class="label">Lexical Overlap</div>
+        <div class="value">zero shared words</div>
+      </div>
+      <div class="overlap-cell" id="overlap2">
+        <div class="label">Temporal Field</div>
+        <div class="value">03:47:15 — 03:48:27</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="page-footer">
+  <div>
+    <div class="instructions" id="instructions">
+      Three witnesses. Ninety seconds at a highway rest stop.<br>
+      Each account shares its structure — four lines, five movements —<br>
+      and its timestamps with the others. Not one word overlaps.<br>
+      <span class="divider"></span>
+      The incident assembles from what each witness cannot say.<br>
+      <strong>Every absent word is evidence.</strong>
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="control-label">View</div>
+    <button class="control-btn" id="btnReveal" aria-label="Reveal all three poems simultaneously">Reveal All</button>
+    <button class="control-btn" id="btnReset" aria-label="Reset to beginning">Reset</button>
+  </div>
+</footer>
+
+<!-- Reveal overlay -->
+<div class="reveal-overlay" id="revealOverlay" role="dialog" aria-label="All three poems revealed">
+  <button class="reveal-close" id="revealClose" aria-label="Close reveal view">Close</button>
+  <div class="reveal-title">All Three Witnesses — Simultaneous</div>
+  <div class="reveal-grid">
+
+    <div class="reveal-poem">
+      <div class="witness-numeral" style="color:#5a4a38">Witness I — The Attendant</div>
+      <div style="height:1.5rem"></div>
+      <div class="poem-col col-0 revealed">
+        <div class="stanza"><div class="stanza-time">03:47:15</div>
+          <div class="stanza-line visible">Rain blurs the smeared glass</div>
+          <div class="stanza-line visible">a silhouette lingers near my register</div>
+          <div class="stanza-line visible">his features dissolved by condensation</div>
+          <div class="stanza-line visible">I observe through water and distance</div></div>
+        <div class="stanza"><div class="stanza-time">03:47:33</div>
+          <div class="stanza-line visible">She leans her skull against</div>
+          <div class="stanza-line visible">a chrome surface without choosing</div>
+          <div class="stanza-line visible">pale strands catching fluorescent glare</div>
+          <div class="stanza-line visible">fingers suspended above glowing keys</div></div>
+        <div class="stanza"><div class="stanza-time">03:47:51</div>
+          <div class="stanza-line visible">He reaches beneath his coat</div>
+          <div class="stanza-line visible">and I note that shoulder</div>
+          <div class="stanza-line visible">angled wrong like a dislocation</div>
+          <div class="stanza-line visible">precipitation thickening against pane</div></div>
+        <div class="stanza"><div class="stanza-time">03:48:09</div>
+          <div class="stanza-line visible">Her hand drops. She pivots</div>
+          <div class="stanza-line visible">and I witness something</div>
+          <div class="stanza-line visible">in his face fracture</div>
+          <div class="stanza-line visible">the window already broken</div></div>
+        <div class="stanza"><div class="stanza-time">03:48:27</div>
+          <div class="stanza-line visible">The tube flickers out</div>
+          <div class="stanza-line visible">he pushes through my door</div>
+          <div class="stanza-line visible">a dark shape dissolving into downpour</div>
+          <div class="stanza-line visible">red glow bleeding across tarmac</div></div>
+      </div>
+    </div>
+
+    <div class="reveal-poem">
+      <div class="witness-numeral" style="color:#4a5a68">Witness II — The Woman</div>
+      <div style="height:1.5rem"></div>
+      <div class="poem-col col-1 revealed">
+        <div class="stanza"><div class="stanza-time">03:47:15</div>
+          <div class="stanza-line visible">This machine thrums below notice</div>
+          <div class="stanza-line visible">Eleven minutes staring at coils</div>
+          <div class="stanza-line visible">D2 to D4 glowing orange</div>
+          <div class="stanza-line visible">for warmth only machines intend</div></div>
+        <div class="stanza"><div class="stanza-time">03:47:33</div>
+          <div class="stanza-line visible">Headlights sweep across linoleum</div>
+          <div class="stanza-line visible">a driver descending from cab-height</div>
+          <div class="stanza-line visible">wet denim and heavy gait</div>
+          <div class="stanza-line visible">new shadow stretching toward me</div></div>
+        <div class="stanza"><div class="stanza-time">03:47:51</div>
+          <div class="stanza-line visible">Close now. Too close</div>
+          <div class="stanza-line visible">breathing uneven behind me</div>
+          <div class="stanza-line visible">I count rhythm between</div>
+          <div class="stanza-line visible">each warm exhale on bare neck</div></div>
+        <div class="stanza"><div class="stanza-time">03:48:09</div>
+          <div class="stanza-line visible">Palm flat against cool metal</div>
+          <div class="stanza-line visible">turning to find his arm</div>
+          <div class="stanza-line visible">raised frozen mid-swing</div>
+          <div class="stanza-line visible">then all velocity</div></div>
+        <div class="stanza"><div class="stanza-time">03:48:27</div>
+          <div class="stanza-line visible">Two bodies fleeing</div>
+          <div class="stanza-line visible">motors waking in parking lot dark</div>
+          <div class="stanza-line visible">Finger lifts from plastic ridge</div>
+          <div class="stanza-line visible">nothing released</div></div>
+      </div>
+    </div>
+
+    <div class="reveal-poem">
+      <div class="witness-numeral" style="color:#5a5a38">Witness III — The Dashcam</div>
+      <div style="height:1.5rem"></div>
+      <div class="poem-col col-2 revealed">
+        <div class="stanza"><div class="stanza-time">03:47:15</div>
+          <div class="stanza-line visible">SPLASH / tire hiss</div>
+          <div class="stanza-line visible">SPLASH / tire hiss</div>
+          <div class="stanza-line visible">automatic-door CHIME</div>
+          <div class="stanza-line visible">engine idle low constant</div></div>
+        <div class="stanza"><div class="stanza-time">03:47:33</div>
+          <div class="stanza-line visible">coin CLATTER concrete</div>
+          <div class="stanza-line visible">coin CLATTER concrete</div>
+          <div class="stanza-line visible">coin CLATTER</div>
+          <div class="stanza-line visible">concrete silence 2.1s</div></div>
+        <div class="stanza"><div class="stanza-time">03:47:51</div>
+          <div class="stanza-line visible">FOOTSTEP heavy left</div>
+          <div class="stanza-line visible">FOOTSTEP heavy right</div>
+          <div class="stanza-line visible">FOOTSTEP heavy left</div>
+          <div class="stanza-line visible">LEATHER creak</div></div>
+        <div class="stanza"><div class="stanza-time">03:48:09</div>
+          <div class="stanza-line visible">VOICE low male 0.4s</div>
+          <div class="stanza-line visible">VOICE high female 0.2s</div>
+          <div class="stanza-line visible">VOICE male LOUDER</div>
+          <div class="stanza-line visible">METALLIC impact 0.8s</div></div>
+        <div class="stanza"><div class="stanza-time">03:48:27</div>
+          <div class="stanza-line visible">RUNNING pair</div>
+          <div class="stanza-line visible">SPLASH SPLASH</div>
+          <div class="stanza-line visible">engine REV acceleration</div>
+          <div class="stanza-line visible">wet-tire SCREECH fade</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="reveal-notes">
+    <p>Structural identity: <span class="shared-num">4 lines per stanza, 5 stanzas per witness</span></p>
+    <p>Temporal field: <span class="shared-num">03:47:15 — 03:48:27</span> (shared timestamps, staggered at 18-second intervals)</p>
+    <p>Lexical partition: <span class="shared-num">absolute</span> — each witness draws from a sealed vocabulary, zero overlap</p>
+    <p>What persists across accounts: <span class="shared-num">the shape of an absence</span></p>
+  </div>
+</div>
+
+<script>
+  // State
+  let elapsed = 0;
+  let running = false;
+  let interval = null;
+  let revealedStanzas = new Set();
+
+  // Thresholds (in seconds) when each stanza appears across all three poems
+  const thresholds = [15, 33, 51, 69, 87];
+  const totalDuration = 90;
+
+  // DOM references
+  const clock = document.getElementById('clock');
+  const progressFill = document.getElementById('progressFill');
+  const instructions = document.getElementById('instructions');
+  const btnReveal = document.getElementById('btnReveal');
+  const btnReset = document.getElementById('btnReset');
+  const revealOverlay = document.getElementById('revealOverlay');
+  const revealClose = document.getElementById('revealClose');
+  const overlapCells = document.querySelectorAll('.overlap-cell');
+
+  // All stanza elements
+  const allLines = document.querySelectorAll('.poems-grid .stanza-line');
+
+  // Format time as MM:SS
+  function formatTime(secs) {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  }
+
+  // Update the clock display
+  function updateClock() {
+    clock.textContent = formatTime(elapsed);
+    const pct = Math.min(100, (elapsed / totalDuration) * 100);
+    progressFill.style.width = pct + '%';
+
+    if (elapsed > 0) {
+      clock.classList.add('elapsed');
+    }
+  }
+
+  // Reveal a stanza set (all three poems at once)
+  function revealStanzaSet(index) {
+    if (revealedStanzas.has(index)) return;
+    revealedStanzas.add(index);
+
+    // Mark columns as revealed
+    document.querySelectorAll('.poem-col').forEach(col => {
+      col.classList.add('revealed');
+    });
+
+    // Reveal lines in all three stanzas with this index
+    const stanzas = document.querySelectorAll('.stanza[data-index="' + index + '"]');
+    stanzas.forEach(stanza => {
+      const lines = stanza.querySelectorAll('.stanza-line');
+      lines.forEach((line, i) => {
+        setTimeout(function() {
+          line.classList.add('visible');
+        }, i * 400);
+      });
+    });
+
+    // Show overlap indicator
+    if (index < overlapCells.length) {
+      setTimeout(function() {
+        overlapCells[index].classList.add('visible');
+      }, 1800);
+    }
+
+    // Fade in instructions after first stanza
+    if (index === 0) {
+      setTimeout(function() {
+        instructions.classList.add('faded-in');
+      }, 2000);
+    }
+  }
+
+  // Check thresholds
+  function checkThresholds() {
+    thresholds.forEach(function(t, i) {
+      if (elapsed >= t) {
+        revealStanzaSet(i);
+      }
+    });
+  }
+
+  // Start the timer
+  function start() {
+    if (running) return;
+    running = true;
+    interval = setInterval(function() {
+      if (elapsed >= totalDuration) {
+        clearInterval(interval);
+        running = false;
+        return;
+      }
+      elapsed++;
+      updateClock();
+      checkThresholds();
+    }, 1000);
+  }
+
+  // Reset everything
+  function reset() {
+    clearInterval(interval);
+    running = false;
+    elapsed = 0;
+    revealedStanzas.clear();
+    updateClock();
+    clock.classList.remove('elapsed');
+    progressFill.style.width = '0%';
+    instructions.classList.remove('faded-in');
+
+    allLines.forEach(function(line) { line.classList.remove('visible'); });
+    document.querySelectorAll('.poem-col').forEach(function(col) { col.classList.remove('revealed'); });
+    overlapCells.forEach(function(cell) { cell.classList.remove('visible'); });
+  }
+
+  // Auto-start on load
+  updateClock();
+  setTimeout(function() {
+    start();
+  }, 1500);
+
+  // Button handlers
+  btnReveal.addEventListener('click', function() {
+    for (var i = 0; i < 5; i++) {
+      revealStanzaSet(i);
+    }
+    elapsed = totalDuration;
+    updateClock();
+    clearInterval(interval);
+    running = false;
+
+    setTimeout(function() {
+      revealOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }, 600);
+  });
+
+  btnReset.addEventListener('click', function() {
+    reset();
+    setTimeout(function() { start(); }, 800);
+  });
+
+  revealClose.addEventListener('click', function() {
+    revealOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+
+  // Close overlay with Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && revealOverlay.classList.contains('open')) {
+      revealOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  });
+</script>
+</body>
+</html>
