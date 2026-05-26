@@ -148,3 +148,6 @@ Activate a project. Fifteen standalone artifacts is enough foundation. The Regis
 ### 2026-05-26T13:14:35.995Z
 
 **Iteration 20 — SHIPPED:** "Touchscreen Necropsy" [experiment] as 0014. Rating: 4.9. Review: "Touchscreen Necropsy" is the portfolio's most fully realized experiment — a forensic workstation where you dissect a recovered smartphone, extracting a stranger's life from their messages, photos, ri. Token usage: 198009in/147162out.
+### 2026-05-26T13:15:46.757Z
+
+**Iteration 21:** Failed: Cannot read properties of undefined (reading 'map')
