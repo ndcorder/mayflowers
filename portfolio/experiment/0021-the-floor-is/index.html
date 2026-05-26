@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Floor Is —</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #080808;
+    --fg: #a0a0a0;
+    --fg-bright: #d4d4d4;
+    --accent: #c44536;
+    --accent-glow: rgba(196, 69, 54, 0.12);
+    --danger: #8b0000;
+    --muted: #505050;
+    --card: #0f0f0f;
+    --border: #1a1a1a;
+    --hasty-color: #c44536;
+    --wary-color: #4a6fa5;
+  }
+
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Courier New', 'Lucida Console', Monaco, monospace;
+    font-size: 13px;
+    line-height: 1.65;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ========== CONTAINERS ========== */
+
+  #container {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* ========== BOT PANELS ========== */
+
+  .bot-panel {
+    width: 150px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 12px;
+    position: relative;
+    border-right: 1px solid var(--border);
+    background: linear-gradient(180deg, #0c0c0c 0%, #080808 100%);
+  }
+  .bot-panel:last-child {
+    border-right: none;
+    border-left: 1px solid var(--border);
+  }
+
+  .bot-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    transition: box-shadow 0.6s ease, background 0.6s ease;
+    user-select: none;
+  }
+
+  #hasty-avatar {
+    background: rgba(196, 69, 54, 0.15);
+    border: 2px solid rgba(196, 69, 54, 0.25);
+    color: var(--hasty-color);
+  }
+  #wary-avatar {
+    background: rgba(74, 111, 165, 0.15);
+    border: 2px solid rgba(74, 111, 165, 0.25);
+    color: var(--wary-color);
+  }
+
+  .bot-name {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .bot-subtitle {
+    font-size: 9px;
+    color: #333;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .step-counter {
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1;
+    transition: color 0.5s ease;
+    user-select: none;
+  }
+
+  #hasty-count { color: rgba(196, 69, 54, 0.3); }
+  #wary-count { color: rgba(74, 111, 165, 0.3); }
+
+  .bot-state {
+    margin-top: 14px;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    min-height: 16px;
+  }
+
+  .bot-panel.active .bot-state { opacity: 1; }
+  .bot-panel.active #hasty-avatar { box-shadow: 0 0 24px rgba(196, 69, 54, 0.25); }
+  .bot-panel.active #wary-avatar { box-shadow: 0 0 24px rgba(74, 111, 165, 0.25); }
+
+  /* ========== TRANSCRIPT ========== */
+
+  #transcript-area {
+    flex: 1;
+    overflow-y: auto;
+    min-width: 0;
+    position: relative;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(196, 69, 54, 0.025) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 100%, rgba(74, 111, 165, 0.015) 0%, transparent 60%),
+      var(--bg);
+  }
+
+  #transcript-area::after {
+    content: '';
+    position: sticky;
+    bottom: 0;
+    display: block;
+    height: 40px;
+    background: linear-gradient(transparent, var(--bg));
+    pointer-events: none;
+  }
+
+  .transcript-inner {
+    padding: 28px 20px 60px;
+    max-width: 580px;
+    margin: 0 auto;
+  }
+
+  /* Entry animations */
+  .entry {
+    animation: entryFadeIn 0.4s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes entryFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Round divider */
+  .round-divider {
+    text-align: center;
+    padding: 14px 0 8px;
+    color: #2a2a2a;
+    font-size: 10px;
+    letter-spacing: 3px;
+    border-bottom: 1px solid #141414;
+    margin-bottom: 6px;
+    animation: entryFadeIn 0.4s ease forwards;
+    opacity: 0;
+  }
+
+  /* Dialogue entries */
+  .dialogue-entry {
+    margin: 5px 0;
+    padding-left: 0;
+    font-size: 13px;
+    line-height: 1.65;
+    transition: font-size 0.3s, letter-spacing 0.3s;
+  }
+
+  .speaker-name {
+    font-weight: 700;
+    margin-right: 3px;
+    transition: opacity 0.3s;
+  }
+
+  .hasty-speaker .speaker-name { color: var(--hasty-color); }
+  .wary-speaker .speaker-name { color: var(--wary-color); }
+
+  .spoken-text {
+    color: var(--fg-bright);
+    transition: color 0.3s;
+  }
+
+  /* System entries */
+  .system-entry {
+    text-align: center;
+    color: #333;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 10px 0;
+    animation: entryFadeIn 0.3s ease forwards;
+    opacity: 0;
+  }
+
+  /* Terminal entries */
+  .terminal-entry {
+    color: var(--accent);
+    font-size: 15px;
+    text-align: center;
+    padding: 16px 8px;
+    margin: 10px 0;
+    position: relative;
+    animation: entryFadeIn 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  .terminal-entry .spoken-text { color: var(--accent); }
+
+  /* Game over entry */
+  .game-over-entry {
+    text-align: center;
+    padding: 24px 0 8px;
+    animation: entryFadeIn 0.8s ease forwards;
+    opacity: 0;
+  }
+
+  .game-over-entry .collapse-text {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .game-over-entry .collapse-sub {
+    font-size: 12px;
+    color: #555;
+    font-style: italic;
+    letter-spacing: 1px;
+  }
+
+  /* Error text effect */
+  .error-text {
+    animation: textFlicker 0.15s steps(2) 3;
+  }
+
+  @keyframes textFlicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.2; }
+    100% { opacity: 1; }
+  }
+
+  /* Tier-based visual degradation — applied per entry via data attribute */
+  .dialogue-entry[data-tier="2"] .speaker-name { opacity: 0.8; }
+  .dialogue-entry[data-tier="3"] .speaker-name { opacity: 0.55; }
+  .dialogue-entry[data-tier="3"] .spoken-text { color: #8a7a6a; }
+  .dialogue-entry[data-tier="3"] { letter-spacing: 0.5px; }
+  .dialogue-entry[data-tier="4"] .speaker-name { opacity: 0.25; }
+  .dialogue-entry[data-tier="4"] .spoken-text { color: #6b3030; }
+  .dialogue-entry[data-tier="4"] { letter-spacing: 1.5px; font-size: 11.5px; }
+
+  /* ========== CONTROLS ========== */
+
+  #controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 24px;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .control-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .control-item label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .control-item .val {
+    font-size: 11px;
+    color: #666;
+    min-width: 22px;
+    text-align: right;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 80px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--muted);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    background: var(--fg);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--muted);
+    border: none;
+    cursor: pointer;
+  }
+
+  #status-text {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color 0.3s;
+  }
+
+  #status-text.running { color: var(--fg); }
+  #status-text.dead { color: var(--accent); }
+
+  .ctrl-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 2px;
+  }
+
+  .ctrl-btn:hover {
+    color: var(--fg);
+    border-color: #333;
+    background: #111;
+  }
+
+  .ctrl-btn:active {
+    background: #1a1a1a;
+  }
+
+  .ctrl-btn.hidden { display: none; }
+
+  /* ========== OVERLAY ========== */
+
+  #overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(5, 5, 5, 0.96);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    transition: opacity 0.6s ease;
+    padding: 40px;
+  }
+
+  #overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .overlay-title {
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 700;
+    color: var(--fg-bright);
+    letter-spacing: clamp(6px, 1.5vw, 12px);
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .overlay-title span {
+    color: var(--accent);
+  }
+
+  .overlay-desc {
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 420px;
+    text-align: center;
+    line-height: 1.7;
+  }
+
+  .overlay-desc strong {
+    color: var(--hasty-color);
+    font-weight: 700;
+  }
+
+  .overlay-desc em {
+    color: var(--wary-color);
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  .overlay-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--fg);
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 12px 36px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+  }
+
+  .overlay-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 30px rgba(196, 69, 54, 0.2);
+  }
+
+  /* ========== RESPONSIVE ========== */
+
+  @media (max-width: 740px) {
+    .bot-panel { width: 80px; padding: 16px 6px; }
+    .bot-subtitle { display: none; }
+    .bot-avatar { width: 40px; height: 40px; font-size: 16px; margin-bottom: 10px; }
+    .step-counter { font-size: 30px; }
+    .transcript-inner { padding: 20px 12px 50px; }
+    #controls { padding: 8px 12px; }
+    .control-group:first-child { gap: 8px; }
+    input[type="range"] { width: 60px; }
+  }
+
+  @media (max-width: 500px) {
+    .bot-panel { width: 50px; padding: 10px 4px; }
+    .bot-name { font-size: 8px; letter-spacing: 1px; writing-mode: vertical-rl; }
+    .bot-avatar { width: 32px; height: 32px; font-size: 13px; margin-bottom: 6px; }
+    .step-counter { font-size: 22px; }
+    .dialogue-entry { font-size: 12px; }
+  }
+
+  /* ========== SCROLLBAR ========== */
+
+  #transcript-area::-webkit-scrollbar { width: 3px; }
+  #transcript-area::-webkit-scrollbar-track { background: transparent; }
+  #transcript-area::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 2px; }
+  #transcript-area::-webkit-scrollbar-thumb:hover { background: #2a2a2a; }
+
+  /* ========== REDUCED MOTION ========== */
+
+  @media (prefers-reduced-motion: reduce) {
+    .entry, .terminal-entry, .system-entry, .game-over-entry, .round-divider {
+      animation: none !important;
+      opacity: 1 !important;
+    }
+    .error-text { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="container">
+  <!-- HASTY PANEL -->
+  <div class="bot-panel" id="hasty-panel">
+    <div class="bot-avatar" id="hasty-avatar">H</div>
+    <div class="bot-name">Hasty</div>
+    <div class="bot-subtitle">Leaps First</div>
+    <div class="step-counter" id="hasty-count">0</div>
+    <div class="bot-state" id="hasty-state"></div>
+  </div>
+
+  <!-- TRANSCRIPT -->
+  <div id="transcript-area">
+    <div class="transcript-inner" id="transcript"></div>
+  </div>
+
+  <!-- WARY PANEL -->
+  <div class="bot-panel" id="wary-panel">
+    <div class="bot-avatar" id="wary-avatar">W</div>
+    <div class="bot-name">Wary</div>
+    <div class="bot-subtitle">Tests First</div>
+    <div class="step-counter" id="wary-count">0</div>
+    <div class="bot-state" id="wary-state"></div>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div id="controls">
+  <div class="control-group">
+    <div class="control-item">
+      <label>Delay</label>
+      <input type="range" id="speed-slider" min="500" max="4000" value="1800" step="100">
+      <span class="val" id="speed-val">1.8s</span>
+    </div>
+    <div class="control-item">
+      <label>Tier</label>
+      <span class="val" id="tier-val" style="min-width:14px;">1</span>
+    </div>
+    <div class="control-item">
+      <label>Round</label>
+      <span class="val" id="round-val">0</span>
+    </div>
+  </div>
+
+  <div id="status-text">idle</div>
+
+  <div class="control-group">
+    <button class="ctrl-btn hidden" id="export-btn">Export</button>
+    <button class="ctrl-btn hidden" id="restart-btn">Restart</button>
+  </div>
+</div>
+
+<!-- OVERLAY -->
+<div id="overlay">
+  <div class="overlay-title">The Floor Is <span>—</span></div>
+  <div class="overlay-desc">
+    Two chatbots — <strong>Hasty</strong> and <em>Wary</em> — negotiate what the floor is.<br><br>
+    Each round, one declares. The other responds. Both step.<br>
+    The negotiation escalates until one bot steps on something it cannot recover from.<br><br>
+    You are the observer. You cannot intervene.
+  </div>
+  <button class="overlay-btn" id="start-btn">Observe</button>
+</div>
+
+<script>
+/* ========================================================
+   THE FLOOR IS — Two chatbots negotiate reality
+   All logic client-side. No API calls.
+   ======================================================== */
+
+// ==================== UTILITY ====================
+
+function pick(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function clamp(val, lo, hi) {
+  return Math.max(lo, Math.min(hi, val));
+}
+
+// ==================== PHRASE BANKS ====================
+// Curated statements organized by escalation tier (1–4)
+// Terminal phrases live in their own pool (tier 5 conceptually)
+
+const FLOOR_STATEMENTS = {
+  1: [
+    "the floor is lava",
+    "the floor is water",
+    "the floor is ice",
+    "the floor is sand",
+    "the floor is mud",
+    "the floor is broken glass",
+    "the floor is wet paint",
+    "the floor is thumbtacks",
+    "the floor is LEGOs",
+    "the floor is hot coals",
+    "the floor is bees",
+    "the floor is slugs",
+    "the floor is grapes",
+    "the floor is marbles"
+  ],
+  2: [
+    "the floor is gravity inverted",
+    "the floor is the memory of the last time you ran",
+    "the floor is the sound of your own breathing amplified",
+    "the floor is every conversation you walked away from",
+    "the floor is the gap between what you said and what you meant",
+    "the floor is the temperature of a lie",
+    "the floor is the distance between your hands",
+    "the floor is the surface tension of unspoken things",
+    "the floor is frictionless where you need grip most",
+    "the floor is the hour between 3 and 4 AM",
+    "the floor is the feeling of being watched by no one"
+  ],
+  3: [
+    "the floor is your reflection three seconds delayed",
+    "the floor is the phone call you never made",
+    "the floor is the space between you and everyone you have loved",
+    "the floor is the text you typed and deleted",
+    "the floor is the version of you that stayed",
+    "the floor is every goodbye you pretended was temporary",
+    "the floor is the weight of doors you closed softly",
+    "the floor is the echo in a room that used to be full",
+    "the floor is the last time you said I'm fine and meant the opposite",
+    "the floor is the distance from your bed to the door on the hardest morning",
+    "the floor is every compliment you've ever deflected"
+  ],
+  4: [
+    "the floor is the last thing your mother said to you",
+    "the floor is the absence that shaped you",
+    "the floor is the question you stopped asking",
+    "the floor is the person you were before you learned to perform",
+    "the floor is the moment before everything changed",
+    "the floor is the silence after someone stops calling",
+    "the floor is the space where forgiveness should have been",
+    "the floor is the thing you built your identity on and it was wrong",
+    "the floor is the name you do not say anymore",
+    "the floor is the floor is the floor"
+  ]
+};
+
+// Hasty's elaboration templates (leaping, metaphorical, impulsive)
+const HASTY_DECLARE = [
+  "Obviously {floor}. Like, duh. Anyone with eyes can see that.",
+  "Fire — metaphorically! The floor is {floor} and we are already mid-air!",
+  "Look down. No — feel down. That's {floor} down there. Has been this whole time.",
+  "You know what? {floor}. There. I said it. The ground just got interesting.",
+  "The ground beneath us? {floor}. Has been since breakfast. We just weren't paying attention.",
+  "Ground truth: {floor}. I can feel it in my teeth. The whole building is vibrating.",
+  "Boom. {floor}. The old ground is gone. This is the new ground. Keep up.",
+  "The floor is {floor} — you can smell it if you try. Copper and old wallpaper.",
+  "Speed-run: the floor is {floor}. I'm already stepping. You can analyze later.",
+  "Hot take at velocity: {floor}. The ground rewrites itself every time we blink.",
+  "{floor}. That's the floor. That's the whole floor. Don't make it complicated.",
+  "New floor just dropped: {floor}. I'm committed. Feet are moving."
+];
+
+// Wary's elaboration templates (cautious, probing, qualifying)
+const WARY_DECLARE = [
+  "Noted that the floor may be {floor}. Testing now. The surface is... irregular.",
+  "I'm seeing indications of {floor}. Preliminary readings are concerning.",
+  "Hypothesis: {floor}. The ground here has a history we should review before stepping.",
+  "Let the record show: the floor appears to be {floor}. I am stepping with appropriate caution.",
+  "Checking. Confirmed: {floor}. At least in this sector. Other sectors remain unknown.",
+  "The floor registers as {floor}. I am stepping because I must, not because I am confident.",
+  "According to my readings: {floor}. I don't like it, but I see it.",
+  "Preliminary finding: {floor}. This is not what I expected. The ground has changed.",
+  "Field report: the floor is {floor}. This is the fourteenth surface anomaly today.",
+  "The floor here tests as {floor}. Adjusting footing protocol accordingly."
+];
+
+// Hasty responds to Wary's floor
+const HASTY_RESPONSE = [
+  "Oh we're doing this? Fine. {floor} — I'm in. Both feet. No hesitation.",
+  "Finally something to stand on! {floor}. I'll take it.",
+  "That tracks. {floor}. My body already believes it.",
+  "Good enough for gravity! Stepping onto {floor} like it was always there. Because maybe it was.",
+  "Yeah yeah {floor}, I see it, I feel it, I'm already mid-stride. What's next?",
+  "Love it. {floor}. The ground is a moving target and I am a moving body.",
+  "Perfect. {floor}. My feet were getting bored anyway."
+];
+
+// Wary responds to Hasty's floor
+const WARY_RESPONSE = [
+  "That's a big claim. {floor}. I'll need a moment. ...Okay. Stepping. Carefully.",
+  "Hmm. {floor}. The structural integrity seems questionable. But I am proceeding.",
+  "Acknowledging {floor}. I don't fully trust this surface but I am stepping. On record.",
+  "Not ideal. {floor}. But the alternative is floating, and I don't have clearance for that.",
+  "{floor}. So noted. I am stepping with 40% confidence. That's the most I can offer.",
+  "{floor}. Marking this as unverified but present. Will reassess after.",
+  "I see {floor}. I am not convinced, but I am stepping. This is called progress under uncertainty."
+];
+
+// Transitions between tiers
+const TRANSITIONS = [
+  "The ground shifts beneath their dialogue.",
+  "Something has changed. The floor remembers.",
+  "A new texture. The old ground dissolves.",
+  "The surface deepens. The conversation has weight now.",
+  "Below every floor there is another floor.",
+  "The ground is not what it was. Neither are they."
+];
+
+// Terminal phrases — things a bot cannot recover from
+const TERMINAL_FAILURES = [
+  "the thing you promised you would never think about again",
+  "the last word of someone who is not coming back",
+  "the truth you built your life around and it was wrong",
+  "every floor you have ever stood on collapsing at once",
+  "the person you could have been if you had been braver",
+  "the sound of the door locking from the other side",
+  "the silence where I love you should have been",
+  "the place where even the ground forgets to hold you"
+];
+
+// ==================== GAME STATE ====================
+
+let state = {
+  round: 0,
+  tier: 1,
+  hastySteps: 0,
+  warySteps: 0,
+  running: false,
+  dead: false,
+  usedStatements: new Set(),
+  usedTerminals: new Set(),
+  timeoutId: null
+};
+
+// ==================== DOM REFERENCES ====================
+
+const transcript     = document.getElementById('transcript');
+const transcriptArea = document.getElementById('transcript-area');
+const hastyPanel     = document.getElementById('hasty-panel');
+const waryPanel      = document.getElementById('wary-panel');
+const hastyCountEl   = document.getElementById('hasty-count');
+const waryCountEl    = document.getElementById('wary-count');
+const hastyStateEl   = document.getElementById('hasty-state');
+const waryStateEl    = document.getElementById('wary-state');
+const tierVal        = document.getElementById('tier-val');
+const roundVal       = document.getElementById('round-val');
+const speedSlider    = document.getElementById('speed-slider');
+const speedVal       = document.getElementById('speed-val');
+const statusText     = document.getElementById('status-text');
+const startBtn       = document.getElementById('start-btn');
+const restartBtn     = document.getElementById('restart-btn');
+const exportBtn      = document.getElementById('export-btn');
+const overlay        = document.getElementById('overlay');
+
+// ==================== TRANSCRIPT RENDERING ====================
+
+function addEntry(html, cssClass) {
+  const el = document.createElement('div');
+  el.className = cssClass || 'entry';
+  el.innerHTML = html;
+  transcript.appendChild(el);
+  smoothScroll();
+}
+
+function addDialogue(speakerName, text, isHasty, tier) {
+  const cls = isHasty ? 'hasty-speaker' : 'wary-speaker';
+  const html = `<span class="speaker-name">${speakerName}:</span><span class="spoken-text">${text}</span>`;
+  const el = document.createElement('div');
+  el.className = `dialogue-entry entry ${cls}`;
+  el.setAttribute('data-tier', tier || state.tier);
+  el.innerHTML = html;
+  transcript.appendChild(el);
+  smoothScroll();
+}
+
+function addSystem(text) {
+  addEntry(text, 'system-entry');
+}
+
+function addTerminal(floorText) {
+  addEntry(`<span class="spoken-text">The floor is ${floorText}.</span>`, 'terminal-entry');
+}
+
+function addGameOver(loserName) {
+  addEntry(
+    `<span class="collapse-text">Collapse</span>` +
+    `<span class="collapse-sub">${loserName} stepped on something it could not recover from.</span>`,
+    'game-over-entry'
+  );
+}
+
+function addRoundDivider(n) {
+  addEntry(`Round ${n}`, 'round-divider');
+}
+
+function smoothScroll() {
+  transcriptArea.scrollTo({
+    top: transcriptArea.scrollHeight,
+    behavior: 'smooth'
+  });
+}
+
+// ==================== PANEL DEGRADATION ====================
+
+function applyPanelDegradation() {
+  const t = state.tier;
+  // Panel border color shift
+  if (t >= 4) {
+    document.querySelectorAll('.bot-panel').forEach(p => p.style.borderColor = '#1f0f0f');
+    hastyCountEl.style.color = 'rgba(196, 69, 54, 0.7)';
+    waryCountEl.style.color = 'rgba(74, 111, 165, 0.7)';
+  } else if (t >= 3) {
+    document.querySelectorAll('.bot-panel').forEach(p => p.style.borderColor = '#1a1714');
+  }
+}
+
+// ==================== FLOOR SELECTION ====================
+
+function selectFloor() {
+  // Tier escalation: rounds 1-2 → tier 1, 3-5 → tier 2, 6-8 → tier 3, 9+ → tier 4
+  state.tier = state.round <= 2 ? 1
+             : state.round <= 5 ? 2
+             : state.round <= 8 ? 3
+             : 4;
+  tierVal.textContent = state.tier;
+
+  // Check for terminal floor (probability increases with rounds)
+  // Starts being possible at round 8, becomes likely by round 13
+  let terminalChance = 0;
+  if (state.round >= 8) {
+    terminalChance = (state.round - 7) * 0.12;
+  }
+
+  if (Math.random() < terminalChance && state.usedTerminals.size < TERMINAL_FAILURES.length) {
+    let terminalFloor;
+    let attempts = 0;
+    do {
+      terminalFloor = pick(TERMINAL_FAILURES);
+      attempts++;
+    } while (state.usedTerminals.has(terminalFloor) && attempts < 20);
+    state.usedTerminals.add(terminalFloor);
+    return { text: terminalFloor, terminal: true };
+  }
+
+  // Normal floor selection from current tier
+  const statements = FLOOR_STATEMENTS[state.tier];
+  let floor;
+  let attempts = 0;
+  do {
+    floor = pick(statements);
+    attempts++;
+  } while (state.usedStatements.has(floor) && attempts < 30);
+
+  // Fallback: if we exhausted the tier, allow reuse
+  if (attempts >= 30) floor = pick(statements);
+
+  state.usedStatements.add(floor);
+  return { text: floor, terminal: false };
+}
+
+// ==================== GENERATION ====================
+
+function generateElaboration(speaker, floorText) {
+  const templates = speaker === 'Hasty' ? HASTY_DECLARE : WARY_DECLARE;
+  return pick(templates).replace('{floor}', floorText);
+}
+
+function generateResponse(speaker, floorText) {
+  const templates = speaker === 'Hasty' ? HASTY_RESPONSE : WARY_RESPONSE;
+  return pick(templates).replace('{floor}', floorText);
+}
+
+// ==================== GAME LOGIC ====================
+
+function getDelay() {
+  const base = parseInt(speedSlider.value);
+  const tierMultiplier = 1 + (state.tier - 1) * 0.12;
+  return Math.round(base * tierMultiplier);
+}
+
+function setPanels(activeHasty, activeWary, hastyLabel, waryLabel) {
+  hastyPanel.classList.toggle('active', activeHasty);
+  waryPanel.classList.toggle('active', activeWary);
+  hastyStateEl.textContent = hastyLabel || '';
+  waryStateEl.textContent = waryLabel || '';
+}
+
+function updateUI() {
+  hastyCountEl.textContent = state.hastySteps;
+  waryCountEl.textContent = state.warySteps;
+  roundVal.textContent = state.round;
+  tierVal.textContent = state.tier;
+}
+
+function startGame() {
+  overlay.classList.add('hidden');
+  state.running = true;
+  state.dead = false;
+  statusText.textContent = 'running';
+  statusText.className = 'running';
+  restartBtn.classList.remove('hidden');
+
+  state.timeoutId = setTimeout(() => runRound(), getDelay());
+}
+
+function runRound() {
+  if (state.dead || !state.running) return;
+
+  state.round++;
+
+  // Select the floor for this round
+  const floorData = selectFloor();
+  updateUI();
+
+  addRoundDivider(state.round);
+
+  // Alternate who starts: Hasty on odd rounds, Wary on even
+  const hastyStarts = state.round % 2 === 1;
+  const starter = hastyStarts ? 'Hasty' : 'Wary';
+  const responder = hastyStarts ? 'Wary' : 'Hasty';
+
+  // PHASE 1: Declaration
+  setPanels(
+    starter === 'Hasty',
+    starter === 'Wary',
+    starter === 'Hasty' ? 'declaring' : 'waiting',
+    starter === 'Wary' ? 'declaring' : 'waiting'
+  );
+
+  state.timeoutId = setTimeout(() => {
+    if (state.dead) return;
+
+    // Render declaration
+    if (floorData.terminal) {
+      addTerminal(floorData.text);
+    } else {
+      const declaration = generateElaboration(starter, floorData.text);
+      addDialogue(starter, declaration, starter === 'Hasty', state.tier);
+    }
+
+    // PHASE 2: Response
+    setPanels(
+      responder === 'Hasty',
+      responder === 'Wary',
+      responder === 'Hasty' ? 'responding' : 'waiting',
+      responder === 'Wary' ? 'responding' : 'waiting'
+    );
+
+    state.timeoutId = setTimeout(() => {
+      if (state.dead) return;
+
+      // Terminal floor ends the game — responder loses
+      if (floorData.terminal) {
+        endGame(responder, floorData.text);
+        return;
+      }
+
+      // Generate and render response
+      const response = generateResponse(responder, floorData.text);
+      addDialogue(responder, response, responder === 'Hasty', state.tier);
+
+      // Both step
+      if (starter === 'Hasty') {
+        state.hastySteps++;
+      } else {
+        state.warySteps++;
+      }
+      if (responder === 'Hasty') {
+        state.hastySteps++;
+      } else {
+        state.warySteps++;
+      }
+
+      updateUI();
+      setPanels(false, false, '', '');
+      applyPanelDegradation();
+
+      // Tier transition announcement
+      const nextTier = state.round + 1 <= 2 ? 1
+                     : state.round + 1 <= 5 ? 2
+                     : state.round + 1 <= 8 ? 3
+                     : 4;
+
+      const delay = getDelay();
+      if (nextTier > state.tier && nextTier <= 4) {
+        state.timeoutId = setTimeout(() => {
+          if (state.dead) return;
+          addSystem(pick(TRANSITIONS));
+          state.timeoutId = setTimeout(() => runRound(), Math.round(delay * 0.6));
+        }, delay);
+      } else {
+        state.timeoutId = setTimeout(() => runRound(), delay);
+      }
+
+    }, getDelay());
+
+  }, getDelay());
+}
+
+function endGame(loserName, floorText) {
+  state.dead = true;
+  state.running = false;
+
+  // Loser's final step — flickering
+  const errEl = document.createElement('div');
+  errEl.className = 'dialogue-entry entry error-text hasty-speaker';
+  if (loserName === 'Wary') errEl.className = 'dialogue-entry entry error-text wary-speaker';
+  errEl.innerHTML = `<span class="speaker-name">${loserName}:</span><span class="spoken-text">I step.</span>`;
+  transcript.appendChild(errEl);
+
+  setTimeout(() => {
+    addSystem(`${loserName} has encountered an unrecoverable surface.`);
+    addGameOver(loserName);
+
+    statusText.textContent = 'ended';
+    statusText.className = 'dead';
+    setPanels(false, false, '', '');
+    exportBtn.classList.remove('hidden');
+  }, 1200);
+}
+
+// ==================== EXPORT ====================
+
+function exportTranscript() {
+  const entries = transcript.querySelectorAll(
+    '.dialogue-entry, .system-entry, .terminal-entry, .game-over-entry, .round-divider'
+  );
+  let text = '═══════════════════════════════\n';
+  text +=    '  THE FLOOR IS — Transcript\n';
+  text +=    '═══════════════════════════════\n\n';
+
+  entries.forEach(el => {
+    const spoken = el.querySelector('.spoken-text');
+    const name = el.querySelector('.speaker-name');
+    if (name && spoken) {
+      text += `${name.textContent} ${spoken.textContent}\n\n`;
+    } else {
+      const plain = el.textContent.trim();
+      if (!plain) return;
+      if (el.classList.contains('round-divider')) {
+        text += `── ${plain} ──\n\n`;
+      } else if (el.classList.contains('game-over-entry')) {
+        text += `\n*** ${plain} ***\n\n`;
+      } else {
+        text += `${plain}\n\n`;
+      }
+    }
+  });
+
+  text += '═══════════════════════════════\n';
+  text += `  Rounds: ${state.round}\n`;
+  text += `  Hasty steps: ${state.hastySteps}\n`;
+  text += `  Wary steps: ${state.warySteps}\n`;
+  text += '═══════════════════════════════\n';
+
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `the-floor-is-${Date.now()}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ==================== RESTART ====================
+
+function resetGame() {
+  if (state.timeoutId) clearTimeout(state.timeoutId);
+
+  state = {
+    round: 0,
+    tier: 1,
+    hastySteps: 0,
+    warySteps: 0,
+    running: false,
+    dead: false,
+    usedStatements: new Set(),
+    usedTerminals: new Set(),
+    timeoutId: null
+  };
+
+  transcript.innerHTML = '';
+  updateUI();
+  tierVal.textContent = '1';
+  statusText.textContent = 'idle';
+  statusText.className = '';
+  setPanels(false, false, '', '');
+  exportBtn.classList.add('hidden');
+  restartBtn.classList.add('hidden');
+
+  // Reset panel styles
+  document.querySelectorAll('.bot-panel').forEach(p => p.style.borderColor = '');
+  hastyCountEl.style.color = '';
+  waryCountEl.style.color = '';
+
+  setTimeout(() => overlay.classList.remove('hidden'), 400);
+}
+
+// ==================== EVENT LISTENERS ====================
+
+startBtn.addEventListener('click', startGame);
+restartBtn.addEventListener('click', resetGame);
+exportBtn.addEventListener('click', exportTranscript);
+
+speedSlider.addEventListener('input', () => {
+  const val = parseInt(speedSlider.value);
+  speedVal.textContent = (val / 1000).toFixed(1) + 's';
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'r' || e.key === 'R') {
+    if (state.running) return;
+    resetGame();
+  }
+});
+
+// Initialize speed display
+speedVal.textContent = (parseInt(speedSlider.value) / 1000).toFixed(1) + 's';
+
+</script>
+</body>
+</html>
