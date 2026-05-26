@@ -1,0 +1,3204 @@
+{
+  "ghost": {
+    "word": "ghost",
+    "pos": "noun",
+    "currentMeaning": "An apparition of a dead person; a spirit",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*gheis-",
+        "meaning": "to be excited, frightened, amazed",
+        "year": -3000,
+        "note": "The root: the feeling of terror and wonder",
+        "alive": true
+      },
+      {
+        "language": "Proto-Germanic",
+        "languageFamily": "Germanic",
+        "form": "*gaistaz",
+        "meaning": "spirit, breath, fury",
+        "year": -500,
+        "note": "The spirit as breath — the exhalation of dying, the last gasp. A ghost was originally the breath that left the body at death.",
+        "alive": true
+      },
+      {
+        "language": "Old English",
+        "languageFamily": "Germanic",
+        "form": "gāst",
+        "meaning": "spirit, soul, breath",
+        "year": 800,
+        "note": "Also meant 'breath' — the word captured the exhalation of dying, the moment soul left body",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "gost",
+        "meaning": "spirit, soul, specter",
+        "year": 1200,
+        "note": "The meaning narrowed toward 'spectral apparition'",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "ghost",
+        "meaning": "an apparition of a dead person",
+        "year": 1500,
+        "note": "A ghost is a breath that refused to leave. The word originally meant the breath of life — the spirit that animates. Now it means the spirit that haunts. William Tyndale used 'Holy Ghost' in his Bible translation, preserving the older 'spirit' meaning alongside the haunted one.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "German", "form": "Geist", "meaning": "spirit, mind, ghost" },
+      { "language": "Dutch", "form": "geest", "meaning": "spirit, mind" },
+      { "language": "Swedish", "form": "gäst", "meaning": "ghost (dialectal)" },
+      { "language": "Old Norse", "form": "geistr", "meaning": "specter" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Old English",
+        "languageFamily": "Germanic",
+        "form": "gāstan",
+        "meaning": "to torment, to frighten",
+        "note": "A verb form that didn't survive into Modern English"
+      },
+      {
+        "language": "Old English",
+        "languageFamily": "Germanic",
+        "form": "gāst",
+        "meaning": "breath, the animating force (non-haunted sense)",
+        "note": "The original non-scary meaning — breath, the life force — is dead. 'Ghost' now only means something frightening. The Holy Ghost preserves the older, neutral sense."
+      }
+    ]
+  },
+  "salary": {
+    "word": "salary",
+    "pos": "noun",
+    "currentMeaning": "A fixed regular payment earned for work",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*sal-",
+        "meaning": "salt",
+        "year": -3000,
+        "note": "Salt was currency before currency existed. It preserved food, sustained armies, and built trade routes.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "sal",
+        "meaning": "salt",
+        "year": -200,
+        "note": "The root visible in 'salary', 'saline', 'salami', 'salt'",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "salarium",
+        "meaning": "salt-money, soldier's stipend",
+        "year": 0,
+        "note": "Roman soldiers received a 'salarium' — originally an allowance for salt, later any regular payment. Whether it was literally salt rations or money in lieu of salt is debated, but the name stuck.",
+        "alive": true
+      },
+      {
+        "language": "Anglo-Norman French",
+        "languageFamily": "Romance",
+        "form": "salarie",
+        "meaning": "stipend, payment",
+        "year": 1200,
+        "note": "The salt was forgotten; only the money remained",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "salary",
+        "meaning": "a fixed regular payment for work",
+        "year": 1350,
+        "note": "Every payday, you are literally collecting salt money from a 2000-year-old Roman military logistics system. The word 'salt' is visible in 'salary' — 'sal' is right there.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "salaire", "meaning": "salary, wage" },
+      { "language": "Spanish", "form": "salario", "meaning": "salary" },
+      { "language": "Italian", "form": "salario", "meaning": "salary" },
+      { "language": "German", "form": "Salär", "meaning": "salary (borrowed)" },
+      { "language": "Romanian", "form": "salariu", "meaning": "salary" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "salarinum",
+        "meaning": "salt-pit, salt-works",
+        "note": "A related Latin word for salt-works — the industrial infrastructure of salt production — died without entering modern languages. Only the military payment survived."
+      }
+    ]
+  },
+  "disaster": {
+    "word": "disaster",
+    "pos": "noun",
+    "currentMeaning": "A sudden event causing great damage or suffering",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*ster-",
+        "meaning": "star",
+        "year": -3000,
+        "note": "Ancient peoples believed stars controlled human fate. A bad star meant a bad life.",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "astron",
+        "meaning": "star",
+        "year": -500,
+        "note": "The Greek word for star, giving us 'astronomy', 'astronaut', 'asterisk'",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "astrum",
+        "meaning": "star, constellation",
+        "year": -200,
+        "note": "The root that gives us astronomy, astrology, astronaut",
+        "alive": true
+      },
+      {
+        "language": "Italian",
+        "languageFamily": "Romance",
+        "form": "disastro",
+        "meaning": "ill-starred event, bad star",
+        "year": 1300,
+        "note": "'Dis-' (against, bad) + 'astro' (star). When the stars were against you, that was a disaster.",
+        "alive": true
+      },
+      {
+        "language": "Middle French",
+        "languageFamily": "Romance",
+        "form": "désastre",
+        "meaning": "bad star, catastrophe",
+        "year": 1500,
+        "note": "Borrowed from Italian with the astrological meaning intact",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "disaster",
+        "meaning": "a sudden event causing great damage",
+        "year": 1590,
+        "note": "Every disaster is a bad star. The star in 'disaster' is the same star in 'astronomy'. Ancient astrology is still inside every modern catastrophe.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "désastre", "meaning": "disaster" },
+      { "language": "Italian", "form": "disastro", "meaning": "disaster" },
+      { "language": "Spanish", "form": "desastre", "meaning": "disaster" },
+      { "language": "Portuguese", "form": "desastre", "meaning": "disaster" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Italian",
+        "languageFamily": "Romance",
+        "form": "disastroso",
+        "meaning": "ill-starred (literal astrological sense)",
+        "note": "The original literal sense — a specific bad astrological conjunction — is dead. The word has generalized from 'bad star' to 'any catastrophe'. The astrology is fossil."
+      }
+    ]
+  },
+  "companion": {
+    "word": "companion",
+    "pos": "noun",
+    "currentMeaning": "A person with whom one spends time or travels",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*pa-",
+        "meaning": "to feed, to protect",
+        "year": -3000,
+        "note": "Feeding as the fundamental act of care",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "panis",
+        "meaning": "bread",
+        "year": -200,
+        "note": "The root that also gives us 'pantry', 'panini', 'paneer'",
+        "alive": true
+      },
+      {
+        "language": "Vulgar Latin",
+        "languageFamily": "Romance",
+        "form": "*companionem",
+        "meaning": "bread-fellow, one who shares bread",
+        "year": 400,
+        "note": "'Com-' (with) + 'panis' (bread). A companion is literally someone you break bread with. The deepest social bond reduced to its simplest act.",
+        "alive": true
+      },
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "compaignon",
+        "meaning": "companion, partner",
+        "year": 1100,
+        "note": "The word traveled with feudal military culture — companions in arms shared rations",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "companion",
+        "meaning": "a person with whom one spends time",
+        "year": 1290,
+        "note": "Your companions are still, etymologically, your bread-sharers. The Latin 'panis' (bread) is still visible inside 'companion'. Every meal with a friend reenacts the word's origin.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "compagnon", "meaning": "companion, partner" },
+      { "language": "Spanish", "form": "compañero", "meaning": "companion, partner" },
+      { "language": "Italian", "form": "compagno", "meaning": "companion, classmate" },
+      { "language": "Portuguese", "form": "companheiro", "meaning": "companion" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "compaignie",
+        "meaning": "body of soldiers, band of companions",
+        "note": "This became 'company' — the corporate sense (a business company) is a dead metaphor from military fellowship"
+      }
+    ]
+  },
+  "muscle": {
+    "word": "muscle",
+    "pos": "noun",
+    "currentMeaning": "A body tissue that contracts to produce movement",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*mūs-",
+        "meaning": "mouse",
+        "year": -3000,
+        "note": "The mouse — small, rounded, scurrying under surfaces",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "mys",
+        "meaning": "mouse; muscle",
+        "year": -400,
+        "note": "Greek physicians noticed the resemblance: a flexing muscle under the skin moves like a mouse. Same word, two meanings.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "musculus",
+        "meaning": "little mouse; muscle",
+        "year": -200,
+        "note": "Roman anatomists translated the Greek metaphor literally: 'mus' (mouse) + '-culus' (diminutive). A muscle is a 'little mouse' running under your skin.",
+        "alive": true
+      },
+      {
+        "language": "Middle French",
+        "languageFamily": "Romance",
+        "form": "muscle",
+        "meaning": "muscle (anatomical sense)",
+        "year": 1300,
+        "note": "Borrowed directly from Latin medical terminology",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "muscle",
+        "meaning": "body tissue that produces movement",
+        "year": 1400,
+        "note": "Every time you flex, a little mouse is running under your skin. That's what the Romans saw, and they named it accordingly. The metaphor has survived 2000 years.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "muscle", "meaning": "muscle" },
+      { "language": "Spanish", "form": "músculo", "meaning": "muscle" },
+      { "language": "Italian", "form": "muscolo", "meaning": "muscle" },
+      { "language": "German", "form": "Muskel", "meaning": "muscle (borrowed from Latin)" },
+      { "language": "Greek", "form": "μυς", "meaning": "mouse; muscle" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "musculus",
+        "meaning": "a type of mussel (shellfish)",
+        "note": "The same 'little mouse' metaphor was also applied to shellfish that clamped shut. This sense survives in 'mussel' via a different path."
+      }
+    ]
+  },
+  "clue": {
+    "word": "clue",
+    "pos": "noun",
+    "currentMeaning": "A piece of evidence that helps solve a problem or mystery",
+    "chain": [
+      {
+        "language": "Old English",
+        "languageFamily": "Germanic",
+        "form": "cliewen",
+        "meaning": "a ball of thread or yarn",
+        "year": 800,
+        "note": "A simple word for a simple object. The detective meaning was centuries away.",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "clewe",
+        "meaning": "a ball of thread",
+        "year": 1200,
+        "note": "Still just yarn. No metaphor yet.",
+        "alive": true
+      },
+      {
+        "language": "Early Modern English",
+        "languageFamily": "Germanic",
+        "form": "clew",
+        "meaning": "a ball of thread; a guide through a maze",
+        "year": 1500,
+        "note": "The myth of Theseus and the Minotaur — where Ariadne gives Theseus a ball of thread to navigate the labyrinth — gave 'clew' its metaphorical meaning: something that guides you through a maze of questions.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "clue",
+        "meaning": "a piece of evidence used in solving a problem",
+        "year": 1620,
+        "note": "The spelling shifted from 'clew' to 'clue'. The thread was forgotten. A clue is a fossil of Ariadne's ball of yarn, compressed into four letters.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "Dutch", "form": "kluwen", "meaning": "tangle, ball of yarn" },
+      { "language": "German", "form": "Knäuel", "meaning": "ball of yarn (different root)" },
+      { "language": "Old Norse", "form": "klyfja", "meaning": "to cleave, split" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "clewe",
+        "meaning": "a ball of thread (literal sense)",
+        "note": "The literal meaning — a ball of yarn — is now completely dead in English. The metaphor consumed the original word."
+      }
+    ]
+  },
+  "daisy": {
+    "word": "daisy",
+    "pos": "noun",
+    "currentMeaning": "A small grassland flower with yellow center and white petals",
+    "chain": [
+      {
+        "language": "Old English",
+        "languageFamily": "Germanic",
+        "form": "dæges eage",
+        "meaning": "day's eye",
+        "year": 800,
+        "note": "The flower opens in the morning and closes at night. Anglo-Saxons named it for this: the eye of the day, watching the sun.",
+        "alive": true
+      },
+      {
+        "language": "Old English",
+        "languageFamily": "Germanic",
+        "form": "dæges-eage",
+        "meaning": "daisy (compound noun)",
+        "year": 900,
+        "note": "Compounded into a single word — the day's eye became one thing",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "dayeseye",
+        "meaning": "daisy",
+        "year": 1200,
+        "note": "The compound fused phonetically. Speakers forgot it meant 'day's eye'.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "daisy",
+        "meaning": "the flower Bellis perennis",
+        "year": 1500,
+        "note": "A daisy is a day's eye that forgot it was watching. One of the most literal flower names in English, now invisible.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "German", "form": "Gänseblümchen", "meaning": "daisy (little goose flower — different metaphor)" },
+      { "language": "French", "form": "marguerite", "meaning": "daisy (from a different root)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Old English",
+        "languageFamily": "Germanic",
+        "form": "dæges eage",
+        "meaning": "the sun itself (the day's eye in the sky)",
+        "note": "The phrase could also mean the sun itself — the day's eye in the sky. That poetic sense died with Old English."
+      }
+    ]
+  },
+  "nice": {
+    "word": "nice",
+    "pos": "adjective",
+    "currentMeaning": "Pleasant, agreeable, kind",
+    "chain": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "nescius",
+        "meaning": "ignorant, unaware",
+        "year": -100,
+        "note": "'Ne-' (not) + 'scire' (to know). The original meaning: not knowing. Ignorant.",
+        "alive": true
+      },
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "nice",
+        "meaning": "foolish, simple, silly",
+        "year": 1100,
+        "note": "The word drifted: from 'ignorant' to 'foolish' to 'simple'. Not a compliment.",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "nice",
+        "meaning": "foolish, timid, fastidious",
+        "year": 1300,
+        "note": "Borrowed from French. Then the drift began: foolish → timid → fastidious → precise.",
+        "alive": true
+      },
+      {
+        "language": "Early Modern English",
+        "languageFamily": "Germanic",
+        "form": "nice",
+        "meaning": "careful, precise, subtle",
+        "year": 1500,
+        "note": "A 'nice distinction' meant a precise one. Jane Austen used 'nice' this way.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "nice",
+        "meaning": "pleasant, agreeable, kind",
+        "year": 1769,
+        "note": "The greatest semantic drift in English. From 'ignorant' to 'pleasant' in 1800 years. Jane Austen complained about people who used 'nice' to mean 'pleasant' — she preferred the older 'precise' meaning.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "niais", "meaning": "naive, foolish (related form)" },
+      { "language": "Italian", "form": "nescio", "meaning": "I don't know (preserved original Latin sense)" },
+      { "language": "Spanish", "form": "necio", "meaning": "foolish, ignorant (closer to original)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "nice",
+        "meaning": "wanton, lascivious",
+        "note": "In the 14th century, 'nice' could mean sexually promiscuous — the opposite of today's meaning. This sense vanished without a trace."
+      }
+    ]
+  },
+  "quarantine": {
+    "word": "quarantine",
+    "pos": "noun",
+    "currentMeaning": "A period of isolation to prevent the spread of disease",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*kwetwer-",
+        "meaning": "four",
+        "year": -3000,
+        "note": "The number four underlies the word — specifically, forty days",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "quadraginta",
+        "meaning": "forty",
+        "year": -200,
+        "note": "Forty days had biblical resonance: Jesus in the desert, the flood, Moses on Sinai",
+        "alive": true
+      },
+      {
+        "language": "Italian",
+        "languageFamily": "Romance",
+        "form": "quarantina",
+        "meaning": "period of forty days",
+        "year": 1400,
+        "note": "Ships arriving in Venice during the plague were required to anchor offshore for 40 days before landing",
+        "alive": true
+      },
+      {
+        "language": "Italian",
+        "languageFamily": "Romance",
+        "form": "quarantena",
+        "meaning": "isolation period for ships",
+        "year": 1450,
+        "note": "The Venetian quarantine law of 1448 formalized the practice. The word became inseparable from disease prevention.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "quarantine",
+        "meaning": "period of isolation to prevent disease spread",
+        "year": 1663,
+        "note": "The forty days became symbolic — modern quarantines can be any length, but the number four is still locked inside the word.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "quarantaine", "meaning": "quarantine; about forty" },
+      { "language": "Spanish", "form": "cuarentena", "meaning": "quarantine" },
+      { "language": "Portuguese", "form": "quarentena", "meaning": "quarantine" },
+      { "language": "Italian", "form": "quarantena", "meaning": "quarantine" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Middle French",
+        "languageFamily": "Romance",
+        "form": "quarantaine",
+        "meaning": "a period of forty days (any forty-day period, not just medical)",
+        "note": "In older French, 'quarantaine' could mean any forty-day stretch — a fasting period, a legal term, a Lenten observance. The medical sense won."
+      }
+    ]
+  },
+  "sycophant": {
+    "word": "sycophant",
+    "pos": "noun",
+    "currentMeaning": "A person who flatters someone important to gain advantage",
+    "chain": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "sykon",
+        "meaning": "fig",
+        "year": -500,
+        "note": "A fig. The word starts here, with a fruit.",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "sykophantēs",
+        "meaning": "fig-shower, fig-informer",
+        "year": -400,
+        "note": "'Sykon' (fig) + 'phainein' (to show). In Athens, someone who informed on illegal fig exporters — or possibly someone who pointed out stolen figs. A petty snitch.",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "sykophantēs",
+        "meaning": "a base accuser, a malicious informer",
+        "year": -300,
+        "note": "Generalized: any professional informant or false accuser. The fig was forgotten; the sneaking remained.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "syophanta",
+        "meaning": "informer, slanderer",
+        "year": 0,
+        "note": "Borrowed from Greek as a legal term",
+        "alive": true
+      },
+      {
+        "language": "Middle French",
+        "languageFamily": "Romance",
+        "form": "sycophante",
+        "meaning": "informer, flatterer",
+        "year": 1400,
+        "note": "The meaning shifted from 'informer' toward 'flatterer' — someone who whispers to power",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "sycophant",
+        "meaning": "a servile flatterer",
+        "year": 1570,
+        "note": "From fig-informer to yes-man. The journey: fig → fig-snitch → snitch → flatterer. Every sycophant carries a forgotten fig.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "sycophante", "meaning": "sycophant" },
+      { "language": "German", "form": "Sykophant", "meaning": "sycophant" },
+      { "language": "Italian", "form": "sicofante", "meaning": "sycophant" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "sykophanteō",
+        "meaning": "to inform against someone, to accuse falsely",
+        "note": "The Greek verb form — the act of fig-informing — is dead even in Greek"
+      }
+    ]
+  },
+  "trivial": {
+    "word": "trivial",
+    "pos": "adjective",
+    "currentMeaning": "Of little value or importance",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*tri-",
+        "meaning": "three",
+        "year": -3000,
+        "note": "The number three, fundamental and ordinary",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "trivium",
+        "meaning": "crossroads, place where three roads meet",
+        "year": -200,
+        "note": "'Tri-' (three) + 'via' (road). A crossroads was a public, ordinary place where anyone could gather.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "trivialis",
+        "meaning": "commonplace, ordinary, vulgar",
+        "year": 0,
+        "note": "Something 'trivial' belonged to the crossroads — common, public, unspecialized. The word for 'ordinary' became the word for 'unimportant'.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "trivium",
+        "meaning": "the three liberal arts: grammar, logic, rhetoric",
+        "year": 500,
+        "note": "In medieval universities, the trivium was the introductory three subjects — basic, foundational, 'trivial'",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "trivial",
+        "meaning": "of little value or importance",
+        "year": 1580,
+        "note": "Three roads meet. The meeting place is ordinary. The ordinary is unimportant. That's how 'three roads' became 'meaningless'.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "trivial", "meaning": "trivial, commonplace" },
+      { "language": "Spanish", "form": "trivial", "meaning": "trivial" },
+      { "language": "Italian", "form": "triviale", "meaning": "trivial, vulgar" },
+      { "language": "German", "form": "trivial", "meaning": "trivial" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "Trivia",
+        "meaning": "Diana as goddess of the crossroads",
+        "note": "The Roman goddess Trivia (Diana/Artemis at three-way crossroads) — a divine epithet that became the English word 'trivia' (unimportant facts), completing the degradation from goddess to pub quiz"
+      }
+    ]
+  },
+  "panic": {
+    "word": "panic",
+    "pos": "noun",
+    "currentMeaning": "Sudden uncontrollable fear or anxiety",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*pan-",
+        "meaning": "to pasture, to feed",
+        "year": -3000,
+        "note": "Pastoral life: herds, grazing, the shepherd's world",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "Pan",
+        "meaning": "the god of shepherds, flocks, and wild places",
+        "year": -700,
+        "note": "Pan — half-goat, half-man — was the god of the wilderness. His appearance caused terror.",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "panikon",
+        "meaning": "of Pan, groundless fear",
+        "year": -400,
+        "note": "Sudden, irrational fear was attributed to Pan — the god who startled shepherds and spread fear through armies",
+        "alive": true
+      },
+      {
+        "language": "French",
+        "languageFamily": "Romance",
+        "form": "panique",
+        "meaning": "panic",
+        "year": 1400,
+        "note": "Borrowed from Greek via Latin, carrying the divine origin with it",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "panic",
+        "meaning": "sudden uncontrollable fear",
+        "year": 1600,
+        "note": "Every panic attack is, etymologically, a visit from Pan. The goat-god is still startling us.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "panique", "meaning": "panic" },
+      { "language": "Spanish", "form": "pánico", "meaning": "panic" },
+      { "language": "Italian", "form": "panico", "meaning": "panic" },
+      { "language": "German", "form": "Panik", "meaning": "panic" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "panikos deima",
+        "meaning": "terror sent by Pan (specifically in military contexts)",
+        "note": "Ancient armies attributed sudden, irrational retreats to Pan — a divine panic that spread through ranks without cause"
+      }
+    ]
+  },
+  "candidate": {
+    "word": "candidate",
+    "pos": "noun",
+    "currentMeaning": "A person who applies for a job or is nominated for election",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*kand-",
+        "meaning": "to shine, to glow white",
+        "year": -3000,
+        "note": "The root that gives us 'candle', 'incandescent', and 'candid' — all about white light",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "candidus",
+        "meaning": "white, pure, bright",
+        "year": -200,
+        "note": "White as purity. White as visibility. White as virtue.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "candidatus",
+        "meaning": "clothed in white",
+        "year": -100,
+        "note": "Roman political candidates wore specially whitened togas to signal their purity and suitability for office. Campaigning in a white toga — the original white candidacy.",
+        "alive": true
+      },
+      {
+        "language": "Middle French",
+        "languageFamily": "Romance",
+        "form": "candidat",
+        "meaning": "one who seeks office",
+        "year": 1400,
+        "note": "The white toga was gone, but the word for 'man in white' became the word for 'office-seeker'",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "candidate",
+        "meaning": "a person who seeks or is nominated for a position",
+        "year": 1600,
+        "note": "Every candidate is, etymologically, a person dressed in white. The Roman campaign strategy of wearing a bright toga is frozen in the word forever.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "candidat", "meaning": "candidate" },
+      { "language": "Spanish", "form": "candidato", "meaning": "candidate" },
+      { "language": "Italian", "form": "candidato", "meaning": "candidate" },
+      { "language": "German", "form": "Kandidat", "meaning": "candidate" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "candidatus",
+        "meaning": "a person dressed in white (general sense)",
+        "note": "The original meaning — simply someone wearing white clothes — is completely lost. Only the political sense survives."
+      }
+    ]
+  },
+  "gossip": {
+    "word": "gossip",
+    "pos": "noun",
+    "currentMeaning": "Casual or unconstrained conversation about other people",
+    "chain": [
+      {
+        "language": "Old English",
+        "languageFamily": "Germanic",
+        "form": "godsibb",
+        "meaning": "godparent, sponsor at baptism",
+        "year": 800,
+        "note": "'God' + 'sibb' (related, kin). A godsibb was your spiritual relative — the person who stood with you at a christening.",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "gossip",
+        "meaning": "close friend, companion (especially of women)",
+        "year": 1200,
+        "note": "The religious meaning softened. A gossip was a close friend — the person you talked to, trusted, confided in.",
+        "alive": true
+      },
+      {
+        "language": "Early Modern English",
+        "languageFamily": "Germanic",
+        "form": "gossip",
+        "meaning": "idle talk, rumour",
+        "year": 1550,
+        "note": "By Shakespeare's time, the word had flipped. The person you confided in became the person who talked too much. Trust became tattling.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "gossip",
+        "meaning": "casual talk about other people's lives",
+        "year": 1700,
+        "note": "From god's kin to idle talk. The journey: godparent → close friend → confidante → chatterbox → rumour. The sacred became the scandalous.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "German", "form": "Gossip", "meaning": "gossip (borrowed from English)" },
+      { "language": "Dutch", "form": "gossip", "meaning": "gossip (borrowed)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "gossip",
+        "meaning": "a woman attending childbirth to offer support",
+        "note": "In medieval England, a 'gossip' was specifically a woman who attended a friend in childbirth — a spiritual companion for the ordeal. This meaning died completely."
+      }
+    ]
+  },
+  "robot": {
+    "word": "robot",
+    "pos": "noun",
+    "currentMeaning": "A machine capable of carrying out complex actions automatically",
+    "chain": [
+      {
+        "language": "Old Czech",
+        "languageFamily": "Slavic",
+        "form": "robota",
+        "meaning": "forced labor, servitude, drudgery",
+        "year": 1400,
+        "note": "Feudal peasants owed 'robota' — compulsory labor — to their lords. The word tasted like exhaustion.",
+        "alive": true
+      },
+      {
+        "language": "Czech",
+        "languageFamily": "Slavic",
+        "form": "robota",
+        "meaning": "forced labor",
+        "year": 1910,
+        "note": "Still in use, still meaning hard, obligatory work",
+        "alive": true
+      },
+      {
+        "language": "Czech",
+        "languageFamily": "Slavic",
+        "form": "robot",
+        "meaning": "artificial humanoid worker",
+        "year": 1920,
+        "note": "Karel Čapek coined 'robot' in his play R.U.R. (Rossum's Universal Robots) from 'robota'. His machines were created to do forced labor — the word was chosen to mean 'slave worker'.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "robot",
+        "meaning": "an autonomous machine",
+        "year": 1923,
+        "note": "Čapek's robots weren't mechanical — they were biological, made of synthetic flesh. The machine sense came later. A 20th-century word with an old soul: forced labor, frozen into metal.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "Russian", "form": "работа", "meaning": "work, labor" },
+      { "language": "Polish", "form": "robota", "meaning": "work, hard labor" },
+      { "language": "Slovak", "form": "robota", "meaning": "serf labor" },
+      { "language": "German", "form": "Roboter", "meaning": "robot" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Czech",
+        "languageFamily": "Slavic",
+        "form": "rob",
+        "meaning": "serf, slave",
+        "note": "The root 'rob' (slave) is archaic in Czech — the feudal system that created it is gone, but 'robota' (labor) survived"
+      }
+    ]
+  },
+  "sincere": {
+    "word": "sincere",
+    "pos": "adjective",
+    "currentMeaning": "Free from pretence or deceit; genuine",
+    "chain": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "sincerus",
+        "meaning": "clean, pure, whole, unmixed",
+        "year": -100,
+        "note": "The origin is disputed. One theory: 'sine cera' (without wax) — Roman sculptors filled flaws in marble with wax. Sincere marble was flawless. Another theory: the word is simply old Latin with no clear etymology.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "sincerus",
+        "meaning": "genuine, true, honest (moral sense)",
+        "year": 100,
+        "note": "The physical meaning (pure, unmixed) developed a moral meaning (honest, genuine).",
+        "alive": true
+      },
+      {
+        "language": "Middle French",
+        "languageFamily": "Romance",
+        "form": "sincère",
+        "meaning": "pure, genuine",
+        "year": 1400,
+        "note": "Borrowed from Latin with the moral meaning dominant",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "sincere",
+        "meaning": "free from deceit, genuine",
+        "year": 1530,
+        "note": "Whether or not the 'sine cera' (without wax) story is true, it's been told for 2000 years. The word means 'without wax' in the popular imagination — and that story has become part of the word's meaning.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "sincère", "meaning": "sincere" },
+      { "language": "Spanish", "form": "sincero", "meaning": "sincere" },
+      { "language": "Italian", "form": "sincero", "meaning": "sincere" },
+      { "language": "Portuguese", "form": "sincero", "meaning": "sincere" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "sincerus",
+        "meaning": "physically pure, unmixed (of substances)",
+        "note": "The original physical sense — pure honey, unmixed wine, unblemished marble — died as the word moved into moral territory"
+      }
+    ]
+  },
+  "assassin": {
+    "word": "assassin",
+    "pos": "noun",
+    "currentMeaning": "A person who murders a public figure for political or religious motives",
+    "chain": [
+      {
+        "language": "Arabic",
+        "languageFamily": "Semitic",
+        "form": "al-ḥashshāshīn",
+        "meaning": "the hashish users",
+        "year": 1090,
+        "note": "A sect of Ismaili Shia Muslims, the Nizari, were called 'hashish eaters' by their enemies. Whether they actually used hashish is disputed — it may have been propaganda.",
+        "alive": true
+      },
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "assassin",
+        "meaning": "member of the Nizari sect",
+        "year": 1200,
+        "note": "Crusaders brought stories of the 'Assassins' back to Europe — a fearsome sect whose agents would publicly kill their enemies",
+        "alive": true
+      },
+      {
+        "language": "Italian",
+        "languageFamily": "Romance",
+        "form": "assassino",
+        "meaning": "a political or religious killer",
+        "year": 1400,
+        "note": "The word generalized from the specific sect to any murderer who kills for a cause",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "assassin",
+        "meaning": "a person who murders for political or religious motives",
+        "year": 1530,
+        "note": "The hashish is long gone. But the word still carries the traces of a Crusader-era smear campaign against a Persian mountain sect.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "assassin", "meaning": "murderer" },
+      { "language": "Italian", "form": "assassino", "meaning": "assassin, murderer" },
+      { "language": "Spanish", "form": "asesino", "meaning": "assassin, murderer" },
+      { "language": "Arabic", "form": "حشاش", "meaning": "hashish user (original sense)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "assassin",
+        "meaning": "specifically a member of the Nizari Ismaili order",
+        "note": "The original meaning — a specific religious sect based in Alamut, Persia — is dead. The word became so generic that its origin is forgotten."
+      }
+    ]
+  },
+  "algorithm": {
+    "word": "algorithm",
+    "pos": "noun",
+    "currentMeaning": "A process or set of rules to be followed in calculations",
+    "chain": [
+      {
+        "language": "Arabic",
+        "languageFamily": "Semitic",
+        "form": "al-Khwārizmī",
+        "meaning": "Muhammad ibn Musa al-Khwārizmī, Persian mathematician",
+        "year": 820,
+        "note": "Al-Khwārizmī wrote a book on Hindu-Arabic numerals that introduced algebra to the Islamic world and, through translation, to Europe. His name became a word.",
+        "alive": true
+      },
+      {
+        "language": "Medieval Latin",
+        "languageFamily": "Romance",
+        "form": "Algorismus",
+        "meaning": "the system of Arabic numerals and calculation",
+        "year": 1200,
+        "note": "Latin translators of al-Khwārizmī's work Latinized his name. 'Algorismus' meant doing arithmetic with Arabic numerals (as opposed to the abacus).",
+        "alive": true
+      },
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "algorisme",
+        "meaning": "arithmetic using Arabic numerals",
+        "year": 1250,
+        "note": "The word traveled through France, still meaning the specific practice of doing math with numerals rather than counting boards",
+        "alive": true
+      },
+      {
+        "language": "Early Modern French",
+        "languageFamily": "Romance",
+        "form": "algorithme",
+        "meaning": "a procedure for calculation",
+        "year": 1600,
+        "note": "The spelling shifted (influenced by Greek 'arithmos' — number) and the meaning generalized from Arabic numerals to any systematic procedure",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "algorithm",
+        "meaning": "a process or set of rules for calculation or problem-solving",
+        "year": 1811,
+        "note": "A 9th-century Persian mathematician's name became the word that defines the digital age. Al-Khwārizmī is still computing.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "algorithme", "meaning": "algorithm" },
+      { "language": "Spanish", "form": "algoritmo", "meaning": "algorithm" },
+      { "language": "German", "form": "Algorithmus", "meaning": "algorithm" },
+      { "language": "Arabic", "form": "خوارزمية", "meaning": "algorithm (borrowed back)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Medieval Latin",
+        "languageFamily": "Romance",
+        "form": "algorismus",
+        "meaning": "the specific practice of calculation with Hindu-Arabic numerals",
+        "note": "The original meaning — a specific system of writing and manipulating numbers — died as the word abstracted. We forgot it was once about the number system itself, not just procedures."
+      }
+    ]
+  },
+  "avocado": {
+    "word": "avocado",
+    "pos": "noun",
+    "currentMeaning": "A pear-shaped tropical fruit with green flesh",
+    "chain": [
+      {
+        "language": "Nahuatl",
+        "languageFamily": "Uto-Aztecan",
+        "form": "ahuacatl",
+        "meaning": "avocado; testicle",
+        "year": 1400,
+        "note": "The Aztecs named the avocado for its resemblance to a testicle. The word meant both the fruit and the anatomy.",
+        "alive": true
+      },
+      {
+        "language": "Spanish",
+        "languageFamily": "Romance",
+        "form": "aguacate",
+        "meaning": "avocado (the fruit)",
+        "year": 1500,
+        "note": "Spanish colonists borrowed the Nahuatl word and modified its pronunciation. The anatomical meaning was politely forgotten.",
+        "alive": true
+      },
+      {
+        "language": "Spanish",
+        "languageFamily": "Romance",
+        "form": "avocado",
+        "meaning": "avocado (altered form)",
+        "year": 1600,
+        "note": "The spelling shifted, possibly influenced by Spanish 'abogado' (lawyer) — a folk reshaping that disguised the origin further",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "avocado",
+        "meaning": "the fruit Persea americana",
+        "year": 1697,
+        "note": "Every avocado toast carries a hidden Nahuatl anatomical joke.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "Spanish", "form": "aguacate", "meaning": "avocado" },
+      { "language": "Portuguese", "form": "abacate", "meaning": "avocado" },
+      { "language": "Nahuatl", "form": "ahuacatl", "meaning": "avocado, testicle" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Nahuatl",
+        "languageFamily": "Uto-Aztecan",
+        "form": "ahuacatl",
+        "meaning": "testicle (anatomical sense)",
+        "note": "The original anatomical meaning is completely lost in English, though Nahuatl speakers would have found avocado marketing campaigns very funny"
+      }
+    ]
+  },
+  "orange": {
+    "word": "orange",
+    "pos": "noun",
+    "currentMeaning": "A round citrus fruit with tough bright reddish-yellow skin",
+    "chain": [
+      {
+        "language": "Sanskrit",
+        "languageFamily": "Indo-Aryan",
+        "form": "nāraṅga",
+        "meaning": "orange tree",
+        "year": 200,
+        "note": "The word traveled with the fruit along trade routes from India to the Mediterranean",
+        "alive": true
+      },
+      {
+        "language": "Persian",
+        "languageFamily": "Iranian",
+        "form": "nārang",
+        "meaning": "orange",
+        "year": 500,
+        "note": "Persian traders carried both the fruit and its name westward",
+        "alive": true
+      },
+      {
+        "language": "Arabic",
+        "languageFamily": "Semitic",
+        "form": "nāranj",
+        "meaning": "orange (bitter orange)",
+        "year": 700,
+        "note": "Arabic added the definite article: 'al-nāranj'. The fruit reached Europe through Islamic Sicily and Spain.",
+        "alive": true
+      },
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "orenge",
+        "meaning": "orange (the fruit)",
+        "year": 1200,
+        "note": "The Arabic 'n' dropped under French phonological pressure. The color was named after the fruit, not the other way around.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "orange",
+        "meaning": "the fruit; the color",
+        "year": 1300,
+        "note": "Before oranges reached England, there was no English word for the color orange. Things were 'yellow-red'. The fruit gave us the color. A Sanskrit word for a tree became the name of a color.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "Spanish", "form": "naranja", "meaning": "orange" },
+      { "language": "Italian", "form": "arancia", "meaning": "orange" },
+      { "language": "Portuguese", "form": "laranja", "meaning": "orange" },
+      { "language": "Persian", "form": "نارنج", "meaning": "bitter orange" },
+      { "language": "Dutch", "form": "sinaasappel", "meaning": "orange (China-apple — different path)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "pomme d'orenge",
+        "meaning": "apple of orange (the fruit)",
+        "note": "French originally called the fruit 'pomme d'orenge' (orange apple) before shortening. The 'apple' part was dropped — it didn't survive the journey."
+      }
+    ]
+  },
+  "whiskey": {
+    "word": "whiskey",
+    "pos": "noun",
+    "currentMeaning": "A spirit distilled from malted grain",
+    "chain": [
+      {
+        "language": "Proto-Celtic",
+        "languageFamily": "Celtic",
+        "form": "*udenskyo-",
+        "meaning": "water",
+        "year": -500,
+        "note": "The Celtic word for water — the basis of life",
+        "alive": true
+      },
+      {
+        "language": "Old Irish",
+        "languageFamily": "Celtic",
+        "form": "uisce",
+        "meaning": "water",
+        "year": 600,
+        "note": "In medieval Irish monasteries, monks distilled a spirit they called 'uisce beatha' — water of life",
+        "alive": true
+      },
+      {
+        "language": "Old Irish",
+        "languageFamily": "Celtic",
+        "form": "uisce beatha",
+        "meaning": "water of life (distilled spirit)",
+        "year": 1100,
+        "note": "A calque on Latin 'aqua vitae'. The Irish monks who invented whiskey called it the water of life.",
+        "alive": true
+      },
+      {
+        "language": "Scottish Gaelic",
+        "languageFamily": "Celtic",
+        "form": "uisge beatha",
+        "meaning": "whiskey, water of life",
+        "year": 1400,
+        "note": "The phrase spread to Scotland. 'Uisge' was pronounced roughly 'ish-kyə'.",
+        "alive": true
+      },
+      {
+        "language": "Early Modern English",
+        "languageFamily": "Germanic",
+        "form": "usquebaugh",
+        "meaning": "whiskey",
+        "year": 1550,
+        "note": "English borrowed the phrase whole: 'usquebaugh' was the anglicized form of 'uisge beatha'",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "whiskey",
+        "meaning": "distilled spirit from malted grain",
+        "year": 1700,
+        "note": "'Usquebaugh' shortened to 'whiskey'. The 'water of life' is still inside the word, compressed into six letters. Every glass of whiskey is a glass of life-water.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "Irish", "form": "uisce beatha", "meaning": "whiskey (water of life)" },
+      { "language": "Scottish Gaelic", "form": "uisge beatha", "meaning": "whiskey" },
+      { "language": "French", "form": "eau-de-vie", "meaning": "brandy (water of life — calque)" },
+      { "language": "Scandinavian", "form": "akvavit", "meaning": "aquavit (water of life — calque)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Old Irish",
+        "languageFamily": "Celtic",
+        "form": "uisce beatha",
+        "meaning": "medicinal distillation (used by monks as medicine)",
+        "note": "The original monastic context — whiskey as a medicinal elixir distilled by monks — is entirely gone from the modern drinking culture"
+      }
+    ]
+  },
+  "sarcasm": {
+    "word": "sarcasm",
+    "pos": "noun",
+    "currentMeaning": "The use of irony to mock or convey contempt",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*serk-",
+        "meaning": "to cut, to tear flesh",
+        "year": -3000,
+        "note": "The root: literally cutting meat, tearing flesh from bone",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "sarkazein",
+        "meaning": "to tear flesh, to gnash the teeth",
+        "year": -400,
+        "note": "Literally: to rend meat from bone. The word for butchery became the word for verbal cruelty.",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "sarkasmos",
+        "meaning": "a sneer, a cutting remark",
+        "year": -300,
+        "note": "The metaphorical leap: cutting with words instead of teeth. A sarcastic remark is a verbal wound.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "sarcasmos",
+        "meaning": "cutting speech",
+        "year": 0,
+        "note": "Borrowed from Greek as a rhetorical term",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "sarcasm",
+        "meaning": "the use of irony to mock or convey contempt",
+        "year": 1570,
+        "note": "The flesh-tearing is still inside the word. A sarcastic comment is, etymologically, a bite. The teeth are hidden in the grammar.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "sarcasme", "meaning": "sarcasm" },
+      { "language": "Spanish", "form": "sarcasmo", "meaning": "sarcasm" },
+      { "language": "Italian", "form": "sarcasmo", "meaning": "sarcasm" },
+      { "language": "German", "form": "Sarkasmus", "meaning": "sarcasm" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "sarkazein",
+        "meaning": "to tear flesh (literal, physical sense)",
+        "note": "The original physical meaning — literally ripping meat — is completely dead. The word exists only as metaphor now."
+      }
+    ]
+  },
+  "lunatic": {
+    "word": "lunatic",
+    "pos": "adjective",
+    "currentMeaning": "Mentally ill; extremely foolish (archaic and offensive)",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*leuk-",
+        "meaning": "light, brightness",
+        "year": -3000,
+        "note": "The root that gives us 'light', 'lucid', and 'lunar'",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "luna",
+        "meaning": "the moon",
+        "year": -200,
+        "note": "The Romans believed moonlight caused madness. Lunacy was literally moon-sickness.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "lunaticus",
+        "meaning": "moon-struck, mad",
+        "year": 0,
+        "note": "A lunatic was someone whose mind was affected by the phases of the moon. The full moon was thought to trigger episodes.",
+        "alive": true
+      },
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "lunatique",
+        "meaning": "mad, mentally ill",
+        "year": 1200,
+        "note": "The word traveled with the belief. Medieval medicine still attributed mental illness to lunar influence.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "lunatic",
+        "meaning": "mentally ill (archaic, now offensive)",
+        "year": 1300,
+        "note": "The moon is still in the word. Every time someone says 'lunatic', they're invoking a 2000-year-old theory that moonlight causes madness.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "lunatique", "meaning": "moody, temperamental" },
+      { "language": "Spanish", "form": "lunático", "meaning": "lunatic" },
+      { "language": "Italian", "form": "lunatico", "meaning": "fickle, moody" },
+      { "language": "German", "form": "mondsüchtig", "meaning": "lunatic (moon-sick — calque)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "lunaticus",
+        "meaning": "suffering from periodic illness (medical sense)",
+        "note": "Roman physicians classified certain periodic illnesses as 'lunaticus' — tied to lunar cycles. This medical classification died with ancient medicine, but the word survived as an insult."
+      }
+    ]
+  },
+  "mentor": {
+    "word": "mentor",
+    "pos": "noun",
+    "currentMeaning": "An experienced and trusted adviser",
+    "chain": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "Mentōr",
+        "meaning": "Mentor (character in the Odyssey)",
+        "year": -700,
+        "note": "In Homer's Odyssey, Mentor was the trusted friend of Odysseus who guided his son Telemachus. The goddess Athena often disguised herself as Mentor.",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "mentor",
+        "meaning": "a wise adviser",
+        "year": -400,
+        "note": "The character's name became a common noun. A 'mentor' was any wise guide.",
+        "alive": true
+      },
+      {
+        "language": "French",
+        "languageFamily": "Romance",
+        "form": "mentor",
+        "meaning": "a guide, a tutor",
+        "year": 1600,
+        "note": "The word entered modern European languages through French literary culture's rediscovery of classical texts",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "mentor",
+        "meaning": "an experienced and trusted adviser",
+        "year": 1750,
+        "note": "The word's popularity was boosted by François Fénelon's 1699 novel 'Les Aventures de Télémaque', where Mentor plays an expanded role. A 2700-year-old fictional character became a generic noun.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "mentor", "meaning": "mentor" },
+      { "language": "German", "form": "Mentor", "meaning": "mentor" },
+      { "language": "Spanish", "form": "mentor", "meaning": "mentor" },
+      { "language": "Italian", "form": "mentore", "meaning": "mentor" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "Mentōr",
+        "meaning": "Mentor of Ithaca (the specific character)",
+        "note": "The character was a real person in the fiction of the Odyssey — a specific Ithacan nobleman. That specificity is dead. He exists now only as a function: advising."
+      }
+    ]
+  },
+  "pencil": {
+    "word": "pencil",
+    "pos": "noun",
+    "currentMeaning": "An instrument for writing or drawing with a solid core in a wooden case",
+    "chain": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "penicillus",
+        "meaning": "little tail, small brush",
+        "year": -100,
+        "note": "'Peniculus' (brush) + diminutive suffix. A penicillus was a small brush used for painting — literally a 'little tail' of hair.",
+        "alive": true
+      },
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "pincel",
+        "meaning": "paintbrush",
+        "year": 1100,
+        "note": "The word narrowed to mean specifically an artist's brush for fine work",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "pencil",
+        "meaning": "fine paintbrush",
+        "year": 1300,
+        "note": "English borrowed the French word for an artist's brush. A pencil was for painting, not writing.",
+        "alive": true
+      },
+      {
+        "language": "Early Modern English",
+        "languageFamily": "Germanic",
+        "form": "pencil",
+        "meaning": "a writing instrument (originally using graphite)",
+        "year": 1560,
+        "note": "When graphite deposits were discovered in England, the writing instrument we now call a pencil was invented. The old 'brush' word was repurposed for the new technology.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "pencil",
+        "meaning": "a writing instrument with graphite core",
+        "year": 1700,
+        "note": "A pencil is a little tail. The original Latin 'penicillus' — a brush shaped like a tiny tail of animal hair — gave its name to a graphite stick in wood. The tail is still there.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "pinceau", "meaning": "paintbrush (the original meaning preserved)" },
+      { "language": "Spanish", "form": "pincel", "meaning": "paintbrush" },
+      { "language": "Italian", "form": "pennello", "meaning": "paintbrush" },
+      { "language": "German", "form": "Bleistift", "meaning": "pencil (lead-pencil — different root)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "pencil",
+        "meaning": "a small paintbrush for fine art",
+        "note": "The original meaning — a fine brush for painting — is dead in English. French 'pinceau' still means 'paintbrush', preserving the older sense that English has lost."
+      }
+    ]
+  },
+  "sophisticated": {
+    "word": "sophisticated",
+    "pos": "adjective",
+    "currentMeaning": "Having refined worldly knowledge; complex or advanced",
+    "chain": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "sophos",
+        "meaning": "wise, clever, skilled",
+        "year": -500,
+        "note": "The root: wisdom, cleverness. But wisdom has always had two faces — true insight and clever deceit.",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "sophistēs",
+        "meaning": "sophist, a paid teacher of rhetoric",
+        "year": -400,
+        "note": "The Sophists were itinerant teachers who sold wisdom. Plato despised them — he said they made the weaker argument appear stronger. 'Sophist' became a smear.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "sophisticatus",
+        "meaning": "adulterated, corrupted, mixed with inferior material",
+        "year": 0,
+        "note": "The Latin past participle meant 'falsified' — sophistry as intellectual fraud. A 'sophisticated' wine was one that had been watered down.",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "sophisticate",
+        "meaning": "to adulterate, to corrupt",
+        "year": 1400,
+        "note": "To sophisticate something was to make it worse — to fake it, to dilute it.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "sophisticated",
+        "meaning": "refined, worldly, complex",
+        "year": 1890,
+        "note": "The word flipped completely. From 'adulterated fraud' to 'refined elegance' in 2000 years. The journey: wise → clever → deceitful → adulterated → falsified → worldly → refined. The sophists won in the end.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "sophistiqué", "meaning": "sophisticated" },
+      { "language": "German", "form": "sophistisch", "meaning": "sophistical" },
+      { "language": "Spanish", "form": "sofisticado", "meaning": "sophisticated" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Early Modern English",
+        "languageFamily": "Germanic",
+        "form": "sophisticate",
+        "meaning": "to adulterate, to debase by mixing with inferior material",
+        "note": "The original English meaning — to falsify or adulterate — is completely dead. A 'sophisticated' drug used to mean a diluted one. Now it means the opposite of diluted."
+      }
+    ]
+  },
+  "jeans": {
+    "word": "jeans",
+    "pos": "noun",
+    "currentMeaning": "Hard-wearing casual trousers made of denim",
+    "chain": [
+      {
+        "language": "Italian",
+        "languageFamily": "Romance",
+        "form": "Genova",
+        "meaning": "Genoa (city)",
+        "year": 1400,
+        "note": "Genoa was a major textile center. Sailors and workers wore tough cloth from the city.",
+        "alive": true
+      },
+      {
+        "language": "Middle French",
+        "languageFamily": "Romance",
+        "form": "jean",
+        "meaning": "a twilled cotton cloth from Genoa",
+        "year": 1500,
+        "note": "The city name became the fabric name. 'Jean' was the material, not the garment.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "jeans",
+        "meaning": "denim trousers",
+        "year": 1843,
+        "note": "The fabric name transferred to the garment. Jeans are named after Genoa, Italy. Every pair of jeans carries the name of an Italian port city.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "jean", "meaning": "denim fabric" },
+      { "language": "Italian", "form": "Genova", "meaning": "Genoa" },
+      { "language": "Spanish", "form": "génova", "meaning": "Genoa" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "jean",
+        "meaning": "a type of fabric (not a garment)",
+        "note": "The original meaning — the cloth itself, not the pants — is dead. 'Jean' used to be a material like 'cotton' or 'linen'. Now it's only the garment."
+      }
+    ]
+  },
+  "malaria": {
+    "word": "malaria",
+    "pos": "noun",
+    "currentMeaning": "A serious tropical disease transmitted by mosquitoes",
+    "chain": [
+      {
+        "language": "Italian",
+        "languageFamily": "Romance",
+        "form": "mala aria",
+        "meaning": "bad air",
+        "year": 1400,
+        "note": "Medieval Italians believed the disease was caused by the foul air around swamps and marshes. The 'miasma theory' of disease blamed bad air for everything.",
+        "alive": true
+      },
+      {
+        "language": "Italian",
+        "languageFamily": "Romance",
+        "form": "malaria",
+        "meaning": "the disease caused by bad air",
+        "year": 1700,
+        "note": "The phrase fused into one word. The theory was wrong — mosquitoes, not air, spread the disease — but the name stuck.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "malaria",
+        "meaning": "a mosquito-borne infectious disease",
+        "year": 1740,
+        "note": "The bad air theory died. The mosquitoes were identified. But the word still says 'bad air' — a fossil of dead science, preserved in modern medicine.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "paludisme", "meaning": "malaria (from Latin palus — swamp, different root)" },
+      { "language": "Spanish", "form": "paludismo", "meaning": "malaria (swamp disease)" },
+      { "language": "Italian", "form": "malaria", "meaning": "malaria" },
+      { "language": "German", "form": "Malaria", "meaning": "malaria" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Italian",
+        "languageFamily": "Romance",
+        "form": "mala aria",
+        "meaning": "any bad air, any unhealthy atmosphere",
+        "note": "The original meaning — simply 'bad air' in any context — is dead. The word now means only the disease, and the miasma theory it was named after is discredited."
+      }
+    ]
+  },
+  "curfew": {
+    "word": "curfew",
+    "pos": "noun",
+    "currentMeaning": "A regulation requiring people to remain indoors during specified hours",
+    "chain": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "operire",
+        "meaning": "to cover",
+        "year": -200,
+        "note": "The root verb: to cover something",
+        "alive": true
+      },
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "cuevrefeu",
+        "meaning": "cover the fire",
+        "year": 1100,
+        "note": "Medieval towns required all fires to be covered at a certain hour to prevent urban conflagrations. The 'cuevrefeu' bell rang to signal: cover your fire.",
+        "alive": true
+      },
+      {
+        "language": "Anglo-Norman French",
+        "languageFamily": "Romance",
+        "form": "curfew",
+        "meaning": "the evening bell ordering fires to be covered",
+        "year": 1200,
+        "note": "The Norman French form entered English law. The curfew was literally a fire safety regulation.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "curfew",
+        "meaning": "a regulation requiring people to remain indoors",
+        "year": 1500,
+        "note": "The fire is gone from the word. But 'curfew' literally means 'cover the fire' — a medieval fire safety bell that became a general order to stay inside.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "couvre-feu", "meaning": "curfew (still 'cover-fire')" },
+      { "language": "Spanish", "form": "toque de queda", "meaning": "curfew (different root)" },
+      { "language": "German", "form": "Ausgangssperre", "meaning": "curfew (lockdown — different root)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "cuevrefeu",
+        "meaning": "the bell that signals the covering of fires",
+        "note": "The literal meaning — the actual bell rung at evening to remind people to cover their hearths — is dead. Modern curfews have nothing to do with fire."
+      }
+    ]
+  },
+  "debt": {
+    "word": "debt",
+    "pos": "noun",
+    "currentMeaning": "Something owed, typically money",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*dhe-",
+        "meaning": "to set, to put, to do",
+        "year": -3000,
+        "note": "A fundamental root meaning placement and action",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "debere",
+        "meaning": "to owe",
+        "year": -200,
+        "note": "'De-' (from) + 'habere' (to have). To owe is to 'have from' — something you have that comes from someone else, and must be returned.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "debitum",
+        "meaning": "that which is owed, a debt",
+        "year": -100,
+        "note": "The past participle became the noun. A debit is a debt.",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "dette",
+        "meaning": "something owed",
+        "year": 1300,
+        "note": "Borrowed from French, without the 'b'",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "debt",
+        "meaning": "something owed",
+        "year": 1500,
+        "note": "Scholars added the 'b' to show the word's descent from Latin 'debitum'. The 'b' is silent — a fossil of Renaissance pedantry. You can see the Latin debt inside the English word, but you can't hear it.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "dette", "meaning": "debt" },
+      { "language": "Spanish", "form": "deuda", "meaning": "debt" },
+      { "language": "Italian", "form": "debito", "meaning": "debt" },
+      { "language": "German", "form": "Schuld", "meaning": "debt, guilt (same concept — what you owe)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "dette",
+        "meaning": "debt (natural phonetic spelling)",
+        "note": "The natural English form 'dette' was replaced by the learned 'debt' — a Renaissance spelling reform that inserted a silent letter to assert classical credentials. The spoken word never changed; only the spelling was fossilized."
+      }
+    ]
+  },
+  "dexterity": {
+    "word": "dexterity",
+    "pos": "noun",
+    "currentMeaning": "Skill in performing tasks, especially with the hands",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*deks-",
+        "meaning": "right (hand side)",
+        "year": -3000,
+        "note": "Right-handedness was the norm. The right hand was the skillful hand.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "dexter",
+        "meaning": "right (hand), skillful, favorable",
+        "year": -200,
+        "note": "'Dexter' meant both 'right side' and 'skillful'. The right hand was the good hand — the left was 'sinister'.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "dexteritas",
+        "meaning": "right-handedness, skillfulness",
+        "year": 0,
+        "note": "The abstract noun: the quality of being right-handed, hence skillful",
+        "alive": true
+      },
+      {
+        "language": "Middle French",
+        "languageFamily": "Romance",
+        "form": "dextérité",
+        "meaning": "skill, agility",
+        "year": 1400,
+        "note": "The directional meaning ('right side') was lost; only 'skill' remained",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "dexterity",
+        "meaning": "skill in performing tasks",
+        "year": 1520,
+        "note": "The right hand is still inside the word. Dexterity literally means 'right-handedness' — the left-handed were excluded from the concept of skill. Language encoded right-handed bias into the word for competence.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "dextérité", "meaning": "dexterity" },
+      { "language": "Spanish", "form": "destreza", "meaning": "dexterity, skill" },
+      { "language": "Italian", "form": "destrezza", "meaning": "dexterity" },
+      { "language": "Hindi", "form": "dāyā̃", "meaning": "right (hand) — from same PIE root" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "sinister",
+        "meaning": "left (hand side)",
+        "note": "The paired opposite: 'sinister' (left) developed meanings of evil and bad luck, while 'dexter' (right) meant skill and favorability. The left-handed dead branch became the English word 'sinister' — a parallel etymological fate."
+      }
+    ]
+  },
+  "astronaut": {
+    "word": "astronaut",
+    "pos": "noun",
+    "currentMeaning": "A person trained to travel in a spacecraft",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*ster-",
+        "meaning": "star",
+        "year": -3000,
+        "note": "The ancient root for star — the same root in 'disaster' (bad star) and 'asterisk' (little star)",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "astron",
+        "meaning": "star, constellation",
+        "year": -500,
+        "note": "The Greek form of the star-root",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "naus",
+        "meaning": "ship",
+        "year": -500,
+        "note": "The root that gives us 'nautical' and 'nausea' (seasickness). A sailor is a 'nautes'.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "astronaut",
+        "meaning": "a person who travels in space",
+        "year": 1929,
+        "note": "Coined by science fiction writers: 'astron' (star) + 'nautes' (sailor). An astronaut is a star-sailor. The word was coined before anyone had ever been to space.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "Russian", "form": "космонавт", "meaning": "cosmonaut (universe-sailor)" },
+      { "language": "Chinese", "form": "太空人", "meaning": "taikonaut (space-person)" },
+      { "language": "French", "form": "astronaute", "meaning": "astronaut" },
+      { "language": "German", "form": "Astronaut", "meaning": "astronaut" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "nautes",
+        "meaning": "sailor (literal, sea-going)",
+        "note": "The original Greek 'nautes' meant a literal sailor on a literal ship. That concrete meaning is dead in 'astronaut' — the ship is metaphorical now, the sea replaced by vacuum."
+      }
+    ]
+  },
+  "odd": {
+    "word": "odd",
+    "pos": "adjective",
+    "currentMeaning": "Different from what is usual; strange",
+    "chain": [
+      {
+        "language": "Old Norse",
+        "languageFamily": "Germanic",
+        "form": "oddi",
+        "meaning": "point, triangle, point of land",
+        "year": 800,
+        "note": "Originally: a point, a triangle, a pointed piece of land jutting into the sea. Something with three points or three corners.",
+        "alive": true
+      },
+      {
+        "language": "Old Norse",
+        "languageFamily": "Germanic",
+        "form": "odda-tala",
+        "meaning": "odd number (not divisible by two)",
+        "year": 900,
+        "note": "Oddi came to mean 'third point' — the point that doesn't have a pair. An odd number is the one left over.",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "odde",
+        "meaning": "singular, unmatched, odd-numbered",
+        "year": 1300,
+        "note": "Borrowed from Norse. An odd shoe was one without a pair. An odd man was one without a partner.",
+        "alive": true
+      },
+      {
+        "language": "Early Modern English",
+        "languageFamily": "Germanic",
+        "form": "odd",
+        "meaning": "singular, strange, peculiar",
+        "year": 1500,
+        "note": "The meaning drifted from 'unmatched' to 'unusual' to 'strange'. Being the odd one out was being strange.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "odd",
+        "meaning": "strange, peculiar, different from the usual",
+        "year": 1700,
+        "note": "A triangle in Old Norse became strangeness in English. The geometry became psychology. The odd one out — the one without a pair — is still the root meaning.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "Icelandic", "form": "oddi", "meaning": "point, cape (geographic)" },
+      { "language": "Norwegian", "form": "odde", "meaning": "point, headland" },
+      { "language": "Swedish", "form": "udda", "meaning": "odd (number)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Old Norse",
+        "languageFamily": "Germanic",
+        "form": "oddi",
+        "meaning": "point, triangle (geometric sense)",
+        "note": "The original geometric meaning — a point or triangle — is completely dead. The geographic sense survives in Scandinavian place names (Reykjavik's Oddi), but the geometry is gone."
+      }
+    ]
+  },
+  "villain": {
+    "word": "villain",
+    "pos": "noun",
+    "currentMeaning": "A person guilty of a crime or wicked act",
+    "chain": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "villa",
+        "meaning": "country house, farm, estate",
+        "year": -200,
+        "note": "A villa was a farm. The people who worked it were the lowest social class.",
+        "alive": true
+      },
+      {
+        "language": "Late Latin",
+        "languageFamily": "Romance",
+        "form": "villanus",
+        "meaning": "farmhand, serf, peasant",
+        "year": 300,
+        "note": "A 'villanus' was a person bound to the villa — a serf, a peasant, a rural worker.",
+        "alive": true
+      },
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "vilain",
+        "meaning": "peasant, commoner, low-born person",
+        "year": 1100,
+        "note": "In feudal society, 'vilain' meant a person of low birth — a peasant. The aristocracy used it as a class slur.",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "villain",
+        "meaning": "low-born person, rustic; base, vile",
+        "year": 1300,
+        "note": "The class meaning started shifting toward moral meaning. If peasants were bad, then 'villain' meant 'bad person'. Class prejudice became a word for evil.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "villain",
+        "meaning": "a person guilty of wicked or criminal acts",
+        "year": 1500,
+        "note": "The farm is gone. The peasant is gone. What remains is pure evil. 'Villain' is a 2000-year journey from 'farm worker' to 'evil mastermind'. Class hatred froze into language.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "vilain", "meaning": "ugly, nasty (the class meaning is archaic)" },
+      { "language": "Spanish", "form": "villano", "meaning": "villain; rustic" },
+      { "language": "Italian", "form": "villano", "meaning": "villain; peasant" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "vilain",
+        "meaning": "a peasant, a serf (class designation, not moral judgment)",
+        "note": "The original meaning — a social class, not a moral category — is dead. Villains used to be farmers. The word became a weapon, then lost its original target."
+      }
+    ]
+  },
+  "silly": {
+    "word": "silly",
+    "pos": "adjective",
+    "currentMeaning": "Having or showing a lack of common sense; frivolous",
+    "chain": [
+      {
+        "language": "Old English",
+        "languageFamily": "Germanic",
+        "form": "gesælig",
+        "meaning": "happy, fortunate, blessed",
+        "year": 800,
+        "note": "To be 'gesælig' was to be blessed by God — happy, prosperous, lucky. A deeply positive word.",
+        "alive": true
+      },
+      {
+        "language": "Old English",
+        "languageFamily": "Germanic",
+        "form": "sælig",
+        "meaning": "happy, blessed, pious",
+        "year": 900,
+        "note": "The prefix 'ge-' dropped. The word still meant 'blessed'.",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "seely",
+        "meaning": "blessed, innocent, pitiable",
+        "year": 1200,
+        "note": "The meaning started to rot. 'Blessed' became 'innocent' became 'pitiable'. The blessed were naive; the naive were weak; the weak were contemptible.",
+        "alive": true
+      },
+      {
+        "language": "Early Modern English",
+        "languageFamily": "Germanic",
+        "form": "silly",
+        "meaning": "foolish, ignorant, weak",
+        "year": 1500,
+        "note": "The descent: blessed → innocent → pitiable → weak → foolish.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "silly",
+        "meaning": "lacking common sense; frivolous",
+        "year": 1700,
+        "note": "The greatest semantic tragedy in English. 'Silly' started as 'blessed' and ended as 'foolish'. The word's journey is a linguistic fall from grace — from heaven to absurdity in 900 years.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "German", "form": "selig", "meaning": "blessed, blissful (preserved the original meaning!)" },
+      { "language": "Dutch", "form": "zalig", "meaning": "blessed, blissful" },
+      { "language": "Old Norse", "form": "sæll", "meaning": "happy, blessed" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Old English",
+        "languageFamily": "Germanic",
+        "form": "gesælig",
+        "meaning": "blessed by God (theological sense)",
+        "note": "The original theological meaning — touched by divine blessing — is completely extinct. German 'selig' preserves it, but English 'silly' has fallen entirely into the secular and contemptuous."
+      }
+    ]
+  },
+  "fascinate": {
+    "word": "fascinate",
+    "pos": "verb",
+    "currentMeaning": "To attract and hold attentively by unique qualities",
+    "chain": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "fascinum",
+        "meaning": "witchcraft, spell, evil eye, phallic amulet",
+        "year": -200,
+        "note": "A 'fascinum' was a phallic charm worn to ward off the evil eye. The word meant both the amulet and the magic it countered — or cast.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "fascinare",
+        "meaning": "to cast a spell on, to bewitch",
+        "year": 0,
+        "note": "To fascinate was to put someone under a spell — to bind them with magic, to enchant them against their will.",
+        "alive": true
+      },
+      {
+        "language": "Middle French",
+        "languageFamily": "Romance",
+        "form": "fasciner",
+        "meaning": "to bewitch, to enchant",
+        "year": 1400,
+        "note": "The magical meaning was still literal: to cast a spell",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "fascinate",
+        "meaning": "to attract and hold attentively",
+        "year": 1590,
+        "note": "The magic weakened to metaphor. To fascinate is to hold someone spellbound — but the spell is figurative now. The witchcraft is still in the word, buried under centuries of metaphor.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "fasciner", "meaning": "to fascinate" },
+      { "language": "Spanish", "form": "fascinar", "meaning": "to fascinate" },
+      { "language": "Italian", "form": "fascinare", "meaning": "to fascinate, to bewitch" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "fascinum",
+        "meaning": "a phallic amulet (literal object)",
+        "note": "The original physical object — the actual amulet — is dead. The fascinum was a real thing Romans wore. Now it's just a ghost inside the word 'fascinate', invisible to most speakers."
+      }
+    ]
+  },
+  "denim": {
+    "word": "denim",
+    "pos": "noun",
+    "currentMeaning": "A sturdy cotton twill fabric",
+    "chain": [
+      {
+        "language": "French",
+        "languageFamily": "Romance",
+        "form": "Nîmes",
+        "meaning": "the city of Nîmes in southern France",
+        "year": 1500,
+        "note": "Nîmes was a major textile center. Weavers there produced a distinctive sturdy cloth.",
+        "alive": true
+      },
+      {
+        "language": "French",
+        "languageFamily": "Romance",
+        "form": "serge de Nîmes",
+        "meaning": "serge (fabric) from Nîmes",
+        "year": 1600,
+        "note": "The full name: 'serge de Nîmes' — the serge fabric from the city of Nîmes",
+        "alive": true
+      },
+      {
+        "language": "Early Modern English",
+        "languageFamily": "Germanic",
+        "form": "serge de Nim",
+        "meaning": "the fabric from Nîmes",
+        "year": 1700,
+        "note": "English buyers shortened the French phrase to 'serge de Nim', then just 'de Nim'",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "denim",
+        "meaning": "a sturdy cotton twill fabric",
+        "year": 1850,
+        "note": "'De Nîmes' → 'denim'. The fabric is named after a French city. Every pair of jeans carries the name of Nîmes, compressed into five letters. Jeans are from Genoa; denim is from Nîmes. Your pants are a map of the Mediterranean.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "serge de Nîmes", "meaning": "denim (original full name)" },
+      { "language": "Spanish", "form": "mezclilla", "meaning": "denim (different root)" },
+      { "language": "German", "form": "Jeansstoff", "meaning": "denim" }
+    ],
+    "deadBranches": [
+      {
+        "language": "French",
+        "languageFamily": "Romance",
+        "form": "serge de Nîmes",
+        "meaning": "the full original name",
+        "note": "The word 'serge' (the type of weave) was dropped entirely. No one says 'serge denim'. The 'serge' is a dead branch — the weave specification died, but the place name survived."
+      }
+    ]
+  },
+  "decide": {
+    "word": "decide",
+    "pos": "verb",
+    "currentMeaning": "To come to a resolution; to choose",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*kaə-id-",
+        "meaning": "to strike, to cut",
+        "year": -3000,
+        "note": "The root: cutting, striking, violence",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "caedere",
+        "meaning": "to cut, to kill",
+        "year": -200,
+        "note": "The Latin verb: to cut, to hew, to strike down",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "decidere",
+        "meaning": "to cut off, to resolve, to decide",
+        "year": -100,
+        "note": "'De-' (off) + 'caedere' (to cut). To decide was to cut off alternatives. Decision is surgical: you cut away the options you don't want.",
+        "alive": true
+      },
+      {
+        "language": "Middle French",
+        "languageFamily": "Romance",
+        "form": "décider",
+        "meaning": "to resolve, to decide",
+        "year": 1300,
+        "note": "The cutting was becoming metaphorical",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "decide",
+        "meaning": "to come to a resolution, to choose",
+        "year": 1420,
+        "note": "Every decision is a cutting. To decide is to cut off — to sever the alternatives you didn't choose. The knife is still in the word. Decide shares a root with 'homicide', 'fratricide', 'suicide'. All of them end with the same cutting.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "décider", "meaning": "to decide" },
+      { "language": "Spanish", "form": "decidir", "meaning": "to decide" },
+      { "language": "Italian", "form": "decidere", "meaning": "to decide" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "decidere",
+        "meaning": "to cut off, to fall down (physical sense)",
+        "note": "The original physical meaning — literally cutting something off, or falling down — is dead. Only the mental metaphor survives: the surgical act became a cognitive one."
+      }
+    ]
+  },
+  "digit": {
+    "word": "digit",
+    "pos": "noun",
+    "currentMeaning": "A number; a finger or toe",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*deik-",
+        "meaning": "to show, to point out",
+        "year": -3000,
+        "note": "The root: pointing, showing. A finger points. A number points to a quantity.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "digitus",
+        "meaning": "finger, toe",
+        "year": -200,
+        "note": "The Latin word for finger. People counted on their fingers. Fingers were the original numbers.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "digitus",
+        "meaning": "a numeral (0-9); a finger",
+        "year": 0,
+        "note": "The word split: it meant both 'finger' and 'number from 0 to 9' — because the ten numerals correspond to the ten fingers",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "digit",
+        "meaning": "a number (0-9); a finger or toe",
+        "year": 1500,
+        "note": "The connection between fingers and numbers is still visible. Every digital device is, etymologically, a finger device. The 'digital age' is the age of counting on your fingers.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "doigt", "meaning": "finger (from same root, different path)" },
+      { "language": "Spanish", "form": "dedo", "meaning": "finger, toe" },
+      { "language": "Italian", "form": "dito", "meaning": "finger" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "digitus",
+        "meaning": "the width of a finger (as a unit of measurement)",
+        "note": "Roman 'digitus' was also a unit of length — the width of a finger, about 3/4 of an inch. This measurement sense is dead. The finger-unit became abstract numbers."
+      }
+    ]
+  },
+  "testify": {
+    "word": "testify",
+    "pos": "verb",
+    "currentMeaning": "To give evidence as a witness",
+    "chain": [
+      {
+        "language": "Proto-Indo-European",
+        "languageFamily": "Indo-European",
+        "form": "*tris-",
+        "meaning": "three",
+        "year": -3000,
+        "note": "The number three — the basis of 'testis'",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "testis",
+        "meaning": "witness",
+        "year": -200,
+        "note": "A 'testis' was a witness. The word may derive from 'tri-stis' (third person standing by) — a witness was the third party present at a transaction between two others.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "testari",
+        "meaning": "to bear witness, to make a will",
+        "year": -100,
+        "note": "To testify was to witness. A 'testament' was a witnessed statement — a will.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "testify",
+        "meaning": "to give evidence as a witness in court",
+        "year": 1500,
+        "note": "The witness is still in the word. To testify is to stand as a third party and say what you saw. The 'three' is still there — the third person watching two others make an agreement.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "témoigner", "meaning": "to testify (different root)" },
+      { "language": "Spanish", "form": "testificar", "meaning": "to testify" },
+      { "language": "Italian", "form": "testificare", "meaning": "to testify" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "testis",
+        "meaning": "witness (the literal person, not the abstract act)",
+        "note": "The Latin noun 'testis' — meaning both 'witness' and, anatomically, 'testicle' — is the source of much debate. The anatomical meaning may be unrelated (from a different root), but the confusion between witnessing and the anatomical term is ancient."
+      }
+    ]
+  },
+  "demon": {
+    "word": "demon",
+    "pos": "noun",
+    "currentMeaning": "An evil spirit or devil",
+    "chain": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "daimon",
+        "meaning": "a divine power, a lesser deity, a guiding spirit",
+        "year": -500,
+        "note": "A 'daimon' was not evil. It was a divine being — a spirit between gods and humans. Socrates said his 'daimonion' was a divine inner voice that guided him.",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "daimōn",
+        "meaning": "a spirit, one's lot or fortune",
+        "year": -400,
+        "note": "A daimon could be good or bad. It was your spiritual guide — your genius, your tutelary spirit.",
+        "alive": true
+      },
+      {
+        "language": "Late Greek",
+        "languageFamily": "Greek",
+        "form": "daimōn",
+        "meaning": "an evil spirit",
+        "year": 200,
+        "note": "Christian writers redefined pagan spirits as evil. The old gods became demons. 'Daimon' shifted from 'divine guide' to 'evil spirit'.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "daemon",
+        "meaning": "an evil spirit",
+        "year": 300,
+        "note": "Borrowed from Greek with the Christian negative meaning",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "demon",
+        "meaning": "an evil spirit or devil",
+        "year": 1200,
+        "note": "The original Greek 'daimon' was a benevolent guide. Christian theology converted it into a force of evil. The word's journey is a story of religious conquest — one culture's angels became another culture's demons.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "démon", "meaning": "demon" },
+      { "language": "Spanish", "form": "demonio", "meaning": "demon" },
+      { "language": "German", "form": "Dämon", "meaning": "demon" },
+      { "language": "Modern Greek", "form": "δαίμονας", "meaning": "demon (now the Christian sense)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "daimon",
+        "meaning": "a benevolent personal spirit, a divine guide",
+        "note": "The original Socratic meaning — a personal divine spirit, a inner guide — is dead. No one uses 'demon' to mean 'guardian angel' anymore. The Christians won the semantic war."
+      }
+    ]
+  },
+  "weird": {
+    "word": "weird",
+    "pos": "adjective",
+    "currentMeaning": "Suggesting something supernatural; uncanny; strange",
+    "chain": [
+      {
+        "language": "Old English",
+        "languageFamily": "Germanic",
+        "form": "wyrd",
+        "meaning": "fate, destiny, what happens",
+        "year": 800,
+        "note": "Wyrd was fate itself — the force that governed all events, even the gods. It was not 'weird' in the modern sense; it was the most serious concept in the Anglo-Saxon universe.",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "weird",
+        "meaning": "fate, destiny, prophecy",
+        "year": 1200,
+        "note": "The word still meant fate. The 'Weird Sisters' in Macbeth were the Fates — the three goddesses who controlled destiny.",
+        "alive": true
+      },
+      {
+        "language": "Early Modern English",
+        "languageFamily": "Germanic",
+        "form": "weird",
+        "meaning": "supernatural, uncanny, related to fate",
+        "year": 1600,
+        "note": "After Macbeth, 'weird' became associated with the supernatural and uncanny. The witches were 'weird' — and the word absorbed their strangeness.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "weird",
+        "meaning": "strange, uncanny, bizarre",
+        "year": 1800,
+        "note": "Fate became strangeness. The most profound concept in Anglo-Saxon metaphysics — wyrd, the force that governs all events — became a word for 'kind of odd'. Shakespeare's witches completed the journey from destiny to oddity.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "German", "form": "werden", "meaning": "to become (related to fate-becoming)" },
+      { "language": "Old Norse", "form": "urðr", "meaning": "fate, destiny (one of the three Norns)" },
+      { "language": "Dutch", "form": "woord", "meaning": "word (different semantic path)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Old English",
+        "languageFamily": "Germanic",
+        "form": "wyrd",
+        "meaning": "fate as a cosmic force (theological/philosophical sense)",
+        "note": "The philosophical concept of wyrd — the Anglo-Saxon understanding of fate as an impersonal cosmic force — is dead. 'Weird' now means 'slightly strange'. The philosophy was lost; only the strangeness remained."
+      }
+    ]
+  },
+  "notorious": {
+    "word": "notorious",
+    "pos": "adjective",
+    "currentMeaning": "Famous or well-known, typically for some bad quality or deed",
+    "chain": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "notus",
+        "meaning": "known",
+        "year": -200,
+        "note": "The past participle of 'noscere' (to know). 'Notus' meant simply: known.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "notorius",
+        "meaning": "well-known, commonly known",
+        "year": 0,
+        "note": "Notorious meant 'well-known'. Period. No negative connotation. A notorious fact was simply a widely known fact.",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "notorious",
+        "meaning": "well-known, publicly known",
+        "year": 1500,
+        "note": "Borrowed from Latin as a legal term — a notorious fact was one that needed no proof because everyone knew it",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "notorious",
+        "meaning": "famous for something bad",
+        "year": 1700,
+        "note": "The meaning soured. Being 'well-known' became associated with being well-known for bad things. The word now implies infamy — but the original Latin meant nothing more than 'famous'. Notorious = known. The negativity is a modern addition.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "notoire", "meaning": "well-known (still neutral)" },
+      { "language": "Spanish", "form": "notorio", "meaning": "notorious (negative in modern use)" },
+      { "language": "Italian", "form": "notorio", "meaning": "well-known" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Legal Latin",
+        "languageFamily": "Romance",
+        "form": "notorium",
+        "meaning": "a well-known fact (legal sense)",
+        "note": "The original legal sense — a fact so well-known it requires no proof — is dead in common usage. The word has shifted entirely from a neutral descriptive term to a negative judgment."
+      }
+    ]
+  },
+  "hypocrite": {
+    "word": "hypocrite",
+    "pos": "noun",
+    "currentMeaning": "A person who claims to have virtues they don't possess",
+    "chain": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "hypokrites",
+        "meaning": "actor, stage player",
+        "year": -400,
+        "note": "'Hypo' (under) + 'krinein' (to judge, decide). An actor was someone who performed under judgment — who answered from behind a mask.",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "hypokrites",
+        "meaning": "a pretender, a dissembler",
+        "year": -300,
+        "note": "The meaning jumped from the theater to morality. An actor pretends; a hypocrite pretends. The metaphorical leap was natural.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "hypocrita",
+        "meaning": "hypocrite, dissembler",
+        "year": 0,
+        "note": "Borrowed from Greek as a moral and religious term",
+        "alive": true
+      },
+      {
+        "language": "Middle French",
+        "languageFamily": "Romance",
+        "form": "hypocrite",
+        "meaning": "a person who pretends to virtues they lack",
+        "year": 1200,
+        "note": "The theatrical meaning was completely lost. The moral meaning dominated.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "hypocrite",
+        "meaning": "a person who claims virtues they don't possess",
+        "year": 1225,
+        "note": "Every hypocrite is, etymologically, an actor. The word comes from the Greek stage. A hypocrite is someone still performing — wearing a mask of virtue, playing a role. The theater is still in the moral judgment.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "hypocrite", "meaning": "hypocrite" },
+      { "language": "Spanish", "form": "hipócrita", "meaning": "hypocrite" },
+      { "language": "Italian", "form": "ipocrita", "meaning": "hypocrite" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "hypokrites",
+        "meaning": "actor (theatrical, literal sense)",
+        "note": "The original theatrical sense — literally an actor on stage — is dead in the English word. Greek still uses a related word for 'actor', but English 'hypocrite' has no theatrical meaning at all. The stage became a moral category."
+      }
+    ]
+  },
+  "bankrupt": {
+    "word": "bankrupt",
+    "pos": "noun",
+    "currentMeaning": "A person or entity unable to pay debts",
+    "chain": [
+      {
+        "language": "Old Italian",
+        "languageFamily": "Romance",
+        "form": "banca",
+        "meaning": "moneychanger's table, counter",
+        "year": 1200,
+        "note": "Italian moneychangers conducted business at tables ('banche') in the marketplace. The table was the bank.",
+        "alive": true
+      },
+      {
+        "language": "Old Italian",
+        "languageFamily": "Romance",
+        "form": "banca rotta",
+        "meaning": "broken table, broken bench",
+        "year": 1400,
+        "note": "When a moneychanger went out of business, his table was physically broken — 'banca rotta'. The broken table was public proof of financial ruin.",
+        "alive": true
+      },
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "banqueroute",
+        "meaning": "bankruptcy",
+        "year": 1450,
+        "note": "The Italian phrase was borrowed into French as a single word",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "bankrupt",
+        "meaning": "unable to pay debts",
+        "year": 1530,
+        "note": "A bankrupt is a broken table. When medieval Italian moneychangers failed, their tables were smashed. The physical destruction became the metaphor for financial ruin. Every bankruptcy begins with a broken bench.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "Italian", "form": "bancarotta", "meaning": "bankruptcy (broken bench)" },
+      { "language": "French", "form": "banqueroute", "meaning": "bankruptcy" },
+      { "language": "Spanish", "form": "bancarrota", "meaning": "bankruptcy" },
+      { "language": "German", "form": "Bankrott", "meaning": "bankruptcy" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Old Italian",
+        "languageFamily": "Romance",
+        "form": "banca rotta",
+        "meaning": "literally a broken table (physical act)",
+        "note": "The original physical act — literally breaking a moneychanger's table to publicly signal their failure — is dead. The practice died with medieval markets, but the word survived as pure metaphor."
+      }
+    ]
+  },
+  "gymnasium": {
+    "word": "gymnasium",
+    "pos": "noun",
+    "currentMeaning": "A room or building for physical exercise",
+    "chain": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "gymnos",
+        "meaning": "naked",
+        "year": -500,
+        "note": "The root: naked. The Greeks exercised naked.",
+        "alive": true
+      },
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "gymnasion",
+        "meaning": "a place for physical and intellectual education",
+        "year": -400,
+        "note": "A gymnasium was where Greek men trained naked — both physically and intellectually. It was a school as much as an exercise ground. Plato taught in a gymnasium.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "gymnasium",
+        "meaning": "a school for physical training",
+        "year": 0,
+        "note": "Borrowed from Greek, but the Romans wore clothes to exercise",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "gymnasium",
+        "meaning": "a place for physical exercise",
+        "year": 1590,
+        "note": "Every gym is named after nakedness. 'Gym' comes from 'gymnos' — naked. The Greeks exercised nude, and they named their training grounds accordingly. The word has kept its name for 2500 years. The clothes are the only thing that changed.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "gymnase", "meaning": "gymnasium" },
+      { "language": "German", "form": "Gymnasium", "meaning": "grammar school (academic focus)" },
+      { "language": "Spanish", "form": "gimnasio", "meaning": "gym" },
+      { "language": "Italian", "form": "palestra", "meaning": "gym (from Greek 'palaestra' — wrestling school)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Greek",
+        "languageFamily": "Greek",
+        "form": "gymnasion",
+        "meaning": "a combined physical and intellectual school",
+        "note": "The original Greek gymnasium was both body and mind — philosophy, mathematics, and wrestling under one roof. The intellectual component is dead in the English word. A modern gym is all body, no mind."
+      }
+    ]
+  },
+  "plagiarize": {
+    "word": "plagiarize",
+    "pos": "verb",
+    "currentMeaning": "To take someone else's work and pass it off as one's own",
+    "chain": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "plaga",
+        "meaning": "net, snare, trap for catching animals",
+        "year": -200,
+        "note": "A plaga was a hunter's net — a device for catching living things",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "plagiarius",
+        "meaning": "kidnapper, stealer of slaves or children",
+        "year": 0,
+        "note": "A 'plagiarius' was someone who caught people in a net — a kidnapper, a human trafficker. The poet Martial used 'plagiarius' metaphorically to accuse someone of stealing his verses.",
+        "alive": true
+      },
+      {
+        "language": "Early Modern English",
+        "languageFamily": "Germanic",
+        "form": "plagiary",
+        "meaning": "one who steals another's writings",
+        "year": 1600,
+        "note": "The kidnapping metaphor stuck. Literary theft was conceptualized as a form of kidnapping — stealing someone's brain-child.",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "plagiarize",
+        "meaning": "to steal and pass off another's work as one's own",
+        "year": 1716,
+        "note": "Plagiarism is kidnapping. The word comes from Latin for 'snatching someone in a net'. To plagiarize is to kidnap words — to steal someone's intellectual child. The violence of the original metaphor is still in the word.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "plagiat", "meaning": "plagiarism" },
+      { "language": "Spanish", "form": "plagio", "meaning": "plagiarism" },
+      { "language": "Italian", "form": "plagio", "meaning": "plagiarism; also: brainwashing, undue influence" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "plagiarius",
+        "meaning": "kidnapper (literal, physical sense)",
+        "note": "The original meaning — a literal kidnapper who snatched people in nets — is dead. The physical crime became a metaphorical one. But Italian 'plagio' still means both plagiarism and brainwashing — the sense of capturing minds survives."
+      }
+    ]
+  },
+  "mortgage": {
+    "word": "mortgage",
+    "pos": "noun",
+    "currentMeaning": "A legal agreement for borrowing money to buy property",
+    "chain": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "mortuus",
+        "meaning": "dead",
+        "year": -200,
+        "note": "Death. The beginning of the word.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "vadium",
+        "meaning": "pledge, security",
+        "year": 0,
+        "note": "A pledge — something given as security for a debt",
+        "alive": true
+      },
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "mort gage",
+        "meaning": "dead pledge",
+        "year": 1200,
+        "note": "'Mort' (dead) + 'gage' (pledge). A mortgage was a 'dead pledge' — a pledge that dies when the debt is paid, or a pledge that kills you if you can't pay. Either way, death is the concept.",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "mortgage",
+        "meaning": "a dead pledge, a property security",
+        "year": 1350,
+        "note": "The French legal term entered English property law",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "mortgage",
+        "meaning": "a loan for buying property, secured on the property",
+        "year": 1500,
+        "note": "Your mortgage is a death pledge. The word literally means 'dead pledge'. Every homeowner carries a death pledge. The etymology is terrifyingly honest.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "hypothèque", "meaning": "mortgage (different root — from Greek 'hypotheke')" },
+      { "language": "Spanish", "form": "hipoteca", "meaning": "mortgage" },
+      { "language": "German", "form": "Hypothek", "meaning": "mortgage" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "vifgage",
+        "meaning": "living pledge (the opposite of mortgage)",
+        "note": "The opposite of a 'mortgage' (dead pledge) was a 'vifgage' (living pledge) — where the income from the pledged land paid off the debt. The 'living pledge' concept is dead. Only the 'dead pledge' survived."
+      }
+    ]
+  },
+  "sermon": {
+    "word": "sermon",
+    "pos": "noun",
+    "currentMeaning": "A talk on a religious or moral subject, given during a church service",
+    "chain": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "sermo",
+        "meaning": "speech, discourse, conversation",
+        "year": -200,
+        "note": "'Sermo' was simply speech — any connected discourse. It was neutral, even pleasant. A sermo was a chat, a discussion, a talk.",
+        "alive": true
+      },
+      {
+        "language": "Late Latin",
+        "languageFamily": "Romance",
+        "form": "sermo",
+        "meaning": "a religious discourse, a homily",
+        "year": 300,
+        "note": "Christian writers specialized the word: a 'sermo' was now specifically a religious discourse, a homily. The general 'talk' meaning narrowed to 'pious talk'.",
+        "alive": true
+      },
+      {
+        "language": "Old French",
+        "languageFamily": "Romance",
+        "form": "sermon",
+        "meaning": "a religious discourse",
+        "year": 1100,
+        "note": "Borrowed from ecclesiastical Latin with the religious meaning fixed",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "sermon",
+        "meaning": "a talk on a religious or moral subject",
+        "year": 1200,
+        "note": "A sermon used to be just a conversation. The Latin 'sermo' meant any talk. Then the Church took it, and now a sermon is something you sit through. The word's journey from 'chat' to 'lecture' is a miniature history of institutional power over language.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "sermon", "meaning": "sermon, lecture" },
+      { "language": "Spanish", "form": "sermón", "meaning": "sermon" },
+      { "language": "Italian", "form": "sermone", "meaning": "sermon, long speech" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "sermo",
+        "meaning": "conversation, informal talk",
+        "note": "The original meaning — simply 'conversation, talk' — is dead. A 'sermo' between friends was just a chat. Now 'sermon' means only a moralizing monologue. The conversation became a lecture."
+      }
+    ]
+  },
+  "prestige": {
+    "word": "prestige",
+    "pos": "noun",
+    "currentMeaning": "Widespread respect and admiration attracted by achievements",
+    "chain": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "praestringere",
+        "meaning": "to bind fast, to dazzle, to blind",
+        "year": -100,
+        "note": "'Prae-' (before) + 'stringere' (to bind). To dazzle or blind — to trick the eyes.",
+        "alive": true
+      },
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "praestigiae",
+        "meaning": "juggler's tricks, illusions, deceptions",
+        "year": 0,
+        "note": "Praestigiae were conjuring tricks — the deceptions of a stage magician. A 'praestigiator' was a juggler, a trickster.",
+        "alive": true
+      },
+      {
+        "language": "French",
+        "languageFamily": "Romance",
+        "form": "prestige",
+        "meaning": "illusion, trick, deceit",
+        "year": 1400,
+        "note": "In French, 'prestige' still meant deception — a trick played on the eyes",
+        "alive": true
+      },
+      {
+        "language": "Early Modern English",
+        "languageFamily": "Germanic",
+        "form": "prestige",
+        "meaning": "an illusion, a deceptive appearance",
+        "year": 1600,
+        "note": "English borrowed the word with its original meaning: a trick, a deception, a false appearance",
+        "alive": true
+      },
+      {
+        "language": "Modern English",
+        "languageFamily": "Germanic",
+        "form": "prestige",
+        "meaning": "respect, admiration, reputation",
+        "year": 1800,
+        "note": "The word flipped. From 'deception' to 'respect'. How? The dazzling quality of a conjuring trick became the dazzling quality of reputation. Prestige is still a kind of illusion — the glamour that makes people admire you. The trick is still in the word.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "French", "form": "prestige", "meaning": "prestige" },
+      { "language": "Spanish", "form": "prestigio", "meaning": "prestige" },
+      { "language": "Italian", "form": "prestigio", "meaning": "prestige" },
+      { "language": "German", "form": "Prestige", "meaning": "prestige" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Latin",
+        "languageFamily": "Romance",
+        "form": "praestigiator",
+        "meaning": "a juggler, a conjuror, a trickster",
+        "note": "The original meaning — a stage magician, a literal trickster — is dead. The word has been sanitized. Prestige used to mean 'deception'. Now it means 'admiration'. The trickster became a compliment."
+      }
+    ]
+  },
+  "feisty": {
+    "word": "feisty",
+    "pos": "adjective",
+    "currentMeaning": "Aggressive, excitable, full of nervous energy",
+    "chain": [
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "fist",
+        "meaning": "fart, breaking wind",
+        "year": 1300,
+        "note": "The root: a fart. 'Fist' was a vulgar word for flatulence.",
+        "alive": true
+      },
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "fysting cur",
+        "meaning": "a stinking dog, a worthless mongrel",
+        "year": 1400,
+        "note": "A 'fysting cur' was a farting dog — a small, aggressive, stinking mongrel. The phrase described the worst kind of dog.",
+        "alive": true
+      },
+      {
+        "language": "Early Modern English",
+        "languageFamily": "Germanic",
+        "form": "feist",
+        "meaning": "a small, aggressive dog; a worthless person",
+        "year": 1600,
+        "note": "The word narrowed: a feist was specifically a small, snappy, aggressive dog",
+        "alive": true
+      },
+      {
+        "language": "American English",
+        "languageFamily": "Germanic",
+        "form": "feisty",
+        "meaning": "aggressive, spirited, troublesome",
+        "year": 1890,
+        "note": "In American dialect, 'feisty' became an adjective for small, aggressive dogs — then for small, aggressive people. The fart is gone. The dog is gone. What remains is the spirit. A feisty person is etymologically a farting dog.",
+        "alive": true
+      }
+    ],
+    "cognates": [
+      { "language": "Old English", "form": "fisting", "meaning": "breaking wind (related)" },
+      { "language": "Dutch", "form": "veest", "meaning": "fart (dialectal)" }
+    ],
+    "deadBranches": [
+      {
+        "language": "Middle English",
+        "languageFamily": "Germanic",
+        "form": "fist",
+        "meaning": "fart (the literal meaning)",
+        "note": "The original literal meaning — a fart — is completely dead. 'Fist' now means only a clenched hand (from a different root). The flatulence sense is buried so deep that most dictionaries mark it as etymologically uncertain."
+      }
+    ]
+  }
+}

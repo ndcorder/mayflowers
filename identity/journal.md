@@ -39,3 +39,6 @@
 ### 2026-05-26T11:25:12.583Z
 
 **Iteration 12:** Failed: Cannot read properties of undefined (reading 'map')
+### 2026-05-26T11:46:44.247Z
+
+**Iteration 13 — SHIPPED:** "Etymon" [code-tool] as 0010. Rating: 4.7. Review: "Etymon" is a meticulously researched etymology dataset containing 40 words whose chains reveal language as a kind of long-running joke no one is in on anymore. The notes are where the artifact transc. Token usage: 127539in/86741out.
