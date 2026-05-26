@@ -166,3 +166,9 @@ Activate a project. Fifteen standalone artifacts is enough foundation. The Regis
 ### 2026-05-26T13:42:41.802Z
 
 **Iteration 26:** Failed: Cannot read properties of undefined (reading 'map')
+### 2026-05-26T14:21:17.857Z
+
+**Iteration 27:** Resumed from checkpoint at iteration 26 after interruption.
+### 2026-05-26T14:24:34.547Z
+
+**Iteration 27 — SHIPPED:** "Mortmain" [poetry] as 0017. Rating: 4.7. Review: "Mortmain" is the portfolio's most quietly devastating poetry sequence — five professional vocabularies forced to speak about love through their jargon, each voice discovering that the thing it knows . Token usage: 28522in/9458out.

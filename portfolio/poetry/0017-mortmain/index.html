@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortmain</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: #faf8f5;
+    color: #2a2520;
+    font-family: 'EB Garamond', 'Georgia', serif;
+    font-size: 20px;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    text-align: center;
+    padding: 120px 24px 60px;
+  }
+
+  header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    text-transform: lowercase;
+    color: #2a2520;
+    margin-bottom: 16px;
+  }
+
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: #c4b9ac;
+    margin: 0 auto;
+  }
+
+  section.poem {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 100px 24px;
+  }
+
+  section.poem h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #8a8078;
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  section.poem .stanza {
+    margin-bottom: 36px;
+  }
+
+  section.poem .stanza:last-child {
+    margin-bottom: 0;
+  }
+
+  section.poem .stanza p {
+    margin-bottom: 0;
+    text-align: left;
+  }
+
+  section.poem .stanza p.indent {
+    padding-left: 2em;
+  }
+
+  .poem-separator {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .poem-separator .dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: #c4b9ac;
+    margin: 0 8px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 80px 24px 120px;
+    font-size: 13px;
+    color: #b0a898;
+    letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 600px) {
+    body {
+      font-size: 18px;
+      line-height: 1.75;
+    }
+    section.poem {
+      padding: 72px 20px;
+    }
+    header {
+      padding: 80px 20px 40px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>mortmain</h1>
+  <div class="divider"></div>
+</header>
+
+<main>
+
+<section class="poem" id="the-navigator">
+  <h2>The Navigator</h2>
+  <div class="stanza">
+    <p>You were my fixed point when the currents</p>
+    <p>would not still. By dead reckoning I held</p>
+    <p>your longitude — an estimate, always an estimate,</p>
+    <p>the margin of error a fathom I could sound within.</p>
+  </div>
+  <div class="stanza">
+    <p>Now my bearing is unmoored. The log reads</p>
+    <p>only elapsed. I am past the edge of the table</p>
+    <p>where the cartographer set down his pen</p>
+    <p>and said enough.</p>
+  </div>
+  <div class="stanza">
+    <p>In the lee of your memory I find calm water.</p>
+    <p>An anchorage no windward fetch can reach.</p>
+    <p class="indent">The depth here, I cannot sound.</p>
+  </div>
+</section>
+
+<div class="poem-separator">
+  <span class="dot"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+</div>
+
+<section class="poem" id="the-actuary">
+  <h2>The Actuary</h2>
+  <div class="stanza">
+    <p>Force of mortality in year one was point-zero-three.</p>
+    <p>By year forty, compounded, actuarially</p>
+    <p>we should not still be — the probability</p>
+    <p>a rounding error I carried forward anyway,</p>
+    <p>treating each year's premium as an investment</p>
+    <p>in a policy that would never mature.</p>
+  </div>
+  <div class="stanza">
+    <p>There is no line for this in the reserve table.</p>
+    <p>Insufficient data. The confidence interval</p>
+    <p>includes zero — so technically, within the model,</p>
+    <p>our variance is not significant. Technically,</p>
+    <p>you cannot prove what I carried</p>
+    <p>beyond the end of the projected period.</p>
+  </div>
+  <div class="stanza">
+    <p>I modelled loss daily. This is not that.</p>
+    <p>This is a claim no policy was written to cover.</p>
+    <p>A liability I accept with no expectation of offset,</p>
+    <p>no amortization schedule,</p>
+    <p class="indent">no actuarially fair price</p>
+    <p class="indent">for the value of a life — not yours,</p>
+    <p class="indent">but mine, after.</p>
+  </div>
+</section>
+
+<div class="poem-separator">
+  <span class="dot"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+</div>
+
+<section class="poem" id="the-midwife">
+  <h2>The Midwife</h2>
+  <div class="stanza">
+    <p>Before crowning, there is the thinning —</p>
+    <p>cervix yielding, dilating, the slow consent of tissue</p>
+    <p>to an opening it was made for. This is the first thing</p>
+    <p>I learned: that the body knows the shape of what comes.</p>
+  </div>
+  <div class="stanza">
+    <p>I have held the moment the lungs open — alveoli</p>
+    <p>unfolding like a map of a country that has always existed</p>
+    <p>but never been drawn. The first breath is a kind</p>
+    <p>of crying and also a kind of arriving.</p>
+  </div>
+  <div class="stanza">
+    <p>I want to say: your pulse was a labor I could not attend.</p>
+    <p>Your heart, the atrium I could not suture closed.</p>
+    <p class="indent">What breaches in the end is not a dilation</p>
+    <p class="indent">but a rupture — the kind where bleeding</p>
+    <p class="indent">cannot be staunched by pressure.</p>
+  </div>
+  <div class="stanza">
+    <p>I have delivered what I could. The vernix</p>
+    <p>of your presence wiped clean. The cord</p>
+    <p>between us — cut. And still: this is the language</p>
+    <p>I have — placenta, fontanel, quickening —</p>
+    <p>when what I mean is the moment of holding</p>
+    <p>which needs no clinical name at all.</p>
+  </div>
+</section>
+
+<div class="poem-separator">
+  <span class="dot"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+</div>
+
+<section class="poem" id="the-prison-officer">
+  <h2>The Prison Officer</h2>
+  <div class="stanza">
+    <p>The wing holds four hundred. My rounds</p>
+    <p>are every thirty minutes. I know the sound</p>
+    <p>of a lock engaging — deadbolt, mortise, slam —</p>
+    <p>and the particular silence after a key turns.</p>
+    <p>It is a silence that means something has been</p>
+    <p>correctly contained.</p>
+  </div>
+  <div class="stanza">
+    <p>I contained myself from you. Put up the barrier</p>
+    <p>where required. Kept my count accurate. Logged</p>
+    <p>every incident of contact. The record shows</p>
+    <p>I was thorough. The record does not show</p>
+    <p>what I wanted.</p>
+  </div>
+  <div class="stanza">
+    <p>Here is the truth the manual does not address:</p>
+    <p>the captive is not the one inside the cell.</p>
+    <p>The captive is the one who walks the perimeter,</p>
+    <p>checking the walls, ensuring they hold —</p>
+    <p>who knows that if the door opened</p>
+    <p>he would not leave.</p>
+  </div>
+  <div class="stanza">
+    <p>I kept you behind glass. I patrolled</p>
+    <p>the boundary of what I could acknowledge.</p>
+    <p>I counted the minutes between us. They were</p>
+    <p>always standard interval.</p>
+    <p class="indent">They were never enough.</p>
+  </div>
+</section>
+
+<div class="poem-separator">
+  <span class="dot"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+</div>
+
+<section class="poem" id="the-baker">
+  <h2>The Baker</h2>
+  <div class="stanza">
+    <p>First you make the sponge — yeast, water, flour —</p>
+    <p>and wait. Nothing happens. Then everything.</p>
+    <p>The dough rises because it has been given time</p>
+    <p>and warmth, and because someone believed it would.</p>
+  </div>
+  <div class="stanza">
+    <p>I kneaded you into me. Worked the heel of my hand</p>
+    <p>until the gluten strands caught and held. Salt —</p>
+    <p>always salt, to make the flavor deeper.</p>
+    <p>You cannot rush bread. You cannot rush love.</p>
+    <p>You can only keep the room warm enough</p>
+    <p>that transformation becomes possible.</p>
+  </div>
+  <div class="stanza">
+    <p>The crust forms in the shock of the oven.</p>
+    <p>A caramelizing. A hardness that protects</p>
+    <p>the soft interior. You taught me this:</p>
+    <p>that the toughened outside is not the loaf's betrayal</p>
+    <p>but its integrity — a shell that lets the crumb</p>
+    <p>stay tender.</p>
+  </div>
+  <div class="stanza">
+    <p>The oven is cold now. The proof box, empty.</p>
+    <p>My hands still move in the old patterns —</p>
+    <p>fold, press, turn, fold — shaping bread</p>
+    <p>for a table I no longer set. This is the argument</p>
+    <p>my hands make against my ending:</p>
+    <p class="indent">that to have made something well is enough.</p>
+    <p class="indent">That to have made it for you</p>
+    <p class="indent">was a kind of proof.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="divider"></div>
+</footer>
+
+</body>
+</html>
