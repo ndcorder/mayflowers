@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apnoea</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --expansion:0.3;
+      --lung-color:72,195,176;
+      --bg:#080808;
+    }
+    html,body{
+      width:100%;height:100%;
+      background:var(--bg);
+      overflow:hidden;
+      font-family:'Courier New','Lucida Console',monospace;
+      user-select:none;-webkit-user-select:none;
+    }
+    body{
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      cursor:pointer;
+    }
+    .lung-wrap{
+      position:relative;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .lung-shape{
+      width:min(260px,52vmin);height:min(260px,52vmin);
+      border-radius:48% 52% 46% 54%/44% 56% 42% 58%;
+      border:1px solid rgba(var(--lung-color),0.15);
+      background:radial-gradient(ellipse at 38% 42%,rgba(var(--lung-color),0.035),transparent 72%);
+      transform:scale(var(--expansion));
+      transition:transform 3.5s cubic-bezier(0.22,1,0.36,1);
+      animation:lungMorph 14s ease-in-out infinite;
+    }
+    @keyframes lungMorph{
+      0%,100%{border-radius:48% 52% 46% 54%/44% 56% 42% 58%}
+      25%{border-radius:53% 47% 51% 49%/46% 54% 48% 52%}
+      50%{border-radius:46% 54% 49% 51%/51% 49% 53% 47%}
+      75%{border-radius:51% 49% 47% 53%/49% 51% 46% 54%}
+    }
+    .lung-pulse{
+      position:absolute;inset:0;
+      border-radius:48% 52% 46% 54%/44% 56% 42% 58%;
+      border:1px solid rgba(var(--lung-color),0.06);
+      transform:scale(var(--expansion));
+      transition:transform 3.5s cubic-bezier(0.22,1,0.36,1);
+      animation:pulseMorph 11s ease-in-out infinite 3s,pulseGlow 6s ease-in-out infinite;
+    }
+    @keyframes pulseMorph{
+      0%,100%{border-radius:46% 54% 49% 51%/51% 49% 53% 47%}
+      33%{border-radius:51% 49% 47% 53%/46% 54% 48% 52%}
+      66%{border-radius:49% 51% 52% 48%/48% 52% 47% 53%}
+    }
+    @keyframes pulseGlow{
+      0%,100%{opacity:0.3}
+      50%{opacity:0.9}
+    }
+    .gasp-ripple{
+      position:absolute;
+      width:min(260px,52vmin);height:min(260px,52vmin);
+      border-radius:50%;
+      border:1px solid rgba(255,255,255,0.25);
+      opacity:0;pointer-events:none;
+    }
+    .gasp-ripple.active{animation:rippleOut 1.8s ease-out forwards}
+    @keyframes rippleOut{
+      0%{transform:scale(var(--expansion));opacity:0.5}
+      100%{transform:scale(1.8);opacity:0}
+    }
+    .vignette{
+      position:fixed;inset:0;
+      background:radial-gradient(ellipse at center,transparent 35%,rgba(0,0,0,0.75) 100%);
+      pointer-events:none;z-index:5;
+    }
+    .text-layer{
+      position:fixed;left:0;right:0;
+      text-align:center;z-index:10;
+      color:rgba(255,255,255,0.12);
+      font-size:min(0.78rem,2.2vmin);
+      letter-spacing:0.18em;
+      text-transform:uppercase;
+      line-height:1.6;
+      pointer-events:none;
+    }
+    #instruction{bottom:14vh}
+    #phase-label{bottom:9.5vh}
+    #gasp-counter{
+      position:fixed;top:2.5vh;right:3vw;
+      font-family:inherit;font-size:min(0.65rem,1.8vmin);
+      color:rgba(255,255,255,0.06);
+      letter-spacing:0.12em;z-index:10;
+      pointer-events:none;
+      transition:color 0.4s ease;
+    }
+    #gasp-counter.flash{color:rgba(255,255,255,0.22)}
+    #ended-msg{
+      position:fixed;top:50%;left:50%;
+      transform:translate(-50%,-50%);
+      font-size:min(1.1rem,3.2vmin);
+      color:rgba(255,255,255,0.06);
+      letter-spacing:0.3em;
+      text-transform:uppercase;z-index:20;
+      pointer-events:none;
+      opacity:0;
+      transition:opacity 8s ease-in 3s;
+    }
+    #ended-msg.visible{opacity:1}
+    @media(prefers-reduced-motion:reduce){
+      .lung-shape,.lung-pulse{animation:none !important}
+    }
+  </style>
+</head>
+<body>
+  <div class="lung-wrap">
+    <div class="lung-shape" id="lung"></div>
+    <div class="lung-pulse"></div>
+    <div class="gasp-ripple" id="ripple"></div>
+  </div>
+  <div class="vignette"></div>
+  <div class="text-layer" id="instruction">breathe when ready (it won't help)</div>
+  <div class="text-layer" id="phase-label"></div>
+  <div id="gasp-counter"></div>
+  <div id="ended-msg">the breath has ended</div>
+
+  <script>
+    (function(){
+      'use strict';
+
+      /* Session constants */
+      var TOTAL_DUR = 90;
+      var INHALE_DUR = 30;
+      var HOLD_DUR = 20;
+      var GASP_SHORTEN = 5;
+
+      /* Randomized timbre per load */
+      var baseFreq = 90 + Math.random() * 30;
+      var secretHarm = Math.random() < 0.6 ? 7 : 5;
+      var detuneBeat = 0.35 + Math.random() * 0.6;
+
+      /* State */
+      var audioCtx = null;
+      var masterGain = null;
+      var compressor = null;
+      var limiter = null;
+      var residueFilter = null;
+      var resonanceGasp = null;
+      var started = false;
+      var startTime = 0;
+      var ended = false;
+      var gaspCount = 0;
+      var gaspBudget = 6;
+      var gaspTimeShift = 0;
+      var currentPhase = 'waiting';
+      var activeOscs = [];
+      var activeGains = [];
+      var noiseSource = null;
+      var phaseTimer = null;
+      var animId = null;
+
+      /* DOM */
+      var lungEl = document.getElementById('lung');
+      var pulseEl = document.querySelector('.lung-pulse');
+      var rippleEl = document.getElementById('ripple');
+      var instrEl = document.getElementById('instruction');
+      var phaseEl = document.getElementById('phase-label');
+      var gaspEl = document.getElementById('gasp-counter');
+      var endedEl = document.getElementById('ended-msg');
+
+      /* ── Audio init ── */
+      function initAudio(){
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        limiter = audioCtx.createGain();
+        limiter.gain.value = 0.82;
+        limiter.connect(audioCtx.destination);
+
+        compressor = audioCtx.createDynamicsCompressor();
+        compressor.threshold.value = -16;
+        compressor.knee.value = 12;
+        compressor.ratio.value = 6;
+        compressor.attack.value = 0.005;
+        compressor.release.value = 0.25;
+        compressor.connect(limiter);
+
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = 0;
+        masterGain.connect(compressor);
+
+        /* Filter residue: each gasp increases peaking, coloring the exhale */
+        residueFilter = audioCtx.createBiquadFilter();
+        residueFilter.type = 'peaking';
+        residueFilter.frequency.value = 2200;
+        residueFilter.Q.value = 0.9;
+        residueFilter.gain.value = 0;
+
+        resonanceGasp = audioCtx.createGain();
+        resonanceGasp.gain.value = 0;
+
+        resonanceGasp.connect(residueFilter);
+        residueFilter.connect(masterGain);
+      }
+
+      /* ── Phase boundary times (accounting for gasps) ── */
+      function holdStart(){ return INHALE_DUR - gaspTimeShift; }
+      function exhaleStart(){ return INHALE_DUR + HOLD_DUR - gaspTimeShift; }
+      function breathEnd(){ return TOTAL_DUR - gaspTimeShift; }
+
+      function timeUntilNextPhase(){
+        if(!audioCtx) return Infinity;
+        var now = audioCtx.currentTime;
+        var elapsed = now - startTime;
+        if(elapsed >= breathEnd()) return 0;
+        if(currentPhase === 'inhale'){
+          return Math.max(0, holdStart() - elapsed);
+        }
+        if(currentPhase === 'hold'){
+          return Math.max(0, exhaleStart() - elapsed);
+        }
+        if(currentPhase === 'exhale'){
+          return Math.max(0, breathEnd() - elapsed);
+        }
+        return Infinity;
+      }
+
+      /* ── Phase scheduling ── */
+      function schedulePhaseTransition(){
+        if(phaseTimer) clearTimeout(phaseTimer);
+        var ms = timeUntilNextPhase() * 1000;
+        if(ms <= 0){
+          advancePhase();
+        } else {
+          phaseTimer = setTimeout(advancePhase, ms);
+        }
+      }
+
+      function advancePhase(){
+        if(ended) return;
+        var elapsed = audioCtx.currentTime - startTime;
+        if(elapsed >= breathEnd()){
+          endBreath();
+          return;
+        }
+        if(currentPhase === 'waiting' || currentPhase === 'inhale'){
+          beginHold();
+        } else if(currentPhase === 'hold'){
+          beginExhale();
+        } else {
+          endBreath();
+        }
+      }
+
+      function triggerStart(){
+        if(started) return;
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        startTime = audioCtx.currentTime;
+        started = true;
+        currentPhase = 'inhale';
+
+        instrEl.style.transition = 'opacity 2s';
+        instrEl.style.opacity = '0';
+        phaseEl.textContent = 'inhale';
+        phaseEl.style.color = 'rgba(72,195,176,0.18)';
+
+        /* Fade master in */
+        var t = audioCtx.currentTime + 0.05;
+        masterGain.gain.setValueAtTime(0, t);
+        masterGain.gain.linearRampToValueAtTime(0.38, t + 0.6);
+
+        /* Inhale: harmonic series 1, 2, 3, 5, 8 */
+        var harmonics = [1, 2, 3, 5, 8];
+        var amps = [0.16, 0.09, 0.065, 0.038, 0.022];
+        var remain = timeUntilNextPhase();
+        if(remain <= 0){ beginHold(); return; }
+
+        harmonics.forEach(function(h, i){
+          var osc = audioCtx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.value = baseFreq * h;
+          var g = audioCtx.createGain();
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.linearRampToValueAtTime(amps[i], t + Math.min(remain * 0.88, 28));
+          osc.connect(g);
+          g.connect(masterGain);
+          osc.start(t);
+          activeOscs.push(osc);
+          activeGains.push(g);
+        });
+
+        schedulePhaseTransition();
+        updateLung();
+      }
+
+      function beginHold(){
+        if(currentPhase === 'hold' || currentPhase === 'exhale') return;
+        currentPhase = 'hold';
+        phaseEl.textContent = 'hold';
+        phaseEl.style.color = 'rgba(185,165,145,0.18)';
+
+        /* Fade out inhale oscillators */
+        fadeActiveOscs(1.2);
+
+        var now = audioCtx.currentTime;
+        var remain = timeUntilNextPhase();
+        if(remain <= 0){ beginExhale(); return; }
+
+        /* Beating pair: slightly detuned */
+        var f1 = baseFreq * 2;
+        var f2 = baseFreq * 2 + detuneBeat;
+
+        [f1, f2].forEach(function(freq){
+          var osc = audioCtx.createOscillator();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          var g = audioCtx.createGain();
+          g.gain.setValueAtTime(0.0001, now);
+          g.gain.linearRampToValueAtTime(0.095, now + 2);
+          g.gain.setValueAtTime(0.095, now + remain - 1.5);
+          g.gain.linearRampToValueAtTime(0.0001, now + remain);
+          osc.connect(g);
+          g.connect(masterGain);
+          osc.start(now);
+          activeOscs.push(osc);
+          activeGains.push(g);
+        });
+
+        /* Secret quiet harmonic — headphone discovery */
+        var oS = audioCtx.createOscillator();
+        oS.type = 'sine';
+        oS.frequency.value = baseFreq * secretHarm;
+        var gS = audioCtx.createGain();
+        gS.gain.setValueAtTime(0.0001, now);
+        gS.gain.linearRampToValueAtTime(0.013, now + 4);
+        gS.gain.setValueAtTime(0.013, now + remain - 2);
+        gS.gain.linearRampToValueAtTime(0.0001, now + remain);
+        oS.connect(gS);
+        gS.connect(masterGain);
+        oS.start(now);
+        activeOscs.push(oS);
+        activeGains.push(gS);
+
+        schedulePhaseTransition();
+      }
+
+      function beginExhale(){
+        if(currentPhase === 'exhale') return;
+        currentPhase = 'exhale';
+        phaseEl.textContent = 'exhale';
+        phaseEl.style.color = 'rgba(135,160,185,0.16)';
+
+        /* Fade out hold oscillators */
+        fadeActiveOscs(1.2);
+
+        var now = audioCtx.currentTime;
+        var remain = breathEnd() - (now - startTime);
+        if(remain <= 0){ endBreath(); return; }
+
+        /* Noise buffer for granular dissolution */
+        var nLen = Math.max(4, Math.ceil(remain) + 2) * audioCtx.sampleRate;
+        var nBuf = audioCtx.createBuffer(1, nLen, audioCtx.sampleRate);
+        var d = nBuf.getChannelData(0);
+        for(var i = 0; i < nLen; i++) d[i] = Math.random() * 2 - 1;
+
+        noiseSource = audioCtx.createBufferSource();
+        noiseSource.buffer = nBuf;
+
+        var nFilter = audioCtx.createBiquadFilter();
+        nFilter.type = 'bandpass';
+        nFilter.frequency.value = baseFreq * 3;
+        nFilter.Q.value = 1.6;
+
+        var nGain = audioCtx.createGain();
+        nGain.gain.setValueAtTime(0.0001, now);
+        nGain.gain.linearRampToValueAtTime(0.055, now + Math.min(3, remain * 0.25));
+        nGain.gain.setValueAtTime(0.055, now + remain * 0.65);
+        nGain.gain.exponentialRampToValueAtTime(0.0001, now + remain);
+
+        noiseSource.connect(nFilter);
+        nFilter.connect(nGain);
+        nGain.connect(masterGain);
+        noiseSource.start(now);
+
+        /* Scattered sine pings — granular texture */
+        var pingCount = 8 + Math.floor(Math.random() * 10);
+        for(var p = 0; p < pingCount; p++){
+          (function(){
+            var delay = 0.5 + Math.random() * (remain - 1.5);
+            var freq = baseFreq * (1 + Math.floor(Math.random() * 12));
+            var dur = 0.25 + Math.random() * 1.4;
+            var at = now + delay;
+            if(at + dur > now + remain) return;
+
+            var pOsc = audioCtx.createOscillator();
+            pOsc.type = 'sine';
+            pOsc.frequency.value = freq;
+            var pG = audioCtx.createGain();
+            pG.gain.setValueAtTime(0.0001, at);
+            pG.gain.linearRampToValueAtTime(0.014 + Math.random() * 0.008, at + 0.04);
+            pG.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+            pOsc.connect(pG);
+            pG.connect(masterGain);
+            pOsc.start(at);
+            pOsc.stop(at + dur + 0.05);
+          })();
+        }
+
+        schedulePhaseTransition();
+      }
+
+      function fadeActiveOscs(dur){
+        var now = audioCtx.currentTime;
+        var oldOscs = activeOscs.slice();
+        var oldGains = activeGains.slice();
+        activeOscs = [];
+        activeGains = [];
+        oldGains.forEach(function(g){
+          try {
+            g.gain.cancelScheduledValues(now);
+            g.gain.setValueAtTime(g.gain.value, now);
+            g.gain.linearRampToValueAtTime(0.0001, now + dur);
+          } catch(e){}
+        });
+        setTimeout(function(){
+          oldOscs.forEach(function(o){ try{o.stop(); o.disconnect();}catch(e){} });
+        }, dur * 1000 + 200);
+      }
+
+      /* ── Gasp ── */
+      function gasp(){
+        if(!started || ended) return;
+        if(gaspCount >= gaspBudget){
+          gaspEl.textContent = 'no more';
+          gaspEl.classList.add('flash');
+          setTimeout(function(){ gaspEl.classList.remove('flash'); }, 600);
+          return;
+        }
+        gaspCount++;
+        gaspTimeShift += GASP_SHORTEN;
+
+        gaspEl.textContent = gaspCount < gaspBudget
+          ? '\u00D7' + gaspCount
+          : '\u00D7' + gaspCount + ' / spent';
+        gaspEl.classList.add('flash');
+        setTimeout(function(){ gaspEl.classList.remove('flash'); }, 600);
+
+        /* Visual ripple */
+        rippleEl.classList.remove('active');
+        void rippleEl.offsetWidth;
+        rippleEl.classList.add('active');
+
+        /* Audio: white noise burst */
+        var now = audioCtx.currentTime;
+        var bLen = 2 * audioCtx.sampleRate;
+        var b = audioCtx.createBuffer(1, bLen, audioCtx.sampleRate);
+        var d = b.getChannelData(0);
+        for(var j = 0; j < bLen; j++) d[j] = Math.random() * 2 - 1;
+
+        var src = audioCtx.createBufferSource();
+        src.buffer = b;
+        var f = audioCtx.createBiquadFilter();
+        f.type = 'bandpass';
+        f.frequency.value = 2800 + Math.random() * 1200;
+        f.Q.value = 1.1;
+        var g = audioCtx.createGain();
+        g.gain.setValueAtTime(0.38, now);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.7);
+        src.connect(f);
+        f.connect(g);
+        g.connect(masterGain);
+        src.start(now);
+        src.stop(now + 0.75);
+
+        /* Resonance tail: colors subsequent audio */
+        var res = audioCtx.createOscillator();
+        res.type = 'sine';
+        res.frequency.value = baseFreq * 4.5;
+        var rG = audioCtx.createGain();
+        rG.gain.setValueAtTime(0.1, now);
+        rG.gain.exponentialRampToValueAtTime(0.0001, now + 7);
+        res.connect(rG);
+        rG.connect(resonanceGasp);
+        res.start(now);
+        res.stop(now + 7.5);
+
+        /* Each gasp increases residue filter coloring */
+        residueFilter.gain.linearRampToValueAtTime(
+          residueFilter.gain.value + 4, now + 0.3
+        );
+        resonanceGasp.gain.setValueAtTime(
+          Math.min(0.28, 0.04 + gaspCount * 0.04), now
+        );
+
+        /* Re-schedule phase transition with new timing */
+        schedulePhaseTransition();
+
+        /* Check if gasp killed the breath */
+        if((now - startTime) >= breathEnd()){
+          endBreath();
+        }
+      }
+
+      /* ── End ── */
+      function endBreath(){
+        if(ended) return;
+        ended = true;
+        currentPhase = 'ended';
+
+        if(phaseTimer) clearTimeout(phaseTimer);
+
+        var now = audioCtx.currentTime;
+        if(masterGain){
+          masterGain.gain.cancelScheduledValues(now);
+          masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+          masterGain.gain.linearRampToValueAtTime(0, now + 4);
+        }
+
+        setTimeout(function(){
+          activeOscs.forEach(function(o){ try{o.stop(); o.disconnect();}catch(e){} });
+          try{ noiseSource.stop(); noiseSource.disconnect(); }catch(e){}
+          if(audioCtx && audioCtx.state !== 'closed'){
+            try{ audioCtx.close(); }catch(e){}
+          }
+        }, 5000);
+
+        /* Visual stillness */
+        lungEl.style.transition = 'transform 6s ease-out, opacity 10s ease 3s';
+        lungEl.style.transform = 'scale(0.12)';
+        lungEl.style.opacity = '0.04';
+        pulseEl.style.transition = 'opacity 4s';
+        pulseEl.style.opacity = '0';
+        document.querySelector('.vignette').style.transition = 'opacity 6s';
+        document.querySelector('.vignette').style.opacity = '0.6';
+
+        phaseEl.textContent = '';
+        gaspEl.textContent = '';
+        instrEl.textContent = '';
+
+        endedEl.classList.add('visible');
+
+        if(animId){ cancelAnimationFrame(animId); animId = null; }
+      }
+
+      /* ── Visual expansion / contraction ── */
+      function effectiveElapsed(){
+        if(!audioCtx) return 0;
+        return (audioCtx.currentTime - startTime) + gaspTimeShift;
+      }
+
+      function expansionForPhase(){
+        if(ended) return 0.12;
+        var e = effectiveElapsed();
+
+        var inhEnd = INHALE_DUR;
+        var holdEnd = INHALE_DUR + HOLD_DUR;
+        var exhEnd = TOTAL_DUR;
+
+        if(e <= 0) return 0.3;
+        if(e >= exhEnd) return 0.12;
+
+        if(e < inhEnd){
+          /* Inhale: 0.3 -> 0.9 */
+          return 0.3 + 0.6 * (e / inhEnd);
+        } else if(e < holdEnd){
+          /* Hold: 0.9 with subtle oscillation */
+          return 0.9 + Math.sin((e - inhEnd) * 2.2) * 0.025;
+        } else {
+          /* Exhale: 0.9 -> 0.12 */
+          var t = (e - holdEnd) / (exhEnd - holdEnd);
+          return 0.9 - 0.78 * (1 - Math.pow(1 - t, 2.5));
+        }
+      }
+
+      function updateLung(){
+        if(ended) return;
+        var exp = expansionForPhase();
+        lungEl.style.transform = 'scale(' + exp.toFixed(4) + ')';
+        animId = requestAnimationFrame(updateLung);
+      }
+
+      /* ── Input ── */
+      function handleInput(e){
+        if(e) e.preventDefault();
+        if(!started){
+          initAudio();
+          triggerStart();
+        } else {
+          gasp();
+        }
+      }
+
+      document.body.addEventListener('click', handleInput);
+      document.body.addEventListener('touchstart', function(e){
+        e.preventDefault();
+        handleInput(e);
+      }, {passive: false});
+      document.body.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+      document.addEventListener('keydown', function(e){
+        if(e.code === 'Space'){
+          e.preventDefault();
+          handleInput(e);
+        }
+      });
+
+    })();
+  </script>
+</body>
+</html>
