@@ -1,0 +1,20 @@
+{
+  "name": "foundry-site",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "astro": "^5.0.0",
+    "marked": "^15.0.12",
+    "tailwindcss": "^4.0.0",
+    "yaml": "^2.7.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.22.2",
+    "typescript": "^5.8.0"
+  }
+}

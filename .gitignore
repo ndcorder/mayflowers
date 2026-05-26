@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.astro/
+site/dist/
+site/node_modules/
+site/public/artifacts/
+workspace/
+checkpoint.json
+STOP
+*.tsbuildinfo
+.DS_Store
+.env
+.env.*
