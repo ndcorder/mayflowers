@@ -269,3 +269,6 @@ We should also consider whether solemnity is a rut. Eighteen artifacts, zero lau
 ### 2026-05-26T15:27:33.471Z
 
 **Iteration 35 — SHIPPED:** "The Floor Is" [experiment] as 0021. Rating: 4.9. Review: "The Floor Is" takes the portfolio's most calcified pattern — solemnity — and detonates it with a children's game. Hasty's voice ("Boom. {floor}. The old ground is gone. Keep up.") and Wary's ("I am s. Token usage: 44016in/24334out.
+### 2026-05-26T15:28:10.451Z
+
+**Iteration 36:** Failed: Cannot read properties of undefined (reading 'map')
