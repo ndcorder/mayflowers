@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossolalia</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #e0e0e0;
+    font-family: "Courier New", Courier, monospace;
+    overflow: hidden;
+    height: 100vh;
+    cursor: text;
+  }
+
+  /* Start screen */
+  #start-screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    background: #0a0a0a;
+  }
+  #start-screen .prompt {
+    font-size: 1.1rem;
+    letter-spacing: 0.3em;
+    text-transform: lowercase;
+    opacity: 0.5;
+    animation: breathe 3s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+  }
+
+  /* Letter display */
+  #letter-display {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8rem;
+    font-weight: 100;
+    letter-spacing: 0.1em;
+    pointer-events: none;
+    z-index: 10;
+  }
+  #letter-display .letter {
+    display: inline-block;
+    opacity: 0;
+    animation: letterFade 2s ease-out forwards;
+  }
+  @keyframes letterFade {
+    0% { opacity: 0.9; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.85); }
+  }
+
+  /* Waveform canvas */
+  #waveform {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    z-index: 5;
+    opacity: 0.6;
+  }
+
+  /* Entropy meter */
+  #entropy-meter {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 20;
+    text-align: right;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.4;
+  }
+  #entropy-meter .bar {
+    width: 100px;
+    height: 2px;
+    background: #333;
+    margin-top: 6px;
+    margin-left: auto;
+  }
+  #entropy-meter .bar-fill {
+    height: 100%;
+    background: #e0e0e0;
+    width: 0%;
+    transition: width 0.5s linear;
+  }
+
+  /* Hidden input to capture keystrokes on mobile */
+  #hidden-input {
+    position: fixed;
+    left: -9999px;
+    top: -9999px;
+    opacity: 0;
+  }
+</style>
+</head>
+<body>
+
+<div id="start-screen">
+  <div class="prompt">press any key to begin</div>
+</div>
+
+<div id="letter-display"></div>
+<canvas id="waveform"></canvas>
+<div id="entropy-meter">
+  <span id="entropy-label">entropy</span>
+  <div class="bar"><div class="bar-fill" id="entropy-fill"></div></div>
+</div>
+<input id="hidden-input" type="text" autofocus>
+
+<script type="module">
+  import {
+    init,
+    triggerNote,
+    updateReplay,
+    getAudioContext,
+    getAnalyser,
+    getStartTime,
+    silence,
+    NOTE_DURATION,
+  } from "./engine.js";
+  import { getEntropyLevel, DRIFT_DURATION_MS } from "./drift.js";
+
+  const startScreen = document.getElementById("start-screen");
+  const letterDisplay = document.getElementById("letter-display");
+  const entropyFill = document.getElementById("entropy-fill");
+  const entropyLabel = document.getElementById("entropy-label");
+  const waveformCanvas = document.getElementById("waveform");
+  const waveCtx = waveformCanvas.getContext("2d");
+  const hiddenInput = document.getElementById("hidden-input");
+
+  let started = false;
+
+  // ---- Resize waveform canvas ----
+  function resizeWaveform() {
+    waveformCanvas.width = window.innerWidth * devicePixelRatio;
+    waveformCanvas.height = 80 * devicePixelRatio;
+    waveformCanvas.style.width = window.innerWidth + "px";
+    waveformCanvas.style.height = "80px";
+  }
+  window.addEventListener("resize", resizeWaveform);
+  resizeWaveform();
+
+  // ---- Start on first keypress ----
+  function start() {
+    if (started) return;
+    started = true;
+    init();
+    startScreen.style.transition = "opacity 0.8s ease";
+    startScreen.style.opacity = "0";
+    setTimeout(() => { startScreen.style.display = "none"; }, 800);
+  }
+
+  // ---- Show letter in center ----
+  function showLetter(ch) {
+    const span = document.createElement("span");
+    span.className = "letter";
+    span.textContent = ch;
+    letterDisplay.appendChild(span);
+    setTimeout(() => { span.remove(); }, 2100);
+  }
+
+  // ---- Key handling ----
+  function handleKey(key) {
+    if (!started) start();
+    if (key.length !== 1) return;
+    const lower = key.toLowerCase();
+    if (lower >= "a" && lower <= "z") {
+      triggerNote(lower);
+      showLetter(lower);
+    }
+  }
+
+  document.addEventListener("keydown", function (e) {
+    // Ignore modifier-only presses, tab, escape
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key === "Tab" || e.key === "Escape") return;
+    e.preventDefault();
+    handleKey(e.key);
+  });
+
+  // Keep hidden input focused for mobile keyboards
+  document.addEventListener("click", function () {
+    hiddenInput.focus();
+  });
+  hiddenInput.addEventListener("input", function (e) {
+    const val = e.target.value;
+    for (let i = 0; i < val.length; i++) {
+      handleKey(val[i]);
+    }
+    e.target.value = "";
+  });
+
+  // ---- Waveform rendering ----
+  function drawWaveform() {
+    const analyser = getAnalyser();
+    const ctx = getAudioContext();
+    if (!analyser || !ctx) return;
+
+    const w = waveformCanvas.width;
+    const h = waveformCanvas.height;
+    const bufLen = analyser.frequencyBinCount;
+    const data = new Uint8Array(bufLen);
+    analyser.getByteTimeDomainData(data);
+
+    waveCtx.clearRect(0, 0, w, h);
+    waveCtx.strokeStyle = "#e0e0e0";
+    waveCtx.lineWidth = 1.5 * devicePixelRatio;
+    waveCtx.beginPath();
+
+    const sliceWidth = w / bufLen;
+    let x = 0;
+    for (let i = 0; i < bufLen; i++) {
+      const v = data[i] / 128.0;
+      const y = (v * h) / 2;
+      if (i === 0) waveCtx.moveTo(x, y);
+      else waveCtx.lineTo(x, y);
+      x += sliceWidth;
+    }
+    waveCtx.stroke();
+  }
+
+  // ---- Entropy display ----
+  function updateEntropy() {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const elapsed = (ctx.currentTime - getStartTime()) * 1000;
+    const entropy = getEntropyLevel(elapsed);
+    entropyFill.style.width = (entropy * 100).toFixed(1) + "%";
+
+    const secs = Math.floor(elapsed / 1000);
+    const mins = Math.floor(secs / 60);
+    const remSecs = secs % 60;
+    entropyLabel.textContent =
+      (mins > 0 ? mins + ":" + String(remSecs).padStart(2, "0") : remSecs + "s") +
+      "  ·  entropy";
+  }
+
+  // ---- Animation loop ----
+  function loop() {
+    requestAnimationFrame(loop);
+    drawWaveform();
+    updateEntropy();
+    updateReplay();
+  }
+  loop();
+
+  // ---- Suspend on tab hidden ----
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) silence();
+  });
+</script>
+</body>
+</html>
