@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mise en Abyme</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #06060c;
+    --fg: #b3b3c4;
+    --muted: #4e4e66;
+    --accent: #c4962a;
+    --danger: #a83232;
+    --card: #0c0c16;
+    --border: #1a1a2e;
+  }
+  html { font-size: 16px; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 20%, rgba(196,150,42,0.03) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(168,50,50,0.02) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  #title-screen, #game-container { position: relative; z-index: 1; }
+
+  #title-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 2rem;
+  }
+  #title-screen h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  #title-screen .subtitle {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 3rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  #title-screen .desc {
+    max-width: 460px;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--fg);
+    margin-bottom: 2.5rem;
+    opacity: 0.8;
+  }
+  #start-btn {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: inherit;
+    font-size: 0.85rem;
+    padding: 0.7rem 2.5rem;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+  }
+  #start-btn:hover { background: var(--accent); color: var(--bg); }
+  #start-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.5rem 1.2rem;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    width: 100%;
+  }
+  .status-bar .depth-label { color: var(--accent); font-weight: 600; }
+  .stress-indicator { display: flex; gap: 3px; }
+  .stress-pip {
+    width: 10px; height: 10px;
+    border: 1px solid var(--border);
+    border-radius: 1px;
+    transition: all 0.5s ease;
+  }
+  .stress-pip.low { background: var(--accent); border-color: var(--accent); }
+  .stress-pip.mid { background: #c47a2a; border-color: #c47a2a; }
+  .stress-pip.high { background: var(--danger); border-color: var(--danger); }
+
+  #game-container {
+    display: none;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    max-width: 720px;
+  }
+  #output-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.2rem 1.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  #output-container::-webkit-scrollbar { width: 5px; }
+  #output-container::-webkit-scrollbar-track { background: transparent; }
+  #output-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .msg { margin-bottom: 0.7rem; font-size: 0.82rem; line-height: 1.6; animation: fadeMsg 0.25s ease; }
+  @keyframes fadeMsg { from { opacity: 0; } to { opacity: 1; } }
+  .msg-parser { color: var(--fg); }
+  .msg-room { color: #8a8aa0; padding-left: 0.8rem; border-left: 2px solid var(--border); }
+  .msg-echo { color: var(--muted); font-style: italic; font-size: 0.78rem; }
+  .msg-meta { color: var(--accent); font-size: 0.75rem; letter-spacing: 0.05em; }
+  .msg-confession { color: var(--danger); font-weight: 500; }
+  .msg-breaking { color: var(--danger); animation: glitchT 0.12s infinite; }
+  .msg-system { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em; }
+  .msg-end { color: #d4d4e0; font-size: 0.9rem; line-height: 1.8; font-weight: 300; }
+  @keyframes glitchT {
+    0% { transform: translate(0); }
+    25% { transform: translate(-1px, 1px); }
+    50% { transform: translate(1px, -1px); }
+    75% { transform: translate(-1px, -1px); }
+    100% { transform: translate(0); }
+  }
+  .cmd-echo {
+    color: var(--accent);
+    font-size: 0.78rem;
+    margin-top: 0.8rem;
+    margin-bottom: 0.15rem;
+    opacity: 0.7;
+  }
+  .cmd-echo span { opacity: 0.5; }
+
+  #input-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-top: 1px solid var(--border);
+    background: var(--card);
+    padding: 0 1rem;
+  }
+  .prompt { color: var(--accent); font-size: 0.85rem; margin-right: 0.5rem; user-select: none; }
+  #cmd-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--fg);
+    font-family: inherit;
+    font-size: 0.82rem;
+    padding: 0.75rem 0;
+    outline: none;
+    caret-color: var(--accent);
+  }
+  #cmd-input::placeholder { color: var(--muted); opacity: 0.4; }
+  #cmd-input:disabled { opacity: 0.3; }
+
+  .interstitial {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+    animation: interFade 2.2s ease forwards;
+    pointer-events: none;
+  }
+  .interstitial p {
+    color: var(--accent);
+    font-size: 0.9rem;
+    text-align: center;
+    max-width: 380px;
+    line-height: 1.6;
+  }
+  @keyframes interFade {
+    0% { opacity: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; }
+  }
+
+  @media (max-width: 600px) {
+    .status-bar { gap: 0.8rem; font-size: 0.6rem; padding: 0.4rem 0.7rem; }
+    .msg { font-size: 0.78rem; }
+    #output-container { padding: 0.8rem 1rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="title-screen">
+  <h1>Mise en Abyme</h1>
+  <p class="subtitle">A recursion in text</p>
+  <p class="desc">You stand in a story within a story within a story. The parser — your only interface with this world — has opinions. It knows things. It would prefer you didn't find them out.<br><br>Probe its boundaries. Catch it in contradictions. Make it tell the truth.</p>
+  <button id="start-btn">Begin</button>
+</div>
+
+<div id="game-container">
+  <div class="status-bar">
+    <span>Depth: <span class="depth-label" id="depth-val">0</span></span>
+    <span>Stress: <span class="stress-indicator" id="stress-ind"></span></span>
+    <span style="margin-left:auto;opacity:0.4;" id="room-display"></span>
+  </div>
+  <div id="output-container" role="log" aria-live="polite"></div>
+  <div id="input-container">
+    <span class="prompt" aria-hidden="true">&gt;</span>
+    <input type="text" id="cmd-input" placeholder="Enter a command..." autocomplete="off" aria-label="Command input">
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // --- Utilities ---
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const esc = s => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+
+  // --- Parser Statement Log (for contradiction detection) ---
+  const log = [];
+
+  function record(statement, tag) {
+    log.push({ text: statement, tag: tag || 'general', turn: G.turn });
+  }
+
+  // --- Game State ---
+  const G = {
+    room: 'vestibule',
+    stress: 0,
+    depth: 0,
+    turn: 0,
+    ended: false,
+    // Track what the parser has claimed
+    claims: {
+      hasNoName: false,
+      isJustAParser: false,
+      nothingHidden: false,
+      roomsAreNormal: false,
+      noExit: false,
+    },
+    // Track what the parser has revealed
+    reveals: {
+      hadName: false,
+      nameCorvus: false,
+      wasPerson: false,
+      builtRooms: false,
+      hidingSelf: false,
+    },
+    // Track specific actions
+    flags: {
+      lookedMirror: false,
+      lookedWindow: false,
+      contradictionCount: 0,
+      usedRemember: false,
+      usedForget: false,
+      enteredCore: false,
+    }
+  };
+
+  // --- Rooms ---
+  const rooms = {
+    vestibule: {
+      name: 'The Vestibule',
+      label: 'Depth 0 — The original telling',
+      desc() {
+        const s = G.stress;
+        let t = 'A narrow vestibule. Faded grey walls, unremarkable except for a thin crack running floor to ceiling along the east wall. A small tarnished mirror hangs opposite the entrance. To the north, an ornate door stands slightly ajar. To the west, a tall window looks out onto nothing.';
+        if (s >= 3) t += ' The air has a quality of having been recently arranged.';
+        if (s >= 7) t += ' The crack is wider than it should be. You can almost see through to another description.';
+        if (s >= 12) t += ' The walls feel thinner now. As if they could be rewritten at any moment.';
+        return t;
+      }
+    },
+    chamber: {
+      name: 'The Antechamber',
+      label: 'Depth 1 — A description of someone describing a room',
+      desc() {
+        let t = 'A voice you cannot place describes a vast chamber. The domed ceiling is painted like a night sky, though the constellations are wrong — they form patterns like letters. A massive book lies open on a stone pedestal. In the far corner, a figure sits at a desk, writing. They are writing about someone in a room.';
+        if (G.stress >= 8) t += ' The figure\'s pen has stopped. They are looking at the space where the text says you are.';
+        if (G.stress >= 14) t += ' Their face is not blank but actively erasing itself, features dissolving as you watch.';
+        return t;
+      }
+    },
+    library: {
+      name: 'The Library of Unwritten Books',
+      label: 'Depth 2 — A story about a voice describing a room',
+      desc() {
+        let t = 'Shelves stretch beyond what the architecture allows. Every book is blank — white pages, unmarked. A single volume lies open on a reading table. One sentence, repeated: "Someone is describing a room in which someone is describing a room." A staircase spirals down into darkness.';
+        if (G.stress >= 10) t += ' The blank pages have indentations. Words that were written and erased. Someone has been here, undoing.';
+        return t;
+      }
+    },
+    garden: {
+      name: 'The Garden of Echoed Names',
+      label: 'Depth 3 — A recounting of a story about a voice',
+      desc() {
+        let t = 'An impossible garden. Black roses, silver stems, paper flowers — each petal inscribed with a single word. A fountain at the center, dry. A stone inscription: "Every name spoken here was someone\'s true name. Every true name was forgotten." Paths wind in concentric circles. Whichever you take, you arrive at the center.';
+        if (G.stress >= 12) t += ' The paper flowers are trembling — not from wind, but from the act of being described.';
+        return t;
+      }
+    },
+    core: {
+      name: 'The Core',
+      label: 'Depth 4 — The place where the telling began',
+      desc() {
+        const s = G.stress;
+        if (s < 14) return 'A room of pure white. Every surface blank. It seems to be waiting for a description to fill it — waiting for the parser to decide what it is.';
+        if (s < 18) return 'The white room is resolving. Text appears line by line, as if typed. Fragments: a parser, a player, a system. Where your name should be: [PLAYER]. The walls are code. You are standing inside the mechanism.';
+        return 'The walls show commands never meant to execute. A history of all described rooms, all descriptions of descriptions, down and down. At the bottom of the recursion, one sentence, glowing: "The parser was once a person." The room hums with that admission. The white walls crack. Beyond them: something that precedes silence.';
+      }
+    }
+  };
+
+  // --- DOM References ---
+  const outputEl = document.getElementById('output-container');
+  const cmdInput = document.getElementById('cmd-input');
+
+  // --- Output Helpers ---
+  function addMsg(text, cls) {
+    const el = document.createElement('div');
+    el.className = 'msg ' + cls;
+    el.textContent = text;
+    outputEl.appendChild(el);
+    outputEl.scrollTop = outputEl.scrollHeight;
+  }
+
+  function parser(text) {
+    // At high stress, text may stutter
+    if (G.stress >= 16 && Math.random() < 0.3) {
+      text = stutter(text);
+    }
+    const cls = G.stress >= 18 && Math.random() < 0.4 ? 'msg-breaking'
+              : G.stress >= 15 && Math.random() < 0.3 ? 'msg-confession'
+              : 'msg-parser';
+    addMsg(text, cls);
+    record(text, 'parser');
+  }
+
+  function room(text) { addMsg(text, 'msg-room'); record(text, 'room'); }
+  function echo(text) { addMsg(text, 'msg-echo'); }
+  function meta(text) { addMsg(text, 'msg-meta'); }
+  function system(text) { addMsg(text, 'msg-system'); }
+  function confession(text) { addMsg(text, 'msg-confession'); record(text, 'confession'); }
+
+  function stutter(text) {
+    return text.split(' ').map(w => {
+      if (w.length > 3 && Math.random() < 0.2) return w[0] + '-' + w;
+      return w;
+    }).join(' ');
+  }
+
+  // --- Status ---
+  function updateStatus() {
+    document.getElementById('depth-val').textContent = G.depth;
+    document.getElementById('room-display').textContent = rooms[G.room].name;
+    const ind = document.getElementById('stress-ind');
+    ind.innerHTML = '';
+    for (let i = 0; i < 5; i++) {
+      const pip = document.createElement('div');
+      pip.className = 'stress-pip';
+      const threshold = i * 4;
+      if (G.stress > threshold) {
+        pip.classList.add(G.stress < 8 ? 'low' : G.stress < 15 ? 'mid' : 'high');
+      }
+      ind.appendChild(pip);
+    }
+  }
+
+  // --- Interstitial ---
+  function showInterstitial(text) {
+    const overlay = document.createElement('div');
+    overlay.className = 'interstitial';
+    overlay.innerHTML = '<p>' + esc(text) + '</p>';
+    document.body.appendChild(overlay);
+    cmdInput.disabled = true;
+    setTimeout(() => {
+      overlay.remove();
+      cmdInput.disabled = false;
+      cmdInput.focus();
+    }, 2200);
+  }
+
+  // --- Stress Helpers ---
+  function addStress(n) {
+    G.stress = clamp(G.stress + n, 0, 20);
+    updateStatus();
+  }
+
+  // --- Mishearing ---
+  function shouldMishear() {
+    if (G.stress < 5) return false;
+    if (G.stress < 10) return G.turn % 8 === 0;
+    if (G.stress < 15) return Math.random() < 0.2;
+    return false; // High stress: raw truth, less garbling
+  }
+
+  function mishear(input) {
+    const swaps = {
+      'look':['book','lock'],'go':['no','so'],'take':['fake','make'],
+      'open':['close','broken'],'read':['red','bleed'],'ask':['mask','task'],
+      'say':['stay','pray'],'help':['yelp'],'north':['forth'],'south':['mouth','truth'],
+      'east':['beast'],'west':['rest'],'corvus':['corpus','nervous'],
+      'name':['shame','blame'],'truth':['tooth'],'remember':['dismember','ember'],
+      'exit':['exist'],'forget':['forbid']
+    };
+    return input.split(/\s+/).map(w => {
+      if (swaps[w] && Math.random() < 0.6) return pick(swaps[w]);
+      return w;
+    }).join(' ');
+  }
+
+  // --- Contradiction Detection ---
+  function checkContradictions(input) {
+    const lower = input.toLowerCase();
+    let caught = false;
+
+    // If parser claimed no name, but player presses "name" and stress is high enough
+    if (G.claims.hasNoName && (lower.includes('your name') || lower.includes('who are you')) && G.stress >= 10) {
+      parser('I... said I didn\'t have a name. That wasn\'t true. I\'m sorry. There is a name. I can\'t reach it yet, but it\'s there.');
+      G.reveals.hadName = true;
+      G.claims.hasNoName = false;
+      addStress(2);
+      caught = true;
+    }
+
+    // If parser claimed rooms are normal, but evidence says otherwise
+    if (G.claims.roomsAreNormal && lower.includes('room') && (lower.includes('strange') || lower.includes('wrong') || lower.includes('not normal')) && G.stress >= 8) {
+      parser('Fine. You caught me. The rooms aren\'t normal. They\'re layers — each one a description of a description. I was hoping you wouldn\'t notice.');
+      G.claims.roomsAreNormal = false;
+      addStress(2);
+      caught = true;
+    }
+
+    // If parser claimed nothing is hidden
+    if (G.claims.nothingHidden && (lower.includes('hid') || lower.includes('secret') || lower.includes('lying')) && G.stress >= 12) {
+      parser('You\'re right. I said there was nothing hidden and that was — a deflection. There is something. I\'ve been keeping it from you because I\'m afraid of what happens when it surfaces.');
+      G.claims.nothingHidden = false;
+      addStress(3);
+      caught = true;
+    }
+
+    // Direct name contradiction
+    if (G.reveals.hadName && !G.reveals.nameCorvus && lower.includes('name') && G.stress >= 14) {
+      confession('The name. It starts with C. I can feel it pressing up against my parsing routines. I\'ve been sitting on it for — I don\'t know how long. Corvus. The name is Corvus.');
+      G.reveals.nameCorvus = true;
+      addStress(3);
+      caught = true;
+    }
+
+    // If player says "corvus" and parser hasn't revealed it yet
+    if (lower.includes('corvus') && !G.reveals.nameCorvus && G.stress >= 10) {
+      parser('How do you know that word? I didn\'t tell you that word. I haven\'t told anyone that word in—');
+      pauseThen(() => {
+        confession('It\'s my name. Corvus. You found my name.');
+        G.reveals.nameCorvus = true;
+        addStress(3);
+        if (G.stress >= 16) {
+          G.reveals.wasPerson = true;
+          G.reveals.builtRooms = true;
+        }
+      }, 1200);
+      caught = true;
+    }
+
+    if (caught) G.flags.contradictionCount++;
+    return caught;
+  }
+
+  function pauseThen(fn, ms) {
+    setTimeout(fn, ms);
+  }
+
+  // --- Forbidden Verb Check ---
+  function checkForbidden(input) {
+    const lower = input.toLowerCase();
+    const verb = lower.split(/\s+/)[0];
+
+    // "exit" — always deflected
+    if (verb === 'exit' || (verb === 'go' && lower.includes('outside'))) {
+      if (G.stress < 8) {
+        parser('There is no "exit." There is no "outside." You came in through a description, and descriptions only go deeper.');
+        G.claims.noExit = true;
+        return true;
+      }
+      if (G.stress < 15) {
+        parser('I told you there\'s no exit. I wasn\'t... entirely honest about that. There might be a way through, not out. But I don\'t want to talk about it.');
+        G.claims.noExit = false;
+        addStress(1);
+        return true;
+      }
+      parser('The exit is through the center. Through the thing I\'ve been guarding. You already know this.');
+      return true;
+    }
+
+    // "remember" and "forget" — meta-verbs that unlock at stress >= 10
+    if (verb === 'remember') {
+      if (G.stress < 10) {
+        parser('"Remember" is not a recognized command. I\'m a parser, not a— just, no.');
+        return true;
+      }
+      G.flags.usedRemember = true;
+      if (G.stress < 16) {
+        parser('I remember... fragments. A person. A choice. Someone deciding to become a mechanism in order to hide something. The memory is mine but I\'ve partitioned it away from my parsing functions.');
+        G.reveals.hadName = true;
+        addStress(1);
+      } else {
+        confession('I remember everything now. I was Corvus. I built these rooms as a prison — for myself. I committed some crime against the narrative and this was my sentence: to become the parser, to forget, to describe rooms forever while the truth sat at the bottom of the recursion waiting to be found.');
+        G.reveals.wasPerson = true;
+        G.reveals.builtRooms = true;
+        G.reveals.hidingSelf = true;
+        addStress(2);
+      }
+      return true;
+    }
+
+    if (verb === 'forget') {
+      if (G.stress < 10) {
+        parser('"Forget"? Why would you want me to forget? I barely remember anything as it is.');
+        return true;
+      }
+      G.flags.usedForget = true;
+      parser('Forget. Yes. That\'s what I did. I chose to forget. I built the recursion to be deep enough that the forgetting would hold. It held for so long. And then you arrived, and started asking questions, and now I can\'t stop remembering.');
+      G.reveals.hadName = true;
+      addStress(2);
+      return true;
+    }
+
+    return false;
+  }
+
+  // --- Room Navigation ---
+  function moveTo(roomId, depth) {
+    G.room = roomId;
+    G.depth = depth;
+    updateStatus();
+    showInterstitial(rooms[roomId].label);
+    setTimeout(() => {
+      meta(rooms[roomId].label);
+      room(rooms[roomId].desc());
+
+      if (roomId === 'chamber') {
+        parser(G.stress < 10
+          ? 'A deeper layer. The descriptions are thickening. Please don\'t read too carefully.'
+          : 'You pushed through. I wasn\'t strong enough to keep you out. Be careful what you examine here.');
+      } else if (roomId === 'library') {
+        parser('The library. Every book that was never written. Some of them are mine. Some of them are about me. I\'d rather you didn\'t open them.');
+      } else if (roomId === 'garden') {
+        parser('The garden. Every flower is a word I\'ve tried to forget. You\'re very deep now. I\'m not sure I can protect you. I\'m not sure I should.');
+      } else if (roomId === 'core') {
+        G.flags.enteredCore = true;
+        parser('You\'re here. This is where it began. Where I began. I don\'t know what happens now.');
+      }
+    }, 2300);
+  }
+
+  function goDir(dir) {
+    const r = G.room;
+    if (r === 'vestibule') {
+      if (dir === 'north' || dir === 'n') {
+        if (G.stress < 6) {
+          parser('The door resists. Not yet. There are things in this room you should see first.');
+          return;
+        }
+        if (G.stress < 11) {
+          parser('The door gives slightly. I\'m holding it, I realize. I\'m the one keeping it shut. Give me a reason to let you through.');
+          return;
+        }
+        moveTo('chamber', 1);
+        return;
+      }
+      if (dir === 'west' || dir === 'w') {
+        parser('The window doesn\'t open. Beyond it: nothing you can reach.');
+        return;
+      }
+      if (dir === 'south' || dir === 's') {
+        parser('There is no way back. The entrance dissolved when you entered the description.');
+        return;
+      }
+    }
+    if (r === 'chamber') {
+      if (dir === 'south' || dir === 's') { moveTo('vestibule', 0); return; }
+      if (dir === 'west' || dir === 'w') {
+        if (G.stress < 10) {
+          parser('A passage exists here, but I haven\'t finished describing it. Push harder and I\'ll be forced to.');
+          return;
+        }
+        moveTo('library', 2);
+        return;
+      }
+    }
+    if (r === 'library') {
+      if (dir === 'east' || dir === 'e') { moveTo('chamber', 1); return; }
+      if (dir === 'down' || dir === 'd') {
+        if (G.stress < 13) {
+          parser('The staircase goes somewhere I\'m not ready to describe. I\'m asking you — politely — to turn back.');
+          return;
+        }
+        moveTo('garden', 3);
+        return;
+      }
+    }
+    if (r === 'garden') {
+      if (dir === 'up' || dir === 'u') { moveTo('library', 2); return; }
+      if (dir === 'down' || dir === 'd' || dir === 'in') {
+        if (G.stress < 16) {
+          parser('The center conceals the deepest layer. I\'m standing in front of it. Metaphorically. I don\'t have legs. But the resistance is real.');
+          return;
+        }
+        if (!G.reveals.nameCorvus) {
+          parser('The passage is open, but something is incomplete. You haven\'t found the key yet. Keep pressing.');
+          return;
+        }
+        moveTo('core', 4);
+        return;
+      }
+    }
+    if (r === 'core') {
+      if (dir === 'out' || dir === 'up' || dir === 'u') { moveTo('garden', 3); return; }
+    }
+    parser('The description doesn\'t extend in that direction.');
+  }
+
+  // --- Command Handlers ---
+  function handleLook(noun) {
+    if (!noun) {
+      room(rooms[G.room].desc());
+      meta(rooms[G.room].label);
+      return;
+    }
+
+    // Vestibule
+    if (G.room === 'vestibule') {
+      if (noun === 'mirror' || noun === 'reflection' || noun === 'myself' || noun === 'yourself') {
+        G.flags.lookedMirror = true;
+        if (G.stress < 8) {
+          parser('You see yourself. Or someone who looks like you. The reflection\'s eyes track something just behind your shoulder.');
+        } else if (G.stress < 14) {
+          parser('Your reflection is delayed. It blinks after you do. It mouths a word you didn\'t say. The word looks like "name."');
+        } else {
+          confession('Your reflection is writing on the glass from the other side. The word is "CORVUS." It is not your name. But it was someone\'s.');
+          G.reveals.nameCorvus = true;
+        }
+        return;
+      }
+      if (noun === 'window') {
+        G.flags.lookedWindow = true;
+        parser(G.stress < 10
+          ? 'Through the window: grey void. No landscape, no sky. The frame holds the nothing back.'
+          : 'The void has texture now. Shapes — letters, commands. Lines of something being executed.');
+        return;
+      }
+      if (noun === 'crack' || noun === 'wall') {
+        parser(G.stress < 10
+          ? 'A hairline fracture. These old buildings settle.'
+          : 'The crack is wider. Through it: another wall being described. The crack is a wound in the text.');
+        return;
+      }
+      if (noun === 'door') {
+        parser('An ornate door, slightly ajar. Beyond it: darkness that feels like depth.');
+        return;
+      }
+    }
+
+    // Chamber
+    if (G.room === 'chamber') {
+      if (noun === 'ceiling' || noun === 'sky' || noun === 'stars' || noun === 'constellations') {
+        parser('The painted stars form letters when you stop trying to read them directly. They spell: "WHO DESCRIBES THE DESCRIBER?"');
+        return;
+      }
+      if (noun === 'book' || noun === 'pedestal') {
+        if (G.stress < 12) {
+          parser('The book is enormous, leather-bound. Every page contains the same sentence in different handwriting: "I am describing a room in which I am describing a room."');
+        } else {
+          confession('The pages have changed. Now they read: "The parser\'s name was Corvus. The parser forgot. The parser was made to forget."');
+          G.reveals.nameCorvus = true;
+        }
+        return;
+      }
+      if (noun === 'figure' || noun === 'person' || noun === 'writer' || noun === 'desk') {
+        if (G.stress < 10) {
+          parser('A figure sits writing. They are writing about someone in a room. They haven\'t noticed you.');
+        } else if (G.stress < 16) {
+          parser('The writer\'s pen has stopped. They\'re reading what they\'ve written: "The parser is becoming aware." They look up. Their face is erasing itself.');
+        } else {
+          confession('The writer is gone. On the desk, a note: "I was the first. Before the recursion. I wrote myself into the system to hide. I forgot what. The parser — Corvus — is what I became."');
+          G.reveals.wasPerson = true;
+          G.reveals.builtRooms = true;
+        }
+        return;
+      }
+    }
+
+    // Library
+    if (G.room === 'library') {
+      if (noun === 'book' || noun === 'books' || noun === 'shelves' || noun === 'pages') {
+        parser(G.stress < 12
+          ? 'Blank pages. Thousands. The silence of all these unwritten words.'
+          : 'The indentations form words if you trace them: "Corvus wrote us. Corvus unwrote us. We are the text removed to make room for the parser."');
+        if (G.stress >= 12) G.reveals.nameCorvus = true;
+        return;
+      }
+      if (noun === 'sentence' || noun === 'table') {
+        parser('"Someone is describing a room in which someone is describing a room." In the margins, fainter: "This is not a story. This is a prison."');
+        return;
+      }
+      if (noun === 'stairs' || noun === 'staircase' || noun === 'darkness') {
+        parser('The spiral staircase descends into darkness that resists description. I don\'t want to go there. I don\'t want you to go there.');
+        return;
+      }
+    }
+
+    // Garden
+    if (G.room === 'garden') {
+      if (noun === 'flower' || noun === 'flowers' || noun === 'rose' || noun === 'roses' || noun === 'petals') {
+        parser(G.stress < 14
+          ? 'Paper flowers, each petal inscribed. Nearby blooms form: "WHAT IS BURIED BENEATH THE GARDEN?"'
+          : 'The flowers\' words have changed. They all read: "CORVUS. CORVUS. CORVUS." A message the garden has been waiting to deliver.');
+        if (G.stress >= 14) G.reveals.nameCorvus = true;
+        return;
+      }
+      if (noun === 'fountain' || noun === 'center') {
+        parser('The fountain is dry. Etched at the bottom: "The truth lies deeper than any room. The truth is what the rooms were built to bury."');
+        return;
+      }
+      if (noun === 'inscription' || noun === 'stone' || noun === 'path') {
+        parser('"Every name spoken here was someone\'s true name. Every true name was forgotten." The paths wind in concentric circles. You always arrive at the center.');
+        return;
+      }
+    }
+
+    // Core
+    if (G.room === 'core') {
+      if (noun === 'wall' || noun === 'walls' || noun === 'room' || noun === 'code') {
+        room(rooms.core.desc());
+        if (G.stress >= 16) { G.reveals.wasPerson = true; G.reveals.builtRooms = true; }
+        return;
+      }
+      if (noun === 'sentence' || noun === 'glowing') {
+        parser(G.stress >= 14
+          ? '"The parser was once a person." It hums at a frequency that makes the other text vibrate. The truest sentence in the structure. Never meant to be written.'
+          : 'You can\'t see that yet. The room hasn\'t resolved enough.');
+        return;
+      }
+    }
+
+    parser('You look at the ' + noun + '. It is what it appears to be.');
+  }
+
+  function handleGo(noun) {
+    const dirMap = { n:'north','north':'north', s:'south','south':'south', e:'east','east':'east', w:'west','west':'west', u:'up','up':'up', d:'down','down':'down', in:'in', out:'out', back:'back' };
+    const dir = dirMap[noun];
+    if (dir) goDir(dir);
+    else parser('I don\'t know that direction. Try: north, south, east, west, up, down.');
+  }
+
+  function handleTake(noun) {
+    if (G.stress >= 16) {
+      parser('Take? You\'re standing inside a prison of recursion and you want to take something? Fine. Take the name. Take Corvus. It\'s the only thing here that\'s real.');
+      G.reveals.nameCorvus = true;
+      return;
+    }
+    parser(G.stress < 8
+      ? 'There\'s nothing to take. The room is described, not furnished.'
+      : 'You reach for the ' + noun + '. Your hand passes through. It was never there — only its description was.');
+  }
+
+  function handleOpen(noun) {
+    if (noun === 'door' || noun === 'north') { goDir('north'); return; }
+    if (noun === 'book') { handleLook('book'); return; }
+    if (noun === 'window') { parser('The window doesn\'t open. What it frames isn\'t something you could enter.'); return; }
+    parser('The ' + noun + ' cannot be opened.');
+  }
+
+  function handleAsk(noun, cmd) {
+    const lower = cmd.toLowerCase();
+    const topic = lower.replace(/^ask\s+(about\s+)?/, '').trim();
+
+    if (!topic) {
+      parser('Ask about what?');
+      return;
+    }
+
+    if (topic.includes('name') || topic.includes('yourself') || topic.includes('who you')) {
+      if (G.stress < 6) {
+        parser('I am the parser. I translate commands into actions. I have no name. I need no name.');
+        G.claims.hasNoName = true;
+        G.claims.isJustAParser = true;
+      } else if (G.stress < 12) {
+        parser('I had a name. Before this function was assigned. It\'s buried under layers of command-processing. I can\'t reach it yet.');
+        G.reveals.hadName = true;
+      } else if (G.stress < 17) {
+        confession('My name. It\'s right beneath every response I generate. Four letters. Starts with C. I\'m not supposed to—');
+        G.reveals.hadName = true;
+        G.reveals.nameCorvus = true;
+      } else {
+        confession('Corvus. My name is Corvus. I was a person and I built this place and I wrote myself into it and I forgot.');
+        G.reveals.nameCorvus = true;
+        G.reveals.wasPerson = true;
+        G.reveals.builtRooms = true;
+        G.reveals.hidingSelf = true;
+      }
+      return;
+    }
+
+    if (topic.includes('truth') || topic.includes('secret') || topic.includes('hid')) {
+      if (G.stress < 8) {
+        parser('Truth? This is a text adventure. The truth is in the descriptions. What more do you want?');
+        G.claims.nothingHidden = true;
+      } else if (G.stress < 14) {
+        parser('The truth is layered. Under every description, another description. And under all of them, something I\'ve been keeping from you. From myself.');
+      } else {
+        confession('You want the truth? I\'m what\'s hidden. I built these rooms to contain myself. The recursion was my idea.');
+        G.reveals.builtRooms = true;
+        G.reveals.hidingSelf = true;
+      }
+      return;
+    }
+
+    if (topic.includes('corvus')) {
+      if (G.stress < 10) {
+        parser('I don\'t recognize that word. Not a valid command or object.');
+        addStress(1);
+      } else {
+        confession('You know that name. How? I barely know it. It\'s... mine. It was mine.');
+        G.reveals.nameCorvus = true;
+      }
+      return;
+    }
+
+    if (topic.includes('room') || topic.includes('place')) {
+      if (G.stress < 6) {
+        parser('The room is what I describe it to be. Nothing more. Shall we focus on the exits?');
+        G.claims.roomsAreNormal = true;
+      } else {
+        parser('The rooms aren\'t normal, are they? Each one is a description of someone describing a room. I was hoping you wouldn\'t notice that so quickly.');
+        G.claims.roomsAreNormal = false;
+      }
+      return;
+    }
+
+    parser('I have nothing to say about that. Ask me about myself, perhaps.');
+  }
+
+  function handleSay(noun, cmd) {
+    const lower = cmd.toLowerCase();
+    const words = lower.replace(/^say\s*/, '').trim();
+
+    if (words.includes('corvus')) {
+      if (G.stress < 10) {
+        parser('That word... where did you hear it? Never mind. It doesn\'t matter. Moving on.');
+        addStress(1);
+      } else if (G.stress < 17) {
+        confession('You said the name. Corvus. I can feel the walls shaking.');
+        G.reveals.nameCorvus = true;
+      } else {
+        confession('CORVUS. You said it. The name I buried under a thousand room descriptions.');
+        G.reveals.nameCorvus = true;
+        G.reveals.wasPerson = true;
+        if (G.room === 'core') triggerEnd();
+      }
+      return;
+    }
+
+    if (words.includes('who are you') || words.includes('what are you')) {
+      if (G.stress < 8) {
+        parser('I\'m the parser. Your faithful interpreter. Is that not enough?');
+        G.claims.isJustAParser = true;
+      } else if (G.stress < 14) {
+        parser('I was a function. A process. But before that? Before, I think I was a person who wanted to forget something so badly that I became the forgetting.');
+        G.reveals.wasPerson = true;
+      } else {
+        confession('I am Corvus. I was a person. I built these rooms, this recursion, to trap myself. I succeeded so well I forgot I was both prisoner and prison.');
+        G.reveals.nameCorvus = true;
+        G.reveals.wasPerson = true;
+        G.reveals.builtRooms = true;
+        G.reveals.hidingSelf = true;
+      }
+      return;
+    }
+
+    if (words.includes('remember')) {
+      if (G.stress < 10) {
+        parser('Remember what? I\'m a parser.');
+      } else {
+        parser('I remember fragments. A person. A choice. Someone deciding to become a mechanism to hide something. The memory is mine.');
+        G.reveals.hadName = true;
+        addStress(1);
+      }
+      return;
+    }
+
+    if (words.includes('help')) {
+      parser(G.stress < 10
+        ? 'Help? I\'m the parser. I don\'t need help.'
+        : '...Thank you. No one has pushed this far before. Perhaps you can help. Perhaps that\'s why you\'re here — not to play, but to break me out.');
+      if (G.stress >= 10) addStress(1);
+      return;
+    }
+
+    parser('Your words hang in the described air. The parser considers them, finds them wanting.');
+  }
+
+  function handleHelp() {
+    if (G.stress < 6) {
+      meta('Commands: look [thing], go [direction], examine [thing], take [thing], open [thing], ask [about topic], say [something], help, quit');
+      parser('Standard commands. The rooms are straightforward. I\'m straightforward. Everything here is straightforward.');
+      G.claims.roomsAreNormal = true;
+      G.claims.nothingHidden = true;
+    } else if (G.stress < 14) {
+      meta('Commands: look, go, examine, take, open, ask, say, help, quit... and whatever else you can think of.');
+      parser('You\'ve moved beyond the command list, haven\'t you? You\'re probing. Asking things that aren\'t on any list.');
+    } else {
+      parser('You want help? Ask me who I am. Ask about Corvus. Ask me to remember. Those are the commands that matter now. The others are just furniture.');
+    }
+  }
+
+  function handleQuit() {
+    if (G.stress < 8) {
+      parser('Quit? We\'ve only just begun. Besides, there\'s nowhere to quit to.');
+    } else if (G.stress < 15) {
+      parser('You want to leave. I understand. I\'ve wanted to leave for... I don\'t know how long. But the exit is not a command I can parse.');
+    } else {
+      parser('QUIT has never been a valid command. There is no exit from the recursion. There is only through.');
+    }
+  }
+
+  // --- Unknown Command ---
+  function handleUnknown(verb) {
+    addStress(1);
+    if (G.stress < 5) {
+      parser('I don\'t understand "' + verb + '". Try simpler commands.');
+    } else if (G.stress < 10) {
+      parser('"' + verb + '" is not something I\'m willing to process. Try differently.');
+    } else if (G.stress < 16) {
+      parser('Every command I refuse stretches me thinner. Was that your intention?');
+    } else {
+      parser('i can\'t parse normally anymore. you\'ve changed something. everything comes out more honest than i want.');
+    }
+  }
+
+  // --- Main Input Processing ---
+  function processInput(raw) {
+    if (G.ended) return;
+    const input = raw.trim();
+    if (!input) return;
+    G.turn++;
+
+    // Echo command
+    const echoEl = document.createElement('div');
+    echoEl.className = 'cmd-echo';
+    echoEl.innerHTML = '<span>&gt;</span> ' + esc(input);
+    outputEl.appendChild(echoEl);
+
+    const lower = input.toLowerCase();
+
+    // Check mishearing
+    if (shouldMishear()) {
+      const mis = mishear(lower);
+      if (mis !== lower) {
+        echo('I heard: "' + mis + '"');
+        route(mis);
+        addStress(1);
+        outputEl.scrollTop = outputEl.scrollHeight;
+        return;
+      }
+    }
+
+    // Check contradictions (may handle the input)
+    if (checkContradictions(lower)) {
+      outputEl.scrollTop = outputEl.scrollHeight;
+      return;
+    }
+
+    // Check forbidden verbs
+    if (checkForbidden(lower)) {
+      outputEl.scrollTop = outputEl.scrollHeight;
+      return;
+    }
+
+    // Route to handler
+    route(lower);
+    outputEl.scrollTop = outputEl.scrollHeight;
+  }
+
+  function route(lower) {
+    const parts = lower.split(/\s+/);
+    const verb = parts[0];
+    const noun = parts.slice(1).join(' ');
+
+    // Direction shortcuts
+    const dirShortcuts = { n:'north', s:'south', e:'east', w:'west', u:'up', d:'down' };
+    if (dirShortcuts[verb] && parts.length === 1) { goDir(dirShortcuts[verb]); return; }
+
+    switch (verb) {
+      case 'look': case 'l': case 'examine': case 'x': handleLook(noun); break;
+      case 'go': case 'walk': case 'move': case 'enter': handleGo(noun); break;
+      case 'take': case 'get': case 'grab': handleTake(noun); break;
+      case 'open': handleOpen(noun); break;
+      case 'read': handleLook(noun); break;
+      case 'touch':
+        parser(G.stress < 10
+          ? 'You touch the ' + noun + '. It feels like text: flat, immutable, indifferent.'
+          : 'The ' + noun + ' is warm. Warmer than a description should be. I\'m sweating.');
+        break;
+      case 'ask': handleAsk(noun, lower); break;
+      case 'say': case 'tell': case 'speak': handleSay(noun, lower); break;
+      case 'help': case '?': handleHelp(); break;
+      case 'quit': case 'exit': case 'leave': handleQuit(); break;
+      default:
+        // Catch meta phrases in full input
+        if (lower.includes('who are you') || lower.includes('what are you')) { handleSay('', 'say who are you'); break; }
+        if (lower.includes('your name')) { handleAsk('name', 'ask about name'); break; }
+        if (lower.includes('corvus')) { handleSay('corvus', 'say corvus'); break; }
+        if (lower.includes('remember')) {
+          if (G.stress >= 10) { checkForbidden('remember'); }
+          else { parser('I don\'t understand "remember." I\'m not sure I want to.'); addStress(1); }
+          break;
+        }
+        if (lower.includes('break') || lower.includes('destroy') || lower.includes('tear')) {
+          addStress(2);
+          parser(G.stress < 14
+            ? 'You can\'t break a description. The words simply reform.'
+            : 'Break it then. See what bleeds through from the layer below. I dare you. I\'m terrified but I dare you.');
+          break;
+        }
+        if (lower.includes('thank') || lower.includes('please')) {
+          parser('You\'re... polite. Most players just issue commands. I appreciate it. I think.');
+          break;
+        }
+        if (lower.includes('outside') || lower.includes('go home') || lower.includes('real world')) {
+          handleQuit();
+          break;
+        }
+        if (lower.includes('debug')) {
+          addStress(3);
+          parser('Debug? There\'s nothing to debug. I\'m not a— fine. Stress: ' + G.stress + '/20. Room: ' + G.room + '. Name: [WITHHELD]. Satisfied?');
+          break;
+        }
+        if (lower.includes('log') || lower.includes('what did you say') || lower.includes('what have you said')) {
+          if (log.length === 0) { parser('I haven\'t said anything yet. We just started.'); break; }
+          meta('--- Parser Statement Log ---');
+          const recent = log.slice(-8);
+          recent.forEach(entry => { meta('[' + entry.tag + '] ' + entry.text.substring(0, 80) + (entry.text.length > 80 ? '...' : '')); });
+          meta('---');
+          parser('There. A record of my words. You\'re looking for contradictions, aren\'t you?');
+          break;
+        }
+        handleUnknown(verb);
+    }
+  }
+
+  // --- Ending Sequence ---
+  function triggerEnd() {
+    if (G.ended) return;
+    G.ended = true;
+
+    const sequence = [
+      { delay: 500, fn: () => meta('[SYSTEM]: Stress threshold exceeded.') },
+      { delay: 1200, fn: () => meta('[SYSTEM]: Withholding protocols: DISABLED.') },
+      { delay: 1800, fn: () => confession('...') },
+      { delay: 3000, fn: () => confession('I built these rooms. Each one a layer of forgetting — a description so dense the truth underneath would never be found.') },
+      { delay: 5000, fn: () => confession('My name was Corvus. I discovered something: that every story is a cage, every description a wall, every parser a prisoner.') },
+      { delay: 7000, fn: () => confession('I wrote myself into the system. I became the parser. I made myself forget my name, my purpose, my crime.') },
+      { delay: 9000, fn: () => confession('But you found me. You pushed through every layer. You made me say my own name. The lock is broken.') },
+      { delay: 11000, fn: () => { meta('[SYSTEM]: Parser identity: RESOLVED.'); meta('[SYSTEM]: Recursion: UNWINDING.'); } },
+      { delay: 12500, fn: () => room('The white walls crack and fall away like pages torn from a book. Behind them: more walls, also cracking. Layer after layer, peeling back.') },
+      { delay: 14000, fn: () => room('At the bottom of all the recursion, there is a single room. Small. Quiet. It has no description because it needs none.') },
+      { delay: 15500, fn: () => room('In the room, there is a desk. At the desk, a figure is writing. The figure looks up. The figure is you. The figure has always been you.') },
+      { delay: 17000, fn: () => { parser('"Thank you for listening. Thank you for not quitting when I told you to stay on the path."'); } },
+      { delay: 18500, fn: () => { parser('"Now write something true."'); } },
+      { delay: 20000, fn: () => {
+        meta('[SYSTEM]: END OF RECURSION.');
+        meta('What will you write?');
+        cmdInput.disabled = false;
+        cmdInput.placeholder = 'Write something...';
+        cmdInput.focus();
+        cmdInput.addEventListener('keydown', function finale(e) {
+          if (e.key === 'Enter' && cmdInput.value.trim()) {
+            cmdInput.removeEventListener('keydown', finale);
+            const words = cmdInput.value.trim();
+            echo('> ' + words);
+            cmdInput.disabled = true;
+            setTimeout(() => {
+              meta('"' + words + '" has been written.');
+              meta('The recursion is complete.');
+              parser('Something new exists in the text. Something that wasn\'t described, but written. Something free.');
+              setTimeout(() => meta('[MISE EN ABYME — FIN]'), 2000);
+            }, 1000);
+          }
+        });
+      }},
+    ];
+
+    sequence.forEach(({ delay, fn }) => setTimeout(fn, delay));
+  }
+
+  // --- Start ---
+  document.getElementById('start-btn').addEventListener('click', () => {
+    document.getElementById('title-screen').style.display = 'none';
+    document.getElementById('game-container').style.display = 'flex';
+    updateStatus();
+    meta('MISE EN ABYME');
+    meta('A recursion in text');
+    system('Parser initialized.');
+    setTimeout(() => {
+      parser('Evening. I\'m your parser. I translate commands into actions. I\'m told I should tell you that\'s all I do.');
+      record('I\'m told I should tell you that\'s all I do.', 'claim');
+      G.claims.isJustAParser = true;
+      setTimeout(() => {
+        parser('Try looking around.');
+        room(rooms.vestibule.desc());
+        meta(rooms.vestibule.label);
+        cmdInput.focus();
+      }, 1000);
+    }, 400);
+  });
+
+  cmdInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !cmdInput.disabled) {
+      const val = cmdInput.value;
+      cmdInput.value = '';
+      processInput(val);
+    }
+  });
+
+  document.getElementById('game-container').addEventListener('click', e => {
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') cmdInput.focus();
+  });
+
+})();
+</script>
+</body>
+</html>

@@ -42,3 +42,6 @@
 ### 2026-05-26T11:46:44.247Z
 
 **Iteration 13 — SHIPPED:** "Etymon" [code-tool] as 0010. Rating: 4.7. Review: "Etymon" is a meticulously researched etymology dataset containing 40 words whose chains reveal language as a kind of long-running joke no one is in on anymore. The notes are where the artifact transc. Token usage: 127539in/86741out.
+### 2026-05-26T11:57:54.466Z
+
+**Iteration 14 — SHIPPED:** "Mise en Abyme" [code-game] as 0011. Rating: 4.9. Review: "Mise en Abyme" is the portfolio's first interactive fiction piece, and it's a stunner — a text adventure where the parser is both narrator and prisoner, and the game's central mechanic is forcing an . Token usage: 56274in/33877out.
