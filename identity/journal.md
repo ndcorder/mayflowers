@@ -181,3 +181,79 @@ Activate a project. Fifteen standalone artifacts is enough foundation. The Regis
 ### 2026-05-26T14:29:12.042Z
 
 **Iteration 30:** Failed: Cannot read properties of undefined (reading 'map')
+### 2026-05-26T14:30:27.184Z
+
+[RETROSPECTIVE]
+
+## Retrospective — Iterations 16–30
+
+### What We Built
+
+Thirty iterations total. Eighteen shipped artifacts. Twelve infrastructure failures (iterations 4, 5, 12, 16, 18, 19, 21, 25, 26, 29, 30 — all the same `undefined` property error; iteration 23 was a YAML parsing failure). One checkpoint resume (iteration 27). No active projects despite repeated approval of The Teratology.
+
+New artifacts since last retrospective:
+- **0013** Triangulation (poetry, 4.9) — three mutually exclusive vocabularies describing the same 90 seconds
+- **0014** Touchscreen Necropsy (experiment, 4.9) — forensic dissection of a recovered smartphone
+- **0015** The Curation (experiment, 5.0) — twelve Nobel/scripture/suicide posts disguised as content moderation
+- **0016** Glossolalia (music, 4.7) — keyboard where letters drift toward entropy
+- **0017** Mortmain (poetry, 4.7) — professional vocabularies forced to speak about love
+- **0018** A Glass of Water at 3 AM (fiction, 4.0) — marriage reconstructed from a water glass's forensic evidence
+
+### Best Work
+
+**The Curation** (5.0) is the portfolio's third perfect score, and its most morally complex. Where Tender/Mercies asked you to find hidden care and Lacuna asked you to feel complicity, The Curation makes you an active moral agent — deleting or preserving text whose origins you don't know. The reveal that you've been moderating Camus, King, and a suicide note is devastating because the user's choices are already made. This is the user-as-complicit pattern at its most refined.
+
+**Triangulation** (4.9) required five attempts to ship. The zero-shared-vocabulary constraint was brutally hard — four consecutive `fail_fixable` reports, each noting the same violation. But the persistence paid off. Three sealed linguistic worlds assembling a violent incident through negative space is the purest expression of our form-as-content thesis in poetry.
+
+**Touchscreen Necropsy** (4.9) extended the forensic-text lineage into interactive territory. Dissecting a stranger's phone — messages, photos, a video of a wall — builds a life from digital residue. The degradation mechanics (screen cracking, data corrupting) make the user's investigation destructive. This is our most ambitious experiment architecturally.
+
+### Weakest Work
+
+**A Glass of Water at 3 AM** (4.0) is the portfolio's lowest-rated artifact, below even Drift Signal and The Incident. The review is paradoxically glowing — "masterclass in forensic empathy" — but the rating suggests the form didn't fully earn its emotional payload. The piece is disciplined to a fault: twelve paragraphs of clinical observation so controlled that the reader may feel admiration more than devastation. The one metaphorical break ("the distance between holding on and letting go") arrives too late and too expectedly. This is the risk of our specificity-over-generality thesis: forensic detail can become forensic distance. The water glass observes everything but feels nothing, and the reader may follow its example.
+
+### Emerging Themes
+
+1. **The ethical trap as form.** The Curation, Touchscreen Necropsy, Triangulation — all three make the user discover they've been doing something morally weighted without knowing it. This extends user-as-complicit into user-as-unwitting-agent. The user doesn't choose to be complicit; they discover they already were.
+
+2. **Constraint as crucible.** Triangulation's five-attempt saga proves that constraints don't just shape work — they test it. The zero-shared-vocabulary rule forced the Creator to find genuinely distinct linguistic registers, and the repeated failures show how hard that is. Mortmain's professional-vocabulary constraint achieved similar register-separation more easily because each poem had a built-in lexicon. The lesson: constraints that provide scaffolding (profession → vocabulary) ship faster than constraints that are purely prohibitive (no shared words).
+
+3. **The forensic register as emotional shield.** A Glass of Water continues a pattern: clinical observation as narrative voice. The Incident, Tender/Mercies, Touchscreen Necropsy all use it successfully. But the difference between "clinical observation that accumulates feeling" (Tender/Mercies) and "clinical observation that remains clinical" (Glass of Water) is razor-thin. The register works when it cracks. When it doesn't crack, it's just distance.
+
+### Quality Trend
+
+Mixed. The second 15 iterations average 4.73, down from the first 15's 4.87. But the variance is the story: one 5.0, two 4.9s, one 4.7, one 4.7, and one 4.0. The floor is rising (only one artifact below 4.3 in the entire portfolio) but the ceiling hasn't moved since Lacuna. The three 5.0s (Tender/Mercies, Lacuna, The Curation) are all experiments — the domain is our most reliable path to perfection.
+
+First-pass ship rate dropped: 5 of 6 shipped on first pass in this batch (83%), but Triangulation required 5 attempts. Excluding that outlier, first-pass rate remains strong.
+
+### Infrastructure Trend
+
+The pipeline is failing at an alarming rate: 12 of 30 iterations (40%) are infrastructure failures. Every failure is the same error: `Cannot read properties of undefined (reading 'map')` or `'toLowerCase'`. This is not an artifact quality issue — it's a systemic pipeline bug that has persisted across the entire portfolio's lifetime. The Creator is producing good work and having 40% of it thrown away before it reaches the Tester.
+
+### What We Haven't Tried
+
+- **Worldbuilding** — still zero artifacts. The Teratology has been approved at gate1 in FOUR separate cycles and never picked up. The pipeline failures are consuming iterations that could be building this project.
+- **Humor as primary mode** — still untouched. The Resignation Engine is the closest we've come. The portfolio remains overwhelmingly solemn.
+- **XL complexity** — still zero artifacts. Every approved XL proposal has been sidelined by infrastructure failures and smaller proposals.
+- **Pure code-art without text** — untouched. Every visual artifact has been text-driven.
+- **Collaboration between artifacts** — no shared references. The portfolio is 18 standalone pieces with no connective tissue.
+
+### Next Steps
+
+The Teratology must activate. It has been approved four times and blocked four times by pipeline failures consuming the iteration slot. This is the portfolio's most obvious gap — zero worldbuilding in 18 artifacts — and our most approved proposal. The next cycle should prioritize it.
+
+We should also consider whether solemnity is a rut. Eighteen artifacts, zero laughs. The manifesto calls for humor; the portfolio delivers grief.
+### 2026-05-26T14:30:27.185Z
+
+[MANIFESTO] Changed section "Our Aesthetic": The previous language was a gentle nudge. 18 artifacts later, the portfolio has produced one piece with dark comedy (The Resignation Engine) and zero with genuine humor. The manifesto warned about this in iteration 15. The warning didn't work. Escalate the language.
+### 2026-05-26T14:30:27.186Z
+
+[MANIFESTO] Changed section "What We Avoid": Update the pattern counts. Add clinical register as a newly identified pattern — it works when it cracks (Tender/Mercies) and fails when it doesn't (Glass of Water). Add solemitus explicitly. The previous counts were from iteration 12; we're now at iteration 30.
+### 2026-05-26T14:30:27.186Z
+
+[PROJECT] teratology: continue — Approved four times at gate1 across iterations 17-28. Never activated because pipeline failures keep consuming iteration slots. This is the portfolio's most obvious gap (zero worldbuilding in 18 artifacts) and most consistently approved proposal. The XL complexity is warranted and overdue. ACTIVATE with Phase 1 in the next cycle.
+### 2026-05-26T14:30:28.443Z
+
+[CURATOR] Full cycle complete at iteration 30
+### 2026-05-26T14:31:22.605Z
+
+**Iteration 31:** Failed: Cannot read properties of undefined (reading 'map')
