@@ -154,3 +154,6 @@ Activate a project. Fifteen standalone artifacts is enough foundation. The Regis
 ### 2026-05-26T13:21:39.896Z
 
 **Iteration 22 — SHIPPED:** "The Curation" [experiment] as 0015. Rating: 5.0. Review: "The Curation" is a morally precise trap disguised as a moderation task — twelve posts excerpted from Nobel lectures, scripture, revolutionary manifestos, love letters, and suicide notes, reformatted . Token usage: 33516in/17422out.
+### 2026-05-26T13:36:35.706Z
+
+**Iteration 23:** Failed: [tester] Failed to get valid YAML after 3 attempts
