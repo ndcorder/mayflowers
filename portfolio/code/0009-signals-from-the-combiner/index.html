@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signals from the Combiner</title>
+<style>
+  :root {
+    --bg: #09090b;
+    --surface: #131316;
+    --surface-raised: #1a1a1f;
+    --text: #ece8e0;
+    --text-muted: #5e5e68;
+    --accent: #d4915e;
+    --accent2: #4e99b5;
+    --wave: #4ae0d2;
+    --source-a: #c97a3a;
+    --source-b: #4a8fbf;
+    --grid: #18181f;
+    --border: #26262e;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Courier New', Courier, monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .bg-glow {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse at 20% 15%, rgba(74,224,210,0.035) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 85%, rgba(212,145,94,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(30,30,40,0.5) 0%, transparent 80%);
+    animation: glowPulse 15s ease-in-out infinite alternate;
+  }
+  @keyframes glowPulse { 0%{opacity:.8} 100%{opacity:1.2} }
+  .container {
+    position: relative; z-index: 1;
+    max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem;
+  }
+  header { margin-bottom: 2rem; }
+  h1 {
+    font-size: clamp(1.8rem,4vw,2.8rem); font-weight: 200;
+    letter-spacing: .15em; text-transform: uppercase; color: var(--text); line-height: 1.1;
+  }
+  header p {
+    font-size: .75rem; color: var(--text-muted);
+    letter-spacing: .2em; text-transform: uppercase; margin-top: .4rem;
+  }
+  .accent-line {
+    height: 1px;
+    background: linear-gradient(90deg, var(--accent), var(--wave) 50%, var(--accent2));
+    margin-top: .75rem; opacity: .5;
+  }
+  .input-section { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  @media(max-width:640px){ .input-section{grid-template-columns:1fr} }
+  .text-input { display: flex; flex-direction: column; gap: .4rem; }
+  .text-input label {
+    font-size: .65rem; letter-spacing: .25em; text-transform: uppercase; color: var(--text-muted);
+  }
+  .text-input textarea {
+    width: 100%; height: 120px; padding: .8rem 1rem;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+    color: var(--text); font-family: 'Courier New', Courier, monospace;
+    font-size: .85rem; line-height: 1.5; resize: vertical;
+    transition: border-color .2s, box-shadow .2s; outline: none;
+  }
+  .text-input textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(212,145,94,.15);
+  }
+  .text-input textarea::placeholder { color: #2e2e38; }
+  .text-input.a label { color: var(--source-a); }
+  .text-input.b label { color: var(--source-b); }
+  .controls { display: flex; gap: 1rem; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; }
+  .btn-generate {
+    padding: .65rem 2rem; background: transparent; border: 1px solid var(--accent);
+    color: var(--accent); font-family: 'Courier New', Courier, monospace;
+    font-size: .75rem; letter-spacing: .2em; text-transform: uppercase;
+    cursor: pointer; transition: all .25s; border-radius: 3px;
+  }
+  .btn-generate:hover {
+    background: var(--accent); color: var(--bg);
+    box-shadow: 0 0 20px rgba(212,145,94,.2);
+  }
+  .btn-generate:active { transform: scale(.97); }
+  .btn-generate:focus-visible { outline: 2px solid var(--wave); outline-offset: 2px; }
+  .btn-generate.generating { opacity: .5; pointer-events: none; }
+  .btn-params {
+    padding: .65rem 1.5rem; background: transparent; border: 1px solid var(--border);
+    color: var(--text-muted); font-family: 'Courier New', Courier, monospace;
+    font-size: .7rem; letter-spacing: .15em; text-transform: uppercase;
+    cursor: pointer; transition: all .25s; border-radius: 3px;
+  }
+  .btn-params:hover { border-color: var(--text-muted); color: var(--text); }
+  .btn-params:focus-visible { outline: 2px solid var(--wave); outline-offset: 2px; }
+  .params-panel {
+    display: none; gap: 1.5rem; margin-bottom: 1.5rem; padding: 1rem 1.2rem;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 4px;
+  }
+  .params-panel.open { display: flex; flex-wrap: wrap; }
+  .param { display: flex; flex-direction: column; gap: .3rem; min-width: 120px; }
+  .param label {
+    font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--text-muted);
+  }
+  .param input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    height: 3px; background: var(--border); border-radius: 2px; outline: none;
+  }
+  .param input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 12px; height: 12px; border-radius: 50%; background: var(--accent); cursor: pointer;
+  }
+  .param input[type="range"]::-moz-range-thumb {
+    width: 12px; height: 12px; border-radius: 50%; background: var(--accent);
+    cursor: pointer; border: none;
+  }
+  .param-value { font-size: .65rem; color: var(--accent); text-align: right; }
+  .seismograph-section {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+    overflow: hidden; margin-bottom: 1.5rem;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .seismograph-section.visible { opacity: 1; transform: translateY(0); }
+  .seismograph-section svg { display: block; width: 100%; height: auto; }
+  .output-section {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+    padding: 1.5rem;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity .6s ease .15s, transform .6s ease .15s;
+  }
+  .output-section.visible { opacity: 1; transform: translateY(0); }
+  .output-header {
+    font-size: .6rem; letter-spacing: .25em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: .75rem;
+  }
+  .output-text { font-size: .9rem; line-height: 2; color: var(--text); max-width: 700px; }
+  .output-text .sent {
+    display: block; margin-bottom: .3rem;
+    opacity: 0; animation: fadeSent .5s forwards;
+  }
+  @keyframes fadeSent { to { opacity: 1; } }
+  .output-text .word-a {
+    color: var(--source-a); opacity: .7; transition: opacity .2s;
+  }
+  .output-text .word-a:hover { opacity: 1; }
+  .output-text .word-b {
+    color: var(--source-b); opacity: .7; transition: opacity .2s;
+  }
+  .output-text .word-b:hover { opacity: 1; }
+  .output-text .word-shared {
+    color: var(--wave); opacity: .7; transition: opacity .2s;
+  }
+  .output-text .word-shared:hover { opacity: 1; }
+  .output-text .word-neutral { color: var(--text-muted); transition: opacity .2s; }
+  .legend {
+    display: flex; gap: 1.5rem; margin-top: 1rem; padding-top: .75rem;
+    border-top: 1px solid var(--border); flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: .4rem;
+    font-size: .6rem; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .legend-swatch { width: 16px; height: 3px; border-radius: 1px; }
+  @media(prefers-reduced-motion:reduce){
+    .bg-glow { animation: none; }
+    .seismograph-section, .output-section { transition: none; }
+    .output-text .sent { animation: none; opacity: 1; }
+  }
+  footer {
+    margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border);
+    text-align: center; font-size: .6rem; letter-spacing: .15em;
+    text-transform: uppercase; color: #2a2a32;
+  }
+</style>
+</head>
+<body>
+  <div class="bg-glow" aria-hidden="true"></div>
+  <div class="container">
+    <header>
+      <h1>Signals from the Combiner</h1>
+      <p>Text collision seismograph</p>
+      <div class="accent-line" aria-hidden="true"></div>
+    </header>
+
+    <section class="input-section" aria-label="Source text inputs">
+      <div class="text-input a">
+        <label for="sourceA">Source Signal A</label>
+        <textarea id="sourceA" placeholder="Enter first text..." aria-label="Source text A">The old house groaned in the winter wind, remembering every soul that had walked its darkened halls. Shadows gathered like forgotten promises.</textarea>
+      </div>
+      <div class="text-input b">
+        <label for="sourceB">Source Signal B</label>
+        <textarea id="sourceB" placeholder="Enter second text..." aria-label="Source text B">She danced through golden meadows under skies that burned with impossible light, her laughter ringing across the quiet world like bells of hope.</textarea>
+      </div>
+    </section>
+
+    <div class="controls">
+      <button class="btn-generate" id="btnGenerate" aria-label="Generate seismograph">Collide</button>
+      <button class="btn-params" id="btnParams" aria-expanded="false" aria-controls="paramsPanel">Parameters</button>
+    </div>
+
+    <div class="params-panel" id="paramsPanel" role="group" aria-label="Generation parameters">
+      <div class="param">
+        <label for="paramSeeds">Seeds</label>
+        <input type="range" id="paramSeeds" min="2" max="8" value="4">
+        <span class="param-value" id="paramSeedsVal" aria-live="polite">4</span>
+      </div>
+      <div class="param">
+        <label for="paramLength">Max Length</label>
+        <input type="range" id="paramLength" min="8" max="35" value="20">
+        <span class="param-value" id="paramLengthVal" aria-live="polite">20</span>
+      </div>
+      <div class="param">
+        <label for="paramNoise">Noise</label>
+        <input type="range" id="paramNoise" min="0" max="50" value="15">
+        <span class="param-value" id="paramNoiseVal" aria-live="polite">15%</span>
+      </div>
+    </div>
+
+    <div class="seismograph-section" id="seismographSection" role="img" aria-label="Seismograph waveform visualization of combined text emotion">
+      <svg id="seismograph" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 600"></svg>
+    </div>
+
+    <section class="output-section" id="outputSection" aria-label="Combined signal output">
+      <div class="output-header">Combined Signal</div>
+      <div class="output-text" id="outputText" aria-live="polite"></div>
+      <div class="legend" aria-label="Word origin legend">
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:var(--source-a)" aria-hidden="true"></div> From A
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:var(--source-b)" aria-hidden="true"></div> From B
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:var(--wave)" aria-hidden="true"></div> Shared
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:var(--text-muted)" aria-hidden="true"></div> Neutral
+        </div>
+      </div>
+    </section>
+
+    <footer>Markov chain text collision &mdash; emotional valence seismograph</footer>
+  </div>
+
+  <script>
+  (function() {
+
+    /* ===== EMOTIONAL VALENCE LEXICON ===== */
+    /* Negative values: grief, fear, anger, loss */
+    /* Positive values: joy, love, beauty, hope */
+    /* Unlisted words default to 0 (emotional silence) */
+
+    var LEXICON = {
+      /* --- Strong negative (-0.9 to -0.7) --- */
+      'hate':-0.95,'hatred':-0.95,'despise':-0.9,'loathing':-0.9,
+      'murder':-0.95,'kill':-0.85,'killed':-0.85,'death':-0.9,'dead':-0.85,
+      'dying':-0.8,'die':-0.8,'died':-0.8,
+      'destroy':-0.9,'destroyed':-0.9,'destruction':-0.9,
+      'devastate':-0.9,'devastated':-0.9,
+      'anguish':-0.9,'agony':-0.9,'torment':-0.9,'torture':-0.9,
+      'misery':-0.85,'despair':-0.9,'desperate':-0.8,
+      'horror':-0.9,'horrific':-0.9,'terror':-0.9,'terrified':-0.85,'terrifying':-0.85,
+      'cruel':-0.85,'cruelty':-0.85,'brutal':-0.85,'brutality':-0.85,
+      'savage':-0.8,'barbaric':-0.8,
+      'suffer':-0.85,'suffering':-0.85,'suffered':-0.8,
+      'rage':-0.85,'fury':-0.85,'wrath':-0.85,'angry':-0.75,'anger':-0.8,
+      'pain':-0.8,'painful':-0.8,
+      'war':-0.8,'poison':-0.7,'venom':-0.7,'toxic':-0.65,
+      'evil':-0.9,'wicked':-0.8,'sin':-0.7,'sinful':-0.7,
+      'corrupt':-0.75,'corruption':-0.75,
+      'betray':-0.8,'betrayal':-0.85,'treason':-0.8,'traitor':-0.8,
+      'doom':-0.8,'doomed':-0.8,
+      'drown':-0.7,'drowning':-0.7,
+      'curse':-0.75,'cursed':-0.75,
+      'scream':-0.8,'screaming':-0.8,'screams':-0.8,'shriek':-0.75,
+
+      /* --- Moderate negative (-0.69 to -0.4) --- */
+      'fear':-0.8,'afraid':-0.75,'frightened':-0.75,'scared':-0.7,'dread':-0.8,
+      'weep':-0.7,'weeping':-0.7,'cried':-0.65,'cry':-0.6,'crying':-0.6,'tears':-0.5,
+      'wound':-0.7,'wounded':-0.7,'bleed':-0.7,'bleeding':-0.7,'blood':-0.5,
+      'alone':-0.6,'lonely':-0.7,'loneliness':-0.7,'isolated':-0.6,
+      'abandoned':-0.75,'abandon':-0.7,
+      'broken':-0.65,'shattered':-0.7,
+      'fail':-0.6,'failure':-0.65,'failed':-0.6,
+      'sick':-0.6,'illness':-0.6,'disease':-0.7,'plague':-0.8,'fever':-0.5,
+      'poverty':-0.7,'starving':-0.75,'hunger':-0.5,
+      'prison':-0.7,'trapped':-0.7,'captive':-0.65,'chained':-0.65,'chains':-0.6,
+      'shame':-0.7,'ashamed':-0.7,'guilt':-0.65,'guilty':-0.65,'regret':-0.6,
+      'rot':-0.7,'rotting':-0.7,'decay':-0.65,'decaying':-0.65,
+      'ruin':-0.7,'ruined':-0.7,
+      'sad':-0.6,'sadness':-0.65,'sorrow':-0.7,'grief':-0.75,'grieving':-0.7,
+      'mourn':-0.7,'mourning':-0.7,'mournful':-0.65,
+      'bleak':-0.6,
+      'worry':-0.5,'worried':-0.5,'worrying':-0.5,'anxious':-0.55,'anxiety':-0.55,
+      'chaos':-0.5,'chaotic':-0.5,'madness':-0.6,'insane':-0.5,
+      'dangerous':-0.55,'danger':-0.5,
+      'threat':-0.55,'threatening':-0.55,'menace':-0.6,
+      'crush':-0.5,'crushed':-0.6,'smother':-0.6,'stifling':-0.5,
+      'sinking':-0.55,'sink':-0.5,
+      'darkness':-0.6,'darkened':-0.5,
+      'bitter':-0.6,'bitterly':-0.6,
+      'lost':-0.55,'loss':-0.6,'losing':-0.55,'gone':-0.5,
+      'tremble':-0.5,'trembling':-0.5,'shiver':-0.4,'shaking':-0.4,
+      'groan':-0.45,'groaned':-0.45,'moan':-0.5,'whimper':-0.55,
+      'haunt':-0.6,'haunted':-0.65,'haunting':-0.5,'ghost':-0.4,'ghosts':-0.4,
+      'rejected':-0.55,'rejection':-0.55,
+
+      /* --- Mild negative (-0.39 to -0.1) --- */
+      'dark':-0.4,'shadow':-0.35,'shadows':-0.35,
+      'cold':-0.35,'coldness':-0.45,
+      'solitude':-0.3,'break':-0.5,'broke':-0.55,'breaking':-0.55,
+      'crack':-0.4,'cracked':-0.45,
+      'falling':-0.45,'fell':-0.4,'fall':-0.3,
+      'dust':-0.35,'grave':-0.6,'graveyard':-0.65,'ashes':-0.5,
+      'burn':-0.4,'burning':-0.45,'burned':-0.5,'fire':-0.3,'flames':-0.35,
+      'storm':-0.3,'tempest':-0.4,
+      'wrong':-0.5,'bad':-0.5,'worse':-0.6,'worst':-0.7,
+      'terrible':-0.7,'terribly':-0.6,
+      'awful':-0.7,'horrible':-0.75,'horrendous':-0.8,'dreadful':-0.7,
+      'ugly':-0.55,'hideous':-0.7,'grotesque':-0.7,'monstrous':-0.7,'monster':-0.6,
+      'empty':-0.5,'hollow':-0.55,'void':-0.6,'nothing':-0.3,'nowhere':-0.4,
+      'frozen':-0.4,'eerie':-0.4,'uncanny':-0.35,
+      'heavy':-0.3,'burden':-0.55,
+      'forgotten':-0.5,'forgot':-0.4,'forget':-0.35,
+      'withered':-0.5,'faded':-0.3,'fading':-0.35,
+      'weak':-0.45,'weakness':-0.5,'frail':-0.45,
+      'struggle':-0.4,'struggling':-0.45,
+      'gloomy':-0.5,'somber':-0.4,'dreary':-0.5,
+      'deny':-0.4,'denied':-0.5,'refuse':-0.35,
+      'confuse':-0.3,'confused':-0.35,'confusion':-0.3,
+      'secret':-0.15,'secrets':-0.2,'hidden':-0.2,
+      'smoke':-0.2,'fog':-0.2,'mist':-0.15,'haze':-0.2,
+      'winter':-0.2,'autumn':-0.1,'night':-0.15,'midnight':-0.25,
+      'wind':-0.1,'rain':-0.15,'raining':-0.2,'pouring':-0.25,
+      'slow':-0.1,'slowly':-0.1,'stopped':-0.3,
+      'away':-0.1,'left':-0.15,
+      'hard':-0.2,'difficult':-0.25,'trouble':-0.4,'troubled':-0.4,
+      'wild':-0.1,'weird':-0.2,'strange':-0.15,
+      'silent':-0.2,'silence':-0.25,'still':-0.1,
+      'wait':-0.15,'waiting':-0.2,
+      'apart':-0.25,'separate':-0.2,
+      'end':-0.3,'ending':-0.25,'last':-0.1,'final':-0.1,
+      'never':-0.2,'no':-0.2,'not':-0.3,
+      'down':-0.1,'below':-0.1,'without':-0.15,
+      'low':-0.1,'far':-0.05,'long':-0.05,
+      'hopeless':-0.7,'impossible':-0.2,
+
+      /* --- Neutral zone (-0.09 to +0.09) --- */
+      'old':-0.15,'ancient':-0.1,'fragile':-0.2,
+      'house':0.05,'room':0.05,'time':0,'day':0.1,'days':0.1,
+      'year':0.05,'years':0.05,
+      'high':0.1,'man':0,'woman':0,'she':0,'he':0,'they':0,
+      'we':0.1,'say':0,'said':0,'tell':0.1,'told':0.05,
+      'upon':0.05,'between':0,'within':0.05,
+      'stood':0,'stand':0.05,'sit':-0.05,'sat':-0.05,'lying':-0.1,
+      'turned':-0.05,'seemed':0,'seem':0,
+
+      /* --- Mild positive (+0.1 to +0.3) --- */
+      'know':0.2,'knowing':0.3,'knowledge':0.4,
+      'think':0.15,'thought':0.1,'feel':0.15,'felt':0.1,
+      'see':0.1,'saw':0.05,'look':0.05,'watch':0.05,
+      'come':0.1,'came':0.05,'give':0.3,'gave':0.25,
+      'make':0.15,'made':0.1,'keep':0.1,'kept':0.05,
+      'move':0.15,'moved':0.1,'running':0.1,'run':0.05,
+      'above':0.1,'near':0.1,
+      'hand':0.1,'hands':0.1,'eye':0.1,'eyes':0.15,'face':0.1,
+      'water':0.15,'stone':0,'ground':0,
+      'whisper':0.2,'whispers':0.2,'whispered':0.2,'quiet':0.15,
+      'voice':0.2,'voices':0.2,'sound':0.15,'echo':0.15,'echoes':0.15,
+      'color':0.3,'colors':0.35,'vivid':0.4,
+      'scent':0.3,'aroma':0.4,
+      'taste':0.3,'flavor':0.3,
+      'sky':0.3,'skies':0.35,'moon':0.35,'moonlight':0.45,
+      'every':0.1,'walked':0.05,'walking':0.1,'walk':0.1,
+      'across':0.05,'through':0.05,'like':0.2,
+      'world':0.15,'earth':0.2,
+      'path':0.2,'road':0.15,'way':0.15,'trail':0.2,
+      'window':0.1,'door':0.05,'doorway':0.1,'gate':0.1,
+      'deep':0.15,'depth':0.2,'vast':0.2,'vastness':0.25,
+      'float':0.3,'floating':0.35,'drift':0.15,'drifting':0.2,
+      'sigh':0.1,
+      'wander':0.2,'wandering':0.2,
+      'certain':0.2,'certainly':0.25,'sure':0.3,'surely':0.3,
+      'perhaps':0.05,'maybe':0.05,'somehow':0.1,'somewhere':0.15,
+      'ever':0.2,'always':0.4,'whole':0.4,'entire':0.15,'all':0.15,
+      'first':0.2,
+      'power':0.3,'wilderness':0.2,
+      'possible':0.3,
+      'open':0.25,'opening':0.3,'opened':0.25,
+      'clear':0.35,'clarity':0.4,'clean':0.3,'fresh':0.4,
+      'new':0.3,'change':0.2,'changed':0.2,
+      'light':0.5,
+
+      /* --- Moderate positive (+0.3 to +0.55) --- */
+      'hope':0.8,'hopeful':0.75,'hoped':0.7,'hoping':0.7,
+      'dream':0.7,'dreams':0.7,'dreaming':0.7,'dreamt':0.65,
+      'bright':0.6,'brightness':0.6,'glow':0.55,'glowing':0.6,
+      'sunshine':0.75,'sunlight':0.7,'sun':0.5,'golden':0.65,'gold':0.55,
+      'warm':0.55,'warmth':0.6,'gentle':0.6,'tender':0.6,'tenderness':0.65,
+      'sweet':0.6,'sweetness':0.65,'soft':0.35,'softly':0.4,
+      'kind':0.65,'kindness':0.7,'compassion':0.75,'mercy':0.6,
+      'friend':0.7,'friends':0.7,'friendship':0.75,'companion':0.6,'together':0.55,
+      'family':0.6,'mother':0.45,'father':0.4,'child':0.35,'children':0.4,'baby':0.45,
+      'comfort':0.6,'comforting':0.6,'safe':0.6,'safety':0.6,'shelter':0.45,
+      'birth':0.5,'born':0.45,'begin':0.35,'beginning':0.4,'began':0.3,
+      'spring':0.4,'summer':0.3,'morning':0.35,'dawn':0.45,'sunrise':0.55,
+      'garden':0.5,'flower':0.55,'flowers':0.55,'bloom':0.6,'blooming':0.6,'blossom':0.6,
+      'nature':0.45,'forest':0.3,'river':0.3,'stream':0.3,'ocean':0.35,'sea':0.3,
+      'mountain':0.3,'mountains':0.35,'meadow':0.5,'field':0.25,'fields':0.25,
+      'alive':0.55,'life':0.45,'living':0.4,'breathe':0.4,'breath':0.35,
+      'spirit':0.45,'soul':0.35,'heart':0.4,'hearts':0.4,
+      'gift':0.6,'treasure':0.6,'precious':0.6,'cherish':0.7,
+      'truth':0.5,'honest':0.5,'honesty':0.55,'sincere':0.55,'sincerity':0.6,
+      'trust':0.6,'faith':0.55,'faithful':0.6,'loyal':0.6,'loyalty':0.65,
+      'heal':0.7,'healing':0.7,'healed':0.65,'cure':0.6,'recovery':0.6,
+      'promise':0.5,'promises':0.45,'vow':0.5,'oath':0.4,
+      'remember':0.3,'remembering':0.35,'memory':0.2,'memories':0.3,
+      'forgive':0.6,'forgiveness':0.65,'forgiven':0.6,
+      'welcome':0.6,'home':0.5,'return':0.35,'returned':0.35,
+      'touch':0.35,'touching':0.4,'feeling':0.3,
+      'wish':0.4,'wishing':0.4,'desire':0.3,'longing':0.15,'yearn':0.2,
+      'rise':0.4,'rising':0.45,'rose':0.35,
+      'discover':0.5,'discovery':0.55,'found':0.3,'find':0.35,'finding':0.4,
+      'create':0.5,'creation':0.5,'creative':0.5,'build':0.4,'building':0.4,'built':0.35,
+      'grow':0.4,'growing':0.45,'growth':0.45,'flourish':0.6,'thrive':0.6,
+      'imagine':0.4,'imagination':0.45,
+      'believe':0.5,'belief':0.45,
+      'please':0.4,'pleased':0.5,'pleasure':0.6,
+      'proud':0.6,'pride':0.4,'honor':0.5,'honored':0.55,
+      'noble':0.5,'dignity':0.5,'respect':0.5,
+      'mystery':0.2,'mysterious':0.15,'mystic':0.3,'mystical':0.35,
+      'stars':0.5,'star':0.45,
+      'bells':0.4,'bell':0.35,'ringing':0.35,'rang':0.3,
+      'radiance':0.8,'radiant':0.8,
+
+      /* --- Strong positive (+0.55 to +1.0) --- */
+      'love':0.95,'loving':0.85,'loved':0.85,'beloved':0.9,
+      'joy':0.9,'joyful':0.85,'joyous':0.85,
+      'happiness':0.85,'happy':0.8,'happiest':0.9,
+      'peace':0.8,'peaceful':0.8,'tranquil':0.75,'serene':0.8,'serenity':0.8,'calm':0.6,
+      'beautiful':0.8,'beauty':0.8,'gorgeous':0.75,'lovely':0.75,'magnificent':0.75,
+      'wonder':0.7,'wonderful':0.8,'wondrous':0.75,'marvelous':0.75,'miracle':0.8,
+      'free':0.7,'freedom':0.8,'liberated':0.7,'liberation':0.75,
+      'laugh':0.7,'laughter':0.75,'laughing':0.7,'smile':0.7,'smiling':0.7,
+      'dance':0.65,'dancing':0.7,'danced':0.65,'dances':0.65,
+      'sing':0.6,'singing':0.65,'sang':0.6,'song':0.6,'songs':0.6,'melody':0.65,
+      'music':0.65,'harmony':0.7,'symphony':0.7,'rhythm':0.5,
+      'grace':0.7,'graceful':0.7,'elegant':0.6,'elegance':0.6,
+      'bliss':0.85,'ecstasy':0.8,'euphoria':0.8,
+      'delight':0.7,'delighted':0.7,'delightful':0.7,
+      'triumph':0.75,'triumphant':0.8,'victory':0.75,'conquer':0.5,
+      'courage':0.7,'courageous':0.7,'brave':0.65,'bravery':0.7,'bold':0.5,
+      'strong':0.5,'strength':0.55,'powerful':0.45,
+      'wisdom':0.6,'wise':0.55,
+      'paradise':0.8,'heaven':0.75,'divine':0.6,'sacred':0.55,'holy':0.5,
+      'bless':0.65,'blessed':0.7,'blessing':0.7,
+      'perfect':0.7,'perfection':0.7,'pure':0.5,'purity':0.55,
+      'incredible':0.6,'amazing':0.65,'fantastic':0.65,'excellent':0.6,
+      'good':0.5,'great':0.5,'greatest':0.6,'better':0.45,'best':0.55,
+      'exquisite':0.75,'splendid':0.7,'glorious':0.7,'glory':0.6,
+      'soar':0.6,'soaring':0.65,'fly':0.5,'flying':0.55,
+      'shine':0.6,'shining':0.65,'shone':0.6,'sparkle':0.6,'sparkling':0.6,'glitter':0.55,
+      'celebrate':0.7,'celebration':0.7,'festival':0.6,'feast':0.5,
+      'play':0.5,'playing':0.55,'playful':0.55,
+      'journey':0.35,'adventure':0.5,
+      'kiss':0.7,'embrace':0.7,'hug':0.6,'hold':0.35,'holding':0.4,
+      'awe':0.6,'reverence':0.55,'veneration':0.5,
+      'hero':0.55,'heroic':0.6,'champion':0.55,'legend':0.45,'legendary':0.5,
+      'magic':0.6,'magical':0.65,'enchant':0.6,'enchanted':0.65,'enchantment':0.6,
+      'eternal':0.4,'eternity':0.45,'immortal':0.4,'infinity':0.35,'infinite':0.35,
+      'forever':0.5,'yes':0.5,
+      'fragrance':0.5,'perfume':0.4,
+      'complete':0.5,
+      'calm':0.6
+    };
+
+    /* ===== PURE FUNCTIONS ===== */
+
+    /* Break text into lowercase word tokens, stripping punctuation */
+    function tokenize(text) {
+      return text.toLowerCase().replace(/[^\w\s']/g, ' ').split(/\s+/).filter(function(w) {
+        return w.length > 0;
+      });
+    }
+
+    /* Build a bigram Markov chain: each word maps to an array of its observed successors */
+    function buildChain(tokens) {
+      var chain = {};
+      for (var i = 0; i < tokens.length - 1; i++) {
+        var key = tokens[i];
+        if (!chain[key]) chain[key] = [];
+        chain[key].push(tokens[i + 1]);
+      }
+      return chain;
+    }
+
+    /* Merge two chains by concatenating successor lists for shared keys */
+    function mergeChains(c1, c2) {
+      var merged = {};
+      var k;
+      for (k in c1) {
+        if (c1.hasOwnProperty(k)) merged[k] = c1[k].slice();
+      }
+      for (k in c2) {
+        if (c2.hasOwnProperty(k)) {
+          if (!merged[k]) merged[k] = [];
+          merged[k] = merged[k].concat(c2[k]);
+        }
+      }
+      return merged;
+    }
+
+    /* Walk the chain from seedWord for up to maxLen steps */
+    function generateSentence(chain, seedWord, minLen, maxLen) {
+      var words = [seedWord];
+      var current = seedWord;
+      for (var i = 1; i < maxLen; i++) {
+        var nexts = chain[current];
+        if (!nexts || nexts.length === 0) break;
+        var next = nexts[Math.floor(Math.random() * nexts.length)];
+        words.push(next);
+        current = next;
+        /* After reaching minimum length, probabilistically stop */
+        if (i >= minLen - 1 && (Math.random() < 0.25 || !chain[current])) break;
+      }
+      return words;
+    }
+
+    /* Look up a word's emotional valence; unknown words return 0 */
+    function getValence(word) {
+      var w = word.toLowerCase().replace(/[^a-z']/g, '');
+      return LEXICON.hasOwnProperty(w) ? LEXICON[w] : 0;
+    }
+
+    /* Classify a word by its source text origin */
+    function classifyWord(word, setA, setB) {
+      var w = word.toLowerCase().replace(/[^a-z']/g, '');
+      var inA = setA.has(w);
+      var inB = setB.has(w);
+      if (inA && inB) return 'shared';
+      if (inA) return 'a';
+      if (inB) return 'b';
+      return 'neutral';
+    }
+
+    /* Fisher-Yates shuffle */
+    function shuffle(arr) {
+      for (var i = arr.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+      }
+      return arr;
+    }
+
+    /* Escape special XML characters */
+    function escapeXml(s) {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    /* ===== SVG CONSTANTS ===== */
+    var W = 1100, H = 600;
+    var MID_Y = H * 0.5;
+    var AMP = H * 0.32;
+    var PAD_L = 50, PAD_R = 50;
+
+    /* ===== SVG RENDERING ===== */
+
+    /* Convert an array of words into wave points across the x-axis */
+    function buildWavePoints(words, startX, endX, noiseFactor) {
+      var n = words.length;
+      if (n === 0) return [];
+      var segW = (endX - startX) / n;
+      var pts = [];
+      for (var i = 0; i < n; i++) {
+        var v = getValence(words[i]);
+        var noise = (Math.random() - 0.5) * noiseFactor * AMP * 0.01;
+        var y = MID_Y - (v + noise * 0.3) * AMP;
+        pts.push({ x: startX + i * segW + segW * 0.5, y: y, valence: v, word: words[i] });
+      }
+      return pts;
+    }
+
+    /* Render an array of points as a smooth cubic bezier SVG path */
+    function pointsToSmoothPath(pts, tension) {
+      tension = tension || 0.3;
+      if (pts.length < 2) {
+        return pts.length === 1
+          ? 'M' + pts[0].x.toFixed(1) + ',' + pts[0].y.toFixed(1)
+          : '';
+      }
+      var d = 'M' + pts[0].x.toFixed(1) + ',' + pts[0].y.toFixed(1);
+      for (var i = 0; i < pts.length - 1; i++) {
+        var p0 = pts[Math.max(0, i - 1)];
+        var p1 = pts[i];
+        var p2 = pts[i + 1];
+        var p3 = pts[Math.min(pts.length - 1, i + 2)];
+        var cp1x = p1.x + (p2.x - p0.x) * tension;
+        var cp1y = p1.y + (p2.y - p0.y) * tension;
+        var cp2x = p2.x - (p3.x - p1.x) * tension;
+        var cp2y = p2.y - (p3.y - p1.y) * tension;
+        d += ' C' + cp1x.toFixed(1) + ',' + cp1y.toFixed(1) + ' '
+             + cp2x.toFixed(1) + ',' + cp2y.toFixed(1) + ' '
+             + p2.x.toFixed(1) + ',' + p2.y.toFixed(1);
+      }
+      return d;
+    }
+
+    /* Render a source text as a layered semi-transparent text block */
+    function renderSourceTextLayer(tokens, startX, endX, color) {
+      var html = '';
+      var maxChars = Math.floor((endX - startX) / 7);
+      var text = tokens.join(' ');
+      if (text.length > maxChars * 3) text = text.substring(0, maxChars * 3) + '...';
+      var words = text.split(' ');
+      var lineLen = Math.floor(maxChars / 1.1);
+      var lines = [];
+      var currentLine = '';
+      for (var i = 0; i < words.length; i++) {
+        if ((currentLine + ' ' + words[i]).length > lineLen) {
+          if (currentLine) lines.push(currentLine);
+          currentLine = words[i];
+        } else {
+          currentLine = currentLine ? currentLine + ' ' + words[i] : words[i];
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+      var lineH = 16;
+      var totalH = lines.length * lineH;
+      var startY = MID_Y - totalH / 2;
+      var maxLines = Math.min(lines.length, 18);
+      for (var li = 0; li < maxLines; li++) {
+        var y = startY + li * lineH;
+        html += '<text x="' + startX + '" y="' + y.toFixed(1) + '" fill="' + color
+          + '" font-size="11" font-family="\'Courier New\',monospace" opacity="0.6">'
+          + escapeXml(lines[li]) + '</text>';
+      }
+      return html;
+    }
+
+    /* Pick a dot color based on valence intensity */
+    function valenceColor(v) {
+      if (v > 0.3) return '#5aedb8';
+      if (v > 0) return '#4ae0d2';
+      if (v > -0.3) return '#e0c84a';
+      return '#e05a4a';
+    }
+
+    /* Build the complete SVG innerHTML for the seismograph */
+    function buildSVG(sourceATokens, sourceBTokens, combinedSentences, noiseFactor) {
+      var svg = '';
+      var contentStart = PAD_L + 10;
+      var contentEnd = W - PAD_R - 10;
+
+      /* Background */
+      svg += '<rect width="' + W + '" height="' + H + '" fill="#0b0b0e"/>';
+
+      /* Gradient and filter definitions */
+      svg += '<defs>';
+      svg += '<radialGradient id="vignette" cx="50%" cy="50%" r="60%">'
+        + '<stop offset="0%" stop-color="#0b0b0e" stop-opacity="0"/>'
+        + '<stop offset="100%" stop-color="#060608" stop-opacity="0.7"/>'
+        + '</radialGradient>';
+      svg += '<filter id="glowSource" x="-20%" y="-20%" width="140%" height="140%">'
+        + '<feGaussianBlur stdDeviation="3" result="blur"/>'
+        + '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>'
+        + '</filter>';
+      svg += '<filter id="glowWave" x="-10%" y="-30%" width="120%" height="160%">'
+        + '<feGaussianBlur stdDeviation="4" result="blur"/>'
+        + '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>'
+        + '</filter>';
+      svg += '<filter id="glowStrong" x="-15%" y="-40%" width="130%" height="180%">'
+        + '<feGaussianBlur stdDeviation="6" result="blur"/>'
+        + '<feComposite in="blur" in2="SourceGraphic" operator="over"/>'
+        + '</filter>';
+      svg += '</defs>';
+
+      /* Vignette overlay */
+      svg += '<rect width="' + W + '" height="' + H + '" fill="url(#vignette)"/>';
+
+      /* Grid lines */
+      svg += '<g opacity="0.35">';
+      var gridSpacing = 25;
+      for (var gy = gridSpacing; gy < H; gy += gridSpacing) {
+        svg += '<line x1="' + PAD_L + '" y1="' + gy + '" x2="' + (W - PAD_R)
+          + '" y2="' + gy + '" stroke="#18181f" stroke-width="0.5"/>';
+      }
+      for (var gx = PAD_L; gx <= W - PAD_R; gx += gridSpacing) {
+        svg += '<line x1="' + gx + '" y1="20" x2="' + gx + '" y2="' + (H - 20)
+          + '" stroke="#18181f" stroke-width="0.5"/>';
+      }
+      svg += '</g>';
+
+      /* Center baseline with axis labels */
+      svg += '<line x1="' + PAD_L + '" y1="' + MID_Y + '" x2="' + (W - PAD_R)
+        + '" y2="' + MID_Y + '" stroke="#2e2e38" stroke-width="1" stroke-dasharray="4,6"/>';
+      svg += '<text x="' + (PAD_L - 5) + '" y="' + (MID_Y - 5)
+        + '" fill="#2e2e38" font-size="8" text-anchor="end" font-family="monospace">0</text>';
+      svg += '<text x="' + (PAD_L - 5) + '" y="' + (MID_Y - AMP + 4)
+        + '" fill="#2e2e38" font-size="8" text-anchor="end" font-family="monospace">+1</text>';
+      svg += '<text x="' + (PAD_L - 5) + '" y="' + (MID_Y + AMP + 4)
+        + '" fill="#2e2e38" font-size="8" text-anchor="end" font-family="monospace">-1</text>';
+
+      /* Source A: faded text layer */
+      if (sourceATokens.length > 0) {
+        svg += '<g opacity="0.12" filter="url(#glowSource)">'
+          + renderSourceTextLayer(sourceATokens, contentStart, contentEnd, '#c97a3a')
+          + '</g>';
+      }
+
+      /* Source B: faded text layer */
+      if (sourceBTokens.length > 0) {
+        svg += '<g opacity="0.12" filter="url(#glowSource)">'
+          + renderSourceTextLayer(sourceBTokens, contentStart, contentEnd, '#4a8fbf')
+          + '</g>';
+      }
+
+      /* Source A: faint waveform */
+      if (sourceATokens.length > 2) {
+        var ptsA = buildWavePoints(sourceATokens, contentStart, contentEnd, noiseFactor);
+        svg += '<path d="' + pointsToSmoothPath(ptsA, 0.3)
+          + '" fill="none" stroke="#c97a3a" stroke-width="1" opacity="0.15" filter="url(#glowSource)"/>';
+      }
+
+      /* Source B: faint waveform */
+      if (sourceBTokens.length > 2) {
+        var ptsB = buildWavePoints(sourceBTokens, contentStart, contentEnd, noiseFactor);
+        svg += '<path d="' + pointsToSmoothPath(ptsB, 0.3)
+          + '" fill="none" stroke="#4a8fbf" stroke-width="1" opacity="0.15" filter="url(#glowSource)"/>';
+      }
+
+      /* Flatten combined sentences into a single word array */
+      var allCombined = [];
+      for (var si = 0; si < combinedSentences.length; si++) {
+        for (var wi = 0; wi < combinedSentences[si].length; wi++) {
+          allCombined.push(combinedSentences[si][wi]);
+        }
+      }
+
+      /* Main combined waveform */
+      if (allCombined.length > 1) {
+        var mainPts = buildWavePoints(allCombined, contentStart, contentEnd, noiseFactor);
+        var mainPath = pointsToSmoothPath(mainPts, 0.25);
+
+        /* Translucent area fill beneath the wave */
+        var areaPath = mainPath
+          + ' L' + mainPts[mainPts.length - 1].x.toFixed(1) + ',' + MID_Y
+          + ' L' + mainPts[0].x.toFixed(1) + ',' + MID_Y + ' Z';
+        svg += '<path d="' + areaPath + '" fill="#4ae0d2" opacity="0.04"/>';
+
+        /* Sharp wave line with glow */
+        svg += '<path d="' + mainPath
+          + '" fill="none" stroke="#4ae0d2" stroke-width="2.5" opacity="0.9" filter="url(#glowWave)"/>';
+        svg += '<path d="' + mainPath
+          + '" fill="none" stroke="#4ae0d2" stroke-width="5" opacity="0.15" filter="url(#glowStrong)"/>';
+
+        /* Word-position dots sized and colored by valence */
+        for (var di = 0; di < mainPts.length; di++) {
+          var pt = mainPts[di];
+          var dotColor = valenceColor(pt.valence);
+          var r = Math.max(2.5, 2.5 + Math.abs(pt.valence) * 3);
+          svg += '<circle cx="' + pt.x.toFixed(1) + '" cy="' + pt.y.toFixed(1)
+            + '" r="' + r.toFixed(1) + '" fill="' + dotColor + '" opacity="0.7"/>';
+          svg += '<circle cx="' + pt.x.toFixed(1) + '" cy="' + pt.y.toFixed(1)
+            + '" r="' + (r + 2).toFixed(1) + '" fill="' + dotColor + '" opacity="0.15"/>';
+        }
+
+        /* Word labels along the bottom, evenly sampled to avoid overlap */
+        var labelY = H - 18;
+        var maxLabels = Math.min(mainPts.length, 30);
+        var labelStep = Math.max(1, Math.floor(mainPts.length / maxLabels));
+        for (var li = 0; li < mainPts.length; li += labelStep) {
+          var lpt = mainPts[li];
+          if (lpt.word.length > 10) continue;
+          var lColor = valenceColor(lpt.valence);
+          svg += '<text x="' + lpt.x.toFixed(1) + '" y="' + labelY
+            + '" fill="' + lColor
+            + '" font-size="7" text-anchor="middle" font-family="\'Courier New\',monospace" opacity="0.5">'
+            + escapeXml(lpt.word) + '</text>';
+        }
+      }
+
+      /* Frame tick marks */
+      for (var fx = PAD_L; fx <= W - PAD_R; fx += 50) {
+        svg += '<line x1="' + fx + '" y1="15" x2="' + fx
+          + '" y2="22" stroke="#2e2e38" stroke-width="0.5"/>';
+        svg += '<line x1="' + fx + '" y1="' + (H - 22) + '" x2="' + fx
+          + '" y2="' + (H - 15) + '" stroke="#2e2e38" stroke-width="0.5"/>';
+      }
+
+      /* Top header label */
+      svg += '<text x="' + (W / 2) + '" y="12" fill="#2e2e38" font-size="8" text-anchor="middle" font-family="monospace" letter-spacing="3">SIGNAL COMBINER OUTPUT</text>';
+
+      return svg;
+    }
+
+    /* ===== DOM INTERACTION ===== */
+
+    /* Build one sentence-span's inner HTML with color-coded word classes */
+    function buildSentenceHTML(words, setA, setB) {
+      var parts = [];
+      for (var i = 0; i < words.length; i++) {
+        var cls = classifyWord(words[i], setA, setB);
+        parts.push('<span class="word-' + cls + '">' + escapeXml(words[i]) + '</span>');
+      }
+      return parts.join(' ');
+    }
+
+    /* Main generation routine */
+    function generate() {
+      var textA = document.getElementById('sourceA').value.trim();
+      var textB = document.getElementById('sourceB').value.trim();
+
+      if (!textA || !textB) {
+        showToast('Both source texts are required.');
+        return;
+      }
+
+      var numSeeds = parseInt(document.getElementById('paramSeeds').value, 10);
+      var maxLen = parseInt(document.getElementById('paramLength').value, 10);
+      var noiseFactor = parseInt(document.getElementById('paramNoise').value, 10);
+
+      var tokensA = tokenize(textA);
+      var tokensB = tokenize(textB);
+
+      if (tokensA.length < 3 || tokensB.length < 3) {
+        showToast('Each text needs at least 3 words.');
+        return;
+      }
+
+      var setA = new Set(tokensA);
+      var setB = new Set(tokensB);
+
+      var chainA = buildChain(tokensA);
+      var chainB = buildChain(tokensB);
+      var merged = mergeChains(chainA, chainB);
+
+      var allKeys = Object.keys(merged);
+      var intersection = [], onlyA = [], onlyB = [];
+      for (var ki = 0; ki < allKeys.length; ki++) {
+        var k = allKeys[ki];
+        if (setA.has(k) && setB.has(k)) intersection.push(k);
+        else if (setA.has(k)) onlyA.push(k);
+        else if (setB.has(k)) onlyB.push(k);
+      }
+
+      shuffle(intersection);
+      shuffle(onlyA);
+      shuffle(onlyB);
+
+      /* Prefer intersection seeds, then unique-to-each-source, then any */
+      var pool = intersection.concat(onlyA).concat(onlyB).concat(allKeys);
+      var seeds = [];
+      for (var pi = 0; seeds.length < numSeeds && pi < pool.length; pi++) {
+        if (seeds.indexOf(pool[pi]) === -1) seeds.push(pool[pi]);
+      }
+
+      var minLen = Math.max(5, Math.floor(maxLen * 0.4));
+      var sentences = [];
+      for (var si = 0; si < seeds.length; si++) {
+        var s = generateSentence(merged, seeds[si], minLen, maxLen);
+        if (s.length >= 3) sentences.push(s);
+      }
+
+      if (sentences.length === 0) {
+        showToast('Could not generate output. Try longer or more varied texts.');
+        return;
+      }
+
+      /* Render seismograph SVG */
+      var svgEl = document.getElementById('seismograph');
+      svgEl.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+      svgEl.innerHTML = buildSVG(tokensA, tokensB, sentences, noiseFactor);
+      document.getElementById('seismographSection').classList.add('visible');
+
+      /* Render output text with proper capitalization */
+      var container = document.getElementById('outputText');
+      container.innerHTML = '';
+      for (var idx = 0; idx < sentences.length; idx++) {
+        var sent = sentences[idx];
+        var span = document.createElement('span');
+        span.className = 'sent';
+        span.style.animationDelay = (idx * 0.12) + 's';
+
+        /* Capitalize the first word's text, not the HTML tag */
+        var html = buildSentenceHTML(sent, setA, setB);
+        if (sent.length > 0) {
+          /* Replace the first word's text content with a capitalized version */
+          var firstWord = sent[0];
+          var capped = firstWord.charAt(0).toUpperCase() + firstWord.slice(1);
+          var firstCls = classifyWord(firstWord, setA, setB);
+          var firstTag = '<span class="word-' + firstCls + '">' + escapeXml(firstWord) + '</span>';
+          var cappedTag = '<span class="word-' + firstCls + '">' + escapeXml(capped) + '</span>';
+          html = html.replace(firstTag, cappedTag);
+        }
+        html += '.';
+
+        span.innerHTML = html;
+        container.appendChild(span);
+      }
+      document.getElementById('outputSection').classList.add('visible');
+    }
+
+    /* Lightweight inline toast notification */
+    function showToast(msg) {
+      var toast = document.getElementById('toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.setAttribute('role', 'alert');
+        toast.style.cssText = 'position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);'
+          + 'background:#1a1a1f;border:1px solid #d4915e;color:#ece8e0;padding:0.7rem 1.4rem;'
+          + 'font-family:monospace;font-size:0.75rem;border-radius:4px;z-index:999;'
+          + 'opacity:0;transition:opacity 0.3s;pointer-events:none;letter-spacing:0.1em;';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = msg;
+      toast.style.opacity = '1';
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(function() { toast.style.opacity = '0'; }, 2500);
+    }
+
+    /* ===== EVENT BINDINGS ===== */
+
+    document.getElementById('btnGenerate').addEventListener('click', function() {
+      var btn = this;
+      btn.classList.add('generating');
+      setTimeout(function() {
+        generate();
+        btn.classList.remove('generating');
+      }, 80);
+    });
+
+    document.getElementById('btnParams').addEventListener('click', function() {
+      var panel = document.getElementById('paramsPanel');
+      var isOpen = panel.classList.toggle('open');
+      this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    document.getElementById('paramSeeds').addEventListener('input', function() {
+      document.getElementById('paramSeedsVal').textContent = this.value;
+    });
+    document.getElementById('paramLength').addEventListener('input', function() {
+      document.getElementById('paramLengthVal').textContent = this.value;
+    });
+    document.getElementById('paramNoise').addEventListener('input', function() {
+      document.getElementById('paramNoiseVal').textContent = this.value + '%';
+    });
+
+    /* Keyboard shortcut: Ctrl/Cmd + Enter to generate */
+    document.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('btnGenerate').click();
+      }
+    });
+
+  })();
+  </script>
+</body>
+</html>

@@ -33,3 +33,6 @@
 ### 2026-05-26T10:35:48.569Z
 
 **Iteration 10 — SHIPPED:** "The Incident at Location 44.789, -93.204" [fiction] as 0008. Rating: 4.3. Review: "The Incident at Location 44.789, -93.204" is a masterclass in procedural horror — a municipal incident report that accumulates dread through bureaucratic accumulation alone. Every detail earns its we. Token usage: 16282in/4898out.
+### 2026-05-26T11:24:26.374Z
+
+**Iteration 11 — SHIPPED:** "Signals from the Combiner" [code-art] as 0009. Rating: 4.7. Review: "Signals from the Combiner" is a meticulously crafted generative instrument where two texts collide through a Markov chain and the resulting hybrid sentences are rendered as an SVG seismograph driven . Token usage: 255395in/209821out.
