@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>syntax_error_at_line_47.py</title>
+<style>
+  :root {
+    --bg: #08080a;
+    --editor-bg: #0c0c0f;
+    --gutter-bg: #0e0e12;
+    --line-hl: #14141a;
+    --error-hl: rgba(255, 100, 80, 0.07);
+    --preserve-hl: rgba(80, 220, 180, 0.06);
+    --text: #a8a4a0;
+    --text-dim: #504d4a;
+    --text-bright: #ddd8d4;
+    --accent: #ff6b35;
+    --accent-dim: rgba(255, 107, 53, 0.15);
+    --preserve-color: #4ecdc4;
+    --preserve-dim: rgba(78, 205, 196, 0.15);
+    --border: #1e1e24;
+    --red: #ff4757;
+    --green: #26de81;
+    --yellow: #fed330;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh;
+  }
+
+  /* ── Title Screen ── */
+
+  #title-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  #title-screen.hidden {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+  }
+
+  .title-content {
+    max-width: 620px;
+    padding: 2rem;
+    text-align: left;
+  }
+
+  .title-filename {
+    color: var(--accent);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 2.5rem;
+    opacity: 0.8;
+  }
+
+  .title-filename::before {
+    content: '~/found ';
+    color: var(--text-dim);
+  }
+
+  .title-quote {
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    border-left: 2px solid var(--border);
+    padding-left: 1rem;
+  }
+
+  .title-desc {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+
+  .title-desc strong {
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  .title-desc .accent { color: var(--accent); }
+  .title-desc .preserve { color: var(--preserve-color); }
+
+  /* ── Buttons ── */
+
+  .btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.8rem;
+    padding: 0.7rem 1.8rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.04em;
+  }
+
+  .btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .btn-primary {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-sm {
+    font-size: 0.7rem;
+    padding: 0.4rem 1rem;
+  }
+
+  .btn-fix {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-fix:hover {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-preserve {
+    border-color: var(--preserve-color);
+    color: var(--preserve-color);
+  }
+
+  .btn-preserve:hover {
+    background: var(--preserve-dim);
+    border-color: var(--preserve-color);
+    color: var(--preserve-color);
+  }
+
+  .btn-run {
+    border-color: var(--green);
+    color: var(--green);
+    font-size: 0.72rem;
+    padding: 0.4rem 1rem;
+  }
+
+  .btn-run:hover {
+    background: rgba(38, 222, 129, 0.1);
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .btn-run:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .btn-run:disabled:hover {
+    background: transparent;
+  }
+
+  /* ── Game Screen ── */
+
+  #game-screen {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    animation: fadeIn 0.6s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ── Header ── */
+
+  .game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--editor-bg);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  .header-left .filename {
+    color: var(--text);
+    font-size: 0.8rem;
+  }
+
+  .stats-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 0.7rem;
+  }
+
+  .stat {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-dim);
+  }
+
+  .stat-value {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .vuln-bar {
+    width: 100px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .vuln-fill {
+    height: 100%;
+    background: var(--preserve-color);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  /* ── Editor ── */
+
+  .editor-wrapper {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--editor-bg);
+  }
+
+  .editor-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0.8rem 0;
+    scroll-behavior: smooth;
+  }
+
+  .editor-scroll::-webkit-scrollbar { width: 6px; }
+  .editor-scroll::-webkit-scrollbar-track { background: transparent; }
+  .editor-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .editor-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+  .code-line {
+    display: flex;
+    align-items: baseline;
+    line-height: 1.75;
+    font-size: 0.8rem;
+    padding: 0 1rem;
+    transition: background 0.2s;
+    position: relative;
+  }
+
+  .code-line:hover {
+    background: rgba(255,255,255,0.02);
+  }
+
+  .code-line.line-target .line-content {
+    cursor: pointer;
+  }
+
+  .code-line.line-target:hover {
+    background: var(--error-hl);
+  }
+
+  .line-num {
+    display: inline-block;
+    width: 3.5rem;
+    text-align: right;
+    padding-right: 1.5rem;
+    color: var(--text-dim);
+    user-select: none;
+    flex-shrink: 0;
+    font-size: 0.72rem;
+    opacity: 0.5;
+  }
+
+  .line-content {
+    white-space: pre;
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* ── Syntax Colors ── */
+
+  .syn-kw   { color: #ff6b35; font-weight: 500; }
+  .syn-fn   { color: #f5cd79; }
+  .syn-str  { color: #78e08f; }
+  .syn-cmt  { color: #504d4a; font-style: italic; }
+  .syn-cls  { color: #e77f67; font-weight: 500; }
+  .syn-bi   { color: #60a3bc; }
+  .syn-num  { color: #f8a5c2; }
+  .syn-op   { color: #786fa6; }
+  .syn-const{ color: #cf6a87; font-weight: 500; }
+
+  /* ── Error Lines ── */
+
+  .line-target .line-content {
+    position: relative;
+  }
+
+  .line-target .line-content::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, var(--accent), var(--accent) 4px, transparent 4px, transparent 8px);
+    opacity: 0.5;
+  }
+
+  .line-preserve-target .line-content::after {
+    background: repeating-linear-gradient(90deg, var(--preserve-color), var(--preserve-color) 4px, transparent 4px, transparent 8px);
+  }
+
+  .error-marker {
+    color: var(--accent);
+    font-size: 0.65rem;
+    margin-left: 0.5rem;
+    opacity: 0.7;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  /* ── Resolved Lines ── */
+
+  .code-line.line-resolved .line-content {
+    opacity: 0.55;
+  }
+
+  .code-line.line-resolved-preserve {
+    background: rgba(78, 205, 196, 0.03);
+  }
+
+  .code-line.line-resolved-fix {
+    background: rgba(255, 107, 53, 0.02);
+  }
+
+  .line-status {
+    margin-left: 0.5rem;
+    font-size: 0.65rem;
+  }
+
+  .line-status.fixed    { color: var(--accent); opacity: 0.6; }
+  .line-status.preserved{ color: var(--preserve-color); opacity: 0.6; }
+
+  /* ── Modal ── */
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(8, 8, 10, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: #111115;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    width: 95%;
+    max-width: 720px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(10px);
+    transition: transform 0.3s ease;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .modal-overlay.active .modal {
+    transform: translateY(0);
+  }
+
+  .modal-header {
+    padding: 0.8rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .modal-title {
+    font-size: 0.8rem;
+    color: var(--text);
+  }
+
+  .modal-title .line-ref {
+    color: var(--accent);
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    font-family: inherit;
+    transition: color 0.2s;
+  }
+
+  .modal-close:hover { color: var(--text); }
+
+  .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  /* ── Diff Display ── */
+
+  .diff-section {
+    display: flex;
+    min-height: 0;
+  }
+
+  .diff-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .diff-pane:first-child {
+    border-right: 1px solid var(--border);
+  }
+
+  .diff-label {
+    padding: 0.5rem 1rem;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .diff-label.fixed    { color: var(--green); }
+  .diff-label.original { color: var(--red); }
+
+  .diff-code {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    font-size: 0.78rem;
+    line-height: 1.75;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--text-dim);
+    min-height: 80px;
+  }
+
+  .diff-code.fixed-code {
+    color: var(--green);
+  }
+
+  /* ── Narrative ── */
+
+  .narrative-section {
+    border-top: 1px solid var(--border);
+    padding: 1rem 1.2rem;
+    max-height: 180px;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  .narrative-text {
+    font-size: 0.78rem;
+    line-height: 1.8;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .narrative-text .highlight {
+    color: var(--text);
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  /* ── Modal Actions ── */
+
+  .modal-actions {
+    padding: 0.8rem 1.2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  /* ── Terminal ── */
+
+  .terminal-wrapper {
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    background: #060608;
+    display: flex;
+    flex-direction: column;
+    transition: height 0.4s ease;
+  }
+
+  .terminal-header {
+    padding: 0.4rem 1rem;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .terminal-header:hover { color: var(--text); }
+
+  .terminal-body {
+    padding: 0.6rem 1rem;
+    max-height: 160px;
+    overflow-y: auto;
+    font-size: 0.72rem;
+    line-height: 1.7;
+  }
+
+  .terminal-body::-webkit-scrollbar { width: 4px; }
+  .terminal-body::-webkit-scrollbar-track { background: transparent; }
+  .terminal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .term-line {
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  .term-prompt  { color: var(--accent); }
+  .term-output  { color: var(--text-dim); }
+  .term-error   { color: var(--red); }
+  .term-success { color: var(--green); }
+  .term-comment { color: var(--text-dim); font-style: italic; }
+
+  /* ── Run Area ── */
+
+  .run-area {
+    padding: 0.6rem 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    background: var(--editor-bg);
+    flex-shrink: 0;
+  }
+
+  /* ── Scroll Hint ── */
+
+  .scroll-hint {
+    text-align: center;
+    padding: 0.3rem;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .scroll-hint.visible { opacity: 1; }
+
+  /* ── Toasts ── */
+
+  #toasts {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 60;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .toast {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.72rem;
+    border-radius: 3px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    max-width: 500px;
+    text-align: center;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .toast-info {
+    background: #1a1a22;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .toast-fix {
+    background: rgba(255, 107, 53, 0.1);
+    border: 1px solid rgba(255, 107, 53, 0.3);
+    color: var(--accent);
+  }
+
+  .toast-preserve {
+    background: rgba(78, 205, 196, 0.1);
+    border: 1px solid rgba(78, 205, 196, 0.3);
+    color: var(--preserve-color);
+  }
+
+  .toast-warn {
+    background: rgba(255, 71, 87, 0.1);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    color: var(--red);
+  }
+
+  /* ── Ending Screen ── */
+
+  #ending-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: var(--bg);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 2rem;
+  }
+
+  #ending-screen.active {
+    display: flex;
+    animation: fadeIn 1s ease;
+  }
+
+  .ending-content {
+    max-width: 650px;
+    width: 100%;
+  }
+
+  .ending-meta {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-bottom: 2rem;
+  }
+
+  .ending-output-title {
+    font-size: 0.75rem;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  .ending-output {
+    background: #0a0a0d;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1.2rem;
+    margin-bottom: 2rem;
+    font-size: 0.82rem;
+    line-height: 2;
+    white-space: pre-wrap;
+    min-height: 200px;
+  }
+
+  .ending-output .sanitized {
+    color: var(--text-dim);
+    text-decoration: line-through;
+    text-decoration-color: rgba(255,255,255,0.2);
+  }
+
+  .ending-output .preserved {
+    color: var(--preserve-color);
+  }
+
+  .ending-output .normal {
+    color: var(--text);
+  }
+
+  .ending-reflection {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .ending-reflection p {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+    font-style: italic;
+  }
+
+  .ending-reflection p:last-child {
+    margin-bottom: 2rem;
+  }
+
+  .ending-reflection .highlight {
+    color: var(--text);
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  .ending-buttons {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  /* ── Responsive ── */
+
+  @media (max-width: 640px) {
+    .modal { width: 98%; max-height: 90vh; }
+    .diff-section { flex-direction: column; }
+    .diff-pane:first-child {
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .code-line { font-size: 0.68rem; padding: 0 0.5rem; }
+    .line-num { width: 2.5rem; padding-right: 0.8rem; }
+    .stats-bar { gap: 0.8rem; }
+    .stat-label { display: none; }
+    .vuln-bar { width: 60px; }
+    .ending-content { padding: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- Title Screen -->
+  <div id="title-screen">
+    <div class="title-content">
+      <div class="title-filename">syntax_error_at_line_47.py</div>
+      <div class="title-quote">
+        "A developer wrote a program to say what they couldn't. It never compiled. You found it on an old machine."
+      </div>
+      <div class="title-desc">
+        <strong>How it works:</strong> This program has errors. Each error is also a wound.<br><br>
+        For each error, you have a choice.<br>
+        <span class="accent">Fix</span> it — the code compiles, but something is lost.<br>
+        <span class="preserve">Preserve</span> it — the vulnerability remains, but so does the truth.<br><br>
+        A <strong>vulnerability score</strong> tracks what survives your debugging. When you've addressed every error, you can run the program and see what you've made of someone's confession.
+      </div>
+      <button class="btn btn-primary" id="btn-start" aria-label="Start debugging">begin debugging</button>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="game-screen">
+    <header class="game-header" role="banner">
+      <div class="header-left">
+        <span class="filename">syntax_error_at_line_47.py</span>
+        <span>—</span>
+        <span id="header-status">fix the errors. or don't.</span>
+      </div>
+      <div class="stats-bar">
+        <div class="stat">
+          <span class="stat-label">resolved</span>
+          <span class="stat-value" id="stat-progress">0/10</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">fixed</span>
+          <span class="stat-value" id="stat-fixed" style="color: var(--accent)">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">preserved</span>
+          <span class="stat-value" id="stat-preserved" style="color: var(--preserve-color)">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">vulnerability</span>
+          <div class="vuln-bar">
+            <div class="vuln-fill" id="vuln-fill" style="width: 100%"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="editor-wrapper">
+      <div class="editor-scroll" id="editor" role="main" aria-label="Code editor"></div>
+      <div class="scroll-hint" id="scroll-hint">scroll for more errors</div>
+    </div>
+
+    <div class="run-area">
+      <button class="btn btn-sm btn-run" id="btn-run" disabled aria-label="Run the program">
+        run python syntax_error_at_line_47.py
+      </button>
+    </div>
+
+    <div class="terminal-wrapper" id="terminal-wrapper">
+      <div class="terminal-header" id="terminal-header" role="button" tabindex="0" aria-label="Toggle terminal">
+        <span>terminal — python 3.11.4</span>
+        <span id="term-toggle">&#9660;</span>
+      </div>
+      <div class="terminal-body" id="terminal"></div>
+    </div>
+  </div>
+
+  <!-- Error Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <div class="modal-title">
+          error at <span class="line-ref" id="modal-line">line ?</span>
+        </div>
+        <button class="modal-close" id="modal-close" aria-label="Close modal">&#10005;</button>
+      </div>
+      <div class="modal-body">
+        <div class="diff-section">
+          <div class="diff-pane">
+            <div class="diff-label original">original</div>
+            <div class="diff-code" id="modal-original"></div>
+          </div>
+          <div class="diff-pane">
+            <div class="diff-label fixed">if fixed</div>
+            <div class="diff-code fixed-code" id="modal-fixed"></div>
+          </div>
+        </div>
+        <div class="narrative-section">
+          <div class="narrative-text" id="modal-narrative"></div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-sm btn-preserve" id="btn-preserve">preserve</button>
+        <button class="btn btn-sm btn-fix" id="btn-fix">fix</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ending Screen -->
+  <div id="ending-screen">
+    <div class="ending-content">
+      <div class="ending-meta">program output — python 3.11.4</div>
+      <div class="ending-output-title">$ python syntax_error_at_line_47.py</div>
+      <div class="ending-output" id="ending-output"></div>
+      <div class="ending-reflection" id="ending-reflection"></div>
+      <div class="ending-buttons">
+        <button class="btn btn-sm" id="btn-restart">start over</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toasts" aria-live="polite"></div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   CODE DATA — a love letter written as Python
+   ══════════════════════════════════════════ */
+var CODE_LINES = [
+  { n: 1,  c: '#!/usr/bin/env python3' },
+  { n: 2,  c: '# syntax_error_at_line_47.py' },
+  { n: 3,  c: '# A program I wrote at 3am' },
+  { n: 4,  c: "# when I couldn't say the thing" },
+  { n: 5,  c: '# I needed to say' },
+  { n: 6,  c: '' },
+  { n: 7,  c: 'import time' },
+  { n: 8,  c: 'from collections import defaultdict' },
+  { n: 9,  c: 'from datetime import datetime' },
+  { n: 10, c: '' },
+  { n: 11, c: '' },
+  { n: 12, c: 'class Confession:' },
+  { n: 13, c: '    """A program that runs only once."""' },
+  { n: 14, c: '' },
+  { n: 15, c: '    def __init__(self, you, me):' },
+  { n: 16, c: '        self.you = you' },
+  { n: 17, c: '        self.me = me' },
+  { n: 18, c: '        self.start_time = datetime.now()' },
+  { n: 19, c: '        self.words_i_couldnt_say = []' },
+  { n: 20, c: '        self.attempts = 0' },
+  { n: 21, c: '' },
+  { n: 22, c: '    def the_thing_that_matters(self):' },
+  { n: 23, c: '        try:' },
+  { n: 24, c: '            return self.you.know(' },
+  { n: 25, c: '                how_i_feel' },
+  { n: 26, c: '            )' },
+  { n: 27, c: '        except Silence:' },
+  { n: 28, c: "# the error isn't in the code" },
+  { n: 29, c: '            pass' },
+  { n: 30, c: '' },
+  { n: 31, c: '    def distance_between(self):' },
+  { n: 32, c: '# midnight on the night I wrote this' },
+  { n: 33, c: '        return abs(' },
+  { n: 34, c: '            39.7392 - your_latitude' },
+  { n: 35, c: '        )  # error: forgot the closing paren' },
+  { n: 36, c: '# but also forgot the other one' },
+  { n: 37, c: '' },
+  { n: 38, c: '    def what_i_remember(self):' },
+  { n: 39, c: '        memories = [' },
+  { n: 40, c: '            "coffee at that place on 5th",' },
+  { n: 41, c: '            "the way you laughed",' },
+  { n: 42, c: '            "3am calls that felt like breathing",' },
+  { n: 43, c: '        ]' },
+  { n: 44, c: '        return memories' },
+  { n: 45, c: '' },
+  { n: 46, c: '    def __str__(self):' },
+  { n: 47, c: '        return "I love you"' },
+  { n: 48, c: '' },
+  { n: 49, c: '    def what_i_want_to_say(self):' },
+  { n: 50, c: "# there's a syntax error somewhere" },
+  { n: 51, c: "# I can't find it" },
+  { n: 52, c: '        message = "I miss you."' },
+  { n: 53, c: '        if feeling_too_much:' },
+  { n: 54, c: '            return message' },
+  { n: 55, c: '' },
+  { n: 56, c: '    def if_only(self):' },
+  { n: 57, c: '        return True' },
+  { n: 58, c: '# everything after here is unreachable' },
+  { n: 59, c: '# like everything I wanted to happen' },
+  { n: 60, c: '' },
+  { n: 61, c: '    def promises_kept(self):' },
+  { n: 62, c: '        count = 0' },
+  { n: 63, c: '        return count' },
+  { n: 64, c: '# I tried so hard' },
+  { n: 65, c: '# but the count stays zero' },
+  { n: 66, c: '' },
+  { n: 67, c: '' },
+  { n: 68, c: '# --- main ---' },
+  { n: 69, c: '' },
+  { n: 70, c: 'you = "the one who left"' },
+  { n: 71, c: 'me = "the one who stayed"' },
+  { n: 72, c: '' },
+  { n: 73, c: 'try:' },
+  { n: 74, c: '    confession = Confession(you, me)' },
+  { n: 75, c: '    confession.the_thing_that_matters()' },
+  { n: 76, c: '    confession.what_i_want_to_say()' },
+  { n: 77, c: 'except Exception:' },
+  { n: 78, c: '# it keeps failing' },
+  { n: 79, c: '# I keep running it anyway' },
+  { n: 80, c: '    pass' },
+  { n: 81, c: '' },
+  { n: 82, c: 'finally:' },
+  { n: 83, c: '    print("the program never finished.")' },
+  { n: 84, c: '    print("neither did I.")' },
+  { n: 85, c: '' },
+  { n: 86, c: '# EOF' }
+];
+
+/* ── Error Definitions — 10 errors, each a wound ── */
+
+var ERRORS = [
+  {
+    id: 'err1',
+    line: 3,
+    original: '# A program I wrote at 3am',
+    fixed: '# A program I wrote at 3:00 AM',
+    narrative: 'The timestamp is wrong. The file says 3:00 AM, but the real creation time in the metadata reads 3:47 AM. They weren\'t sure when it started. <span class="highlight">Does the precision matter?</span> Those 47 minutes between 3am and 3:47 — that\'s 47 minutes of wanting to write this and not being able to begin.',
+    preserve_text: 'Those 47 minutes are the distance between a passing thought and something you can\'t take back. Some imprecision is the most honest thing in this file.',
+    is_preservable: true,
+    idx: 2
+  },
+  {
+    id: 'err2',
+    line: 20,
+    original: '        self.attempts = 0',
+    fixed: '        self.attempts = attempts',
+    narrative: 'The parameter <span class="highlight">attempts</span> is passed into __init__ but never assigned. The count stays at zero. Zero attempts — <span class="highlight">they were so afraid of trying that they built the failure into the constructor.</span> The variable arrives and is immediately discarded.',
+    preserve_text: 'Zero isn\'t a bug. Zero is the truest number in this program. They never tried. That\'s the confession hiding in plain sight.',
+    is_preservable: true,
+    idx: 19
+  },
+  {
+    id: 'err3',
+    line: 27,
+    original: '        except Silence:',
+    fixed: '        except Exception:',
+    narrative: '<span class="highlight">Silence</span> is not a Python exception. But maybe it should be. They wrote code to catch the one thing they were actually afraid of — and the language has no name for it. <span class="highlight">Silence is the real exception here.</span> Python just doesn\'t know it yet.',
+    preserve_text: 'There is no Exception called Silence. But there should be. Some errors describe the world better than any import ever could.',
+    is_preservable: true,
+    idx: 26
+  },
+  {
+    id: 'err4',
+    line: 34,
+    original: '            39.7392 - your_latitude',
+    fixed: '            39.7392 - self.you.latitude',
+    narrative: '<span class="highlight">your_latitude</span> — not self.you.latitude. Not you.latitude. Just... your_latitude. Direct. Personal. As if the variable exists outside the program\'s logic, in some space where "you" is still a given. Still close enough to reference without a namespace.',
+    preserve_text: '"your_latitude" isn\'t trying to access an object. It\'s reaching for someone. The informality is the most honest line in this method.',
+    is_preservable: true,
+    idx: 33
+  },
+  {
+    id: 'err5',
+    line: 44,
+    original: '        return memories',
+    fixed: '        return self.memories',
+    narrative: '<span class="highlight">memories</span> is local but returned as if it were permanent. It\'ll vanish when the function ends. The memories exist inside the scope of this function, and then they\'re gone. <span class="highlight">Like memories do.</span> Kept briefly, then inaccessible.',
+    preserve_text: 'The ephemeral scope isn\'t a mistake. Memories are local — they exist in a moment, and then they fall out of reach. That\'s not a bug. That\'s the human experience rendered in indented blocks.',
+    is_preservable: true,
+    idx: 43
+  },
+  {
+    id: 'err6',
+    line: 47,
+    original: '        return "I love you"',
+    fixed: '        return message',
+    narrative: '<span class="highlight">Line 47.</span> The title error. The string "I love you" is hardcoded, but the method references a variable <span class="highlight">message</span> that should contain it. The most direct statement in the entire program, and they buried it in a function, wrapped it in quotes, made it a return value instead of something spoken aloud.',
+    preserve_text: '"I love you" should not be abstracted into a variable. It should not be wrapped in function calls or stored in data structures. It should be said. The hardcoding is the only honest thing here.',
+    is_preservable: true,
+    idx: 46
+  },
+  {
+    id: 'err7',
+    line: 53,
+    original: '        if feeling_too_much:',
+    fixed: '        if self.feeling_too_much:',
+    narrative: '<span class="highlight">feeling_too_much</span> — undefined. Was it meant to be a data attribute? A method? A constant? The condition can\'t be evaluated because feeling too much was never properly declared. It was just... present. Ambient. Unquantified. <span class="highlight">Present the way weather is present.</span>',
+    preserve_text: 'Feeling too much doesn\'t need a self. prefix. It\'s not an attribute or a method. It\'s a state that doesn\'t belong to any one object — it\'s just the atmosphere of this program.',
+    is_preservable: true,
+    idx: 52
+  },
+  {
+    id: 'err8',
+    line: 57,
+    original: '        return True',
+    fixed: '        return self.possible',
+    narrative: '<span class="highlight">True</span> — always True. "if_only" always returns True. But that\'s not the real value. The variable <span class="highlight">self.possible</span> — which is False — never gets returned. The hope is hardcoded. The reality sits unreachable in another attribute.',
+    preserve_text: '"If only" things were True. That\'s the entire meaning of the phrase. Fixing this makes "if_only" return False — which is technically correct and emotionally devastating.',
+    is_preservable: true,
+    idx: 56
+  },
+  {
+    id: 'err9',
+    line: 63,
+    original: '        return count',
+    fixed: '        return self.promises_made',
+    narrative: '<span class="highlight">count</span> is 0. The method returns zero promises kept. But there\'s a reference to <span class="highlight">self.promises_made</span> — some non-zero number of promises that were made but never kept. The gap between the two numbers is the measure of something they can\'t close.',
+    preserve_text: 'Zero promises kept isn\'t a bug to fix by referencing some larger number. Zero is the truth. Changing it would be lying to the compiler and to yourself.',
+    is_preservable: true,
+    idx: 62
+  },
+  {
+    id: 'err10',
+    line: 78,
+    original: '# it keeps failing',
+    fixed: '# rewrite it from scratch',
+    narrative: 'This line lives in the except block — the failure path. The program that was supposed to confess love has crashed, and <span class="highlight">the response isn\'t to fix the code but to run it again.</span> And again. And again. Debugging as devotion. Compulsion as love.',
+    preserve_text: '',
+    is_preservable: false,
+    idx: 77
+  }
+];
+
+/* ══════════════════════════════════════════
+   SYNTAX HIGHLIGHTING
+   ══════════════════════════════════════════ */
+
+var PYTHON_KEYWORDS = [
+  'def', 'class', 'import', 'from', 'return', 'if', 'elif', 'else',
+  'try', 'except', 'finally', 'for', 'in', 'while', 'with', 'as',
+  'and', 'or', 'not', 'is', 'None', 'True', 'False', 'pass',
+  'break', 'continue', 'raise', 'lambda', 'yield', 'del',
+  'global', 'nonlocal', 'assert'
+];
+
+var PYTHON_BUILTINS = [
+  'print', 'range', 'len', 'str', 'int', 'float', 'list', 'dict',
+  'set', 'tuple', 'bool', 'abs', 'type', 'isinstance', 'Exception',
+  'super', 'self', 'defaultdict', 'datetime', 'time', 'enumerate',
+  'zip', 'map', 'filter', 'sorted', 'reversed', 'any', 'all',
+  'min', 'max', 'sum', 'open', 'input'
+];
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function highlightPython(code) {
+  if (!code.trim()) return escapeHtml(code);
+
+  var tokens = [];
+  var i = 0;
+
+  while (i < code.length) {
+    /* Comments */
+    if (code[i] === '#') {
+      tokens.push({ t: 'c', v: code.substring(i) });
+      i = code.length;
+    }
+    /* Strings */
+    else if (code[i] === '"' || code[i] === "'") {
+      var q = code[i];
+      var j = i + 1;
+      while (j < code.length && code[j] !== q) {
+        if (code[j] === '\\') j++;
+        j++;
+      }
+      if (j < code.length) j++;
+      tokens.push({ t: 's', v: code.substring(i, j) });
+      i = j;
+    }
+    /* Numbers */
+    else if (/[0-9]/.test(code[i]) && (i === 0 || !/[a-zA-Z_]/.test(code[i - 1]))) {
+      var j = i;
+      while (j < code.length && /[0-9.]/.test(code[j])) j++;
+      tokens.push({ t: 'n', v: code.substring(i, j) });
+      i = j;
+    }
+    /* Identifiers */
+    else if (/[a-zA-Z_]/.test(code[i])) {
+      var j = i;
+      while (j < code.length && /[a-zA-Z0-9_]/.test(code[j])) j++;
+      var word = code.substring(i, j);
+      if (PYTHON_KEYWORDS.indexOf(word) !== -1) {
+        tokens.push({ t: 'k', v: word });
+      } else if (word === 'self') {
+        tokens.push({ t: 'b', v: word });
+      } else if (PYTHON_BUILTINS.indexOf(word) !== -1) {
+        tokens.push({ t: 'b', v: word });
+      } else if (j < code.length && code[j] === '(') {
+        tokens.push({ t: 'f', v: word });
+      } else if (i > 0 && code[i - 1] === '.') {
+        tokens.push({ t: 'p', v: word });
+      } else {
+        tokens.push({ t: 'x', v: word });
+      }
+      i = j;
+    }
+    /* Operators */
+    else if ('=<>!+-*/%&|^~'.indexOf(code[i]) !== -1) {
+      var j = i;
+      while (j < code.length && '=<>=+-*/%&|^~!'.indexOf(code[j]) !== -1) j++;
+      tokens.push({ t: 'o', v: code.substring(i, Math.min(j, i + 2)) });
+      i = Math.min(j, i + 2);
+    }
+    /* Everything else */
+    else {
+      tokens.push({ t: 'x', v: code[i] });
+      i++;
+    }
+  }
+
+  return tokens.map(function(t) {
+    var v = escapeHtml(t.v);
+    switch (t.t) {
+      case 'k': return '<span class="syn-kw">' + v + '</span>';
+      case 'f': return '<span class="syn-fn">' + v + '</span>';
+      case 's': return '<span class="syn-str">' + v + '</span>';
+      case 'c': return '<span class="syn-cmt">' + v + '</span>';
+      case 'b': return '<span class="syn-bi">' + v + '</span>';
+      case 'n': return '<span class="syn-num">' + v + '</span>';
+      case 'o': return '<span class="syn-op">' + v + '</span>';
+      default:  return v;
+    }
+  }).join('');
+}
+
+/* ══════════════════════════════════════════
+   GAME STATE
+   ══════════════════════════════════════════ */
+
+var state = {
+  started: false,
+  currentError: null,
+  decisions: {},
+  terminalLines: [],
+  terminalExpanded: true
+};
+
+/* ══════════════════════════════════════════
+   DOM REFERENCES
+   ══════════════════════════════════════════ */
+
+function $(id) { return document.getElementById(id); }
+
+var titleScreen    = $('title-screen');
+var gameScreen     = $('game-screen');
+var editorEl       = $('editor');
+var modalOverlay   = $('modal-overlay');
+var endingScreen   = $('ending-screen');
+var terminalEl     = $('terminal');
+var toastsEl       = $('toasts');
+
+/* ══════════════════════════════════════════
+   RENDERING
+   ══════════════════════════════════════════ */
+
+function renderEditor() {
+  editorEl.innerHTML = '';
+
+  CODE_LINES.forEach(function(line, i) {
+    var div = document.createElement('div');
+    div.className = 'code-line';
+    div.dataset.line = line.n;
+    div.dataset.idx = i;
+
+    var errForLine = ERRORS.find(function(e) { return e.line === line.n; });
+    var resolved = getDecisionForLine(line.n);
+
+    /* Mark clickable targets */
+    if (errForLine && !resolved) {
+      div.classList.add('line-target');
+      if (errForLine.is_preservable) {
+        div.classList.add('line-preserve-target');
+      }
+    }
+
+    /* Mark resolved lines */
+    if (resolved) {
+      div.classList.add('line-resolved');
+      div.classList.add(resolved === 'fix' ? 'line-resolved-fix' : 'line-resolved-preserve');
+    }
+
+    /* Line number */
+    var numSpan = document.createElement('span');
+    numSpan.className = 'line-num';
+    numSpan.textContent = line.n;
+
+    /* Line content — show fixed version if player chose fix */
+    var contentSpan = document.createElement('span');
+    contentSpan.className = 'line-content';
+
+    var displayCode = resolved === 'fix'
+      ? (ERRORS.find(function(e) { return e.line === line.n; }) || {}).fixed || line.c
+      : line.c;
+
+    contentSpan.innerHTML = highlightPython(displayCode);
+
+    div.appendChild(numSpan);
+    div.appendChild(contentSpan);
+
+    /* Status indicator or error marker */
+    if (errForLine) {
+      if (resolved) {
+        var statusSpan = document.createElement('span');
+        statusSpan.className = 'line-status ' + (resolved === 'fix' ? 'fixed' : 'preserved');
+        statusSpan.textContent = resolved === 'fix' ? '\u270E fixed' : '\u2726 preserved';
+        div.appendChild(statusSpan);
+      } else {
+        var marker = document.createElement('span');
+        marker.className = 'error-marker';
+        marker.textContent = '\u25C0 error';
+        div.appendChild(marker);
+      }
+    }
+
+    /* Click handler */
+    div.addEventListener('click', function() {
+      if (resolved) {
+        showToast('This error has already been addressed.', 'info');
+        return;
+      }
+      var err = ERRORS.find(function(e) { return e.line === line.n; });
+      if (err) openModal(err);
+    });
+
+    editorEl.appendChild(div);
+  });
+}
+
+function getDecisionForLine(lineNum) {
+  var err = ERRORS.find(function(e) { return e.line === lineNum; });
+  if (!err) return null;
+  return state.decisions[err.id] || null;
+}
+
+function updateStats() {
+  var total = ERRORS.length;
+  var fixed = 0;
+  var preserved = 0;
+
+  Object.keys(state.decisions).forEach(function(id) {
+    if (state.decisions[id] === 'fix') fixed++;
+    else preserved++;
+  });
+
+  var resolved = fixed + preserved;
+
+  $('stat-progress').textContent = resolved + '/' + total;
+  $('stat-fixed').textContent = fixed;
+  $('stat-preserved').textContent = preserved;
+
+  /* Vulnerability: percentage of preservable errors the player kept intact */
+  var preservable = ERRORS.filter(function(e) { return e.is_preservable; }).length;
+  var vuln = preservable > 0 ? Math.round((preserved / preservable) * 100) : 0;
+  $('vuln-fill').style.width = vuln + '%';
+
+  /* Run button state */
+  var btnRun = $('btn-run');
+  btnRun.disabled = resolved < total;
+
+  /* Header status message */
+  var statusEl = $('header-status');
+  if (resolved === 0) {
+    statusEl.textContent = 'fix the errors. or don\'t.';
+  } else if (resolved < total) {
+    statusEl.textContent = (total - resolved) + ' errors remaining';
+  } else {
+    statusEl.textContent = 'all errors addressed \u2014 ready to run';
+  }
+}
+
+/* ══════════════════════════════════════════
+   MODAL
+   ══════════════════════════════════════════ */
+
+function openModal(err) {
+  state.currentError = err;
+
+  $('modal-line').textContent = 'line ' + err.line;
+  $('modal-original').innerHTML = highlightPython(err.original);
+  $('modal-fixed').innerHTML = highlightPython(err.fixed);
+  $('modal-narrative').innerHTML = err.narrative;
+
+  var btnPreserve = $('btn-preserve');
+  if (err.is_preservable && err.preserve_text) {
+    btnPreserve.style.display = '';
+    btnPreserve.title = err.preserve_text;
+  } else {
+    btnPreserve.style.display = 'none';
+  }
+
+  modalOverlay.classList.add('active');
+  $('btn-fix').focus();
+}
+
+function closeModal() {
+  modalOverlay.classList.remove('active');
+  state.currentError = null;
+}
+
+function makeDecision(type) {
+  if (!state.currentError) return;
+  var err = state.currentError;
+  state.decisions[err.id] = type;
+
+  if (type === 'fix') {
+    showToast('Line ' + err.line + ' fixed \u2014 the code compiles a little cleaner.', 'fix');
+    addTerminalLine('[fixed] line ' + err.line + ': ' + err.fixed.trim(), 'term-success');
+  } else {
+    showToast('Line ' + err.line + ' preserved \u2014 the vulnerability remains, and so does the truth.', 'preserve');
+    addTerminalLine('[preserved] line ' + err.line + ': "' + err.original.trim() + '"', 'term-comment');
+  }
+
+  closeModal();
+  renderEditor();
+  updateStats();
+
+  /* Auto-scroll to the next unresolved error */
+  setTimeout(function() {
+    var nextErr = ERRORS.find(function(e) { return !state.decisions[e.id]; });
+    if (nextErr) scrollToLine(nextErr.line);
+  }, 300);
+}
+
+/* ══════════════════════════════════════════
+   TERMINAL
+   ══════════════════════════════════════════ */
+
+function addTerminalLine(text, cls) {
+  cls = cls || 'term-output';
+  state.terminalLines.push({ text: text, cls: cls });
+  renderTerminal();
+}
+
+function renderTerminal() {
+  terminalEl.innerHTML = state.terminalLines.map(function(l) {
+    return '<div class="term-line ' + l.cls + '">' + escapeHtml(l.text) + '</div>';
+  }).join('');
+  terminalEl.scrollTop = terminalEl.scrollHeight;
+}
+
+function toggleTerminal() {
+  state.terminalExpanded = !state.terminalExpanded;
+  terminalEl.style.display = state.terminalExpanded ? '' : 'none';
+  $('term-toggle').textContent = state.terminalExpanded ? '\u25BC' : '\u25B2';
+}
+
+/* ══════════════════════════════════════════
+   TOASTS
+   ══════════════════════════════════════════ */
+
+function showToast(msg, type) {
+  type = type || 'info';
+  var toast = document.createElement('div');
+  toast.className = 'toast toast-' + type;
+  toast.textContent = msg;
+  toastsEl.appendChild(toast);
+
+  requestAnimationFrame(function() {
+    toast.classList.add('show');
+  });
+
+  setTimeout(function() {
+    toast.classList.remove('show');
+    setTimeout(function() { toast.remove(); }, 300);
+  }, 3500);
+}
+
+/* ══════════════════════════════════════════
+   SCROLL
+   ══════════════════════════════════════════ */
+
+function scrollToLine(lineNum) {
+  var lineEl = editorEl.querySelector('[data-line="' + lineNum + '"]');
+  if (lineEl) {
+    lineEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+/* ══════════════════════════════════════════
+   ENDING SEQUENCE
+   ══════════════════════════════════════════ */
+
+function runProgram() {
+  var btnRun = $('btn-run');
+  btnRun.disabled = true;
+  btnRun.textContent = 'running...';
+
+  if (!state.terminalExpanded) toggleTerminal();
+
+  var fixed = 0;
+  var preserved = 0;
+  Object.keys(state.decisions).forEach(function(id) {
+    state.decisions[id] === 'fix' ? fixed++ : preserved++;
+  });
+
+  var sequence = [
+    { text: '$ python syntax_error_at_line_47.py',  cls: 'term-prompt',  delay: 200 },
+    { text: '',                                      cls: 'term-output',  delay: 100 },
+    { text: 'Traceback (most recent call last):',    cls: 'term-error',   delay: 300 },
+    { text: '  File "syntax_error_at_line_47.py", line 47, in __str__', cls: 'term-error', delay: 200 },
+    { text: '    return "I love you"',               cls: 'term-error',   delay: 200 },
+    { text: 'SyntaxError: not brave enough to compile', cls: 'term-error', delay: 500 },
+    { text: '',                                      cls: 'term-output',  delay: 200 },
+    { text: '# the program that was supposed to say it for me', cls: 'term-comment', delay: 300 },
+    { text: '# never ran',                           cls: 'term-comment', delay: 300 },
+    { text: '# i ran it 847 times',                  cls: 'term-comment', delay: 300 },
+    { text: '# maybe the error was never in the code', cls: 'term-comment', delay: 500 },
+    { text: '',                                      cls: 'term-output',  delay: 300 },
+    { text: 'Generating sanitized output...',        cls: 'term-output',  delay: 600 }
+  ];
+
+  var promise = Promise.resolve();
+
+  sequence.forEach(function(step) {
+    promise = promise.then(function() {
+      return new Promise(function(r) { setTimeout(r, step.delay); });
+    }).then(function() {
+      addTerminalLine(step.text, step.cls);
+    });
+  });
+
+  promise.then(function() {
+    return new Promise(function(r) { setTimeout(r, 1000); });
+  }).then(function() {
+    showEnding(fixed, preserved);
+  });
+}
+
+function showEnding(fixed, preserved) {
+  var outputEl = $('ending-output');
+  var reflectionEl = $('ending-reflection');
+
+  /* Build the program output based on player decisions */
+  var parts = [];
+
+  parts.push({ text: 'the program never finished.',  cls: 'normal' });
+  parts.push({ text: 'neither did i.',                cls: 'normal' });
+  parts.push({ text: '',                              cls: 'normal' });
+  parts.push({ text: '---',                           cls: 'normal' });
+  parts.push({ text: '',                              cls: 'normal' });
+
+  var e1 = state.decisions['err1'];
+  parts.push({
+    text: 'written at: ' + (e1 === 'fix'
+      ? '3:00 AM (precise, sterile)'
+      : '3am (the hour that smells like your hair)'),
+    cls: e1 === 'preserve' ? 'preserved' : 'sanitized'
+  });
+
+  var e2 = state.decisions['err2'];
+  parts.push({
+    text: 'attempts: ' + (e2 === 'fix'
+      ? 'a number large enough to be forgettable'
+      : '0 (zero, none, not once, not ever)'),
+    cls: e2 === 'preserve' ? 'preserved' : 'sanitized'
+  });
+
+  var e3 = state.decisions['err3'];
+  parts.push({
+    text: 'exception caught: ' + (e3 === 'fix'
+      ? 'Exception (generic, handled, closed)'
+      : 'Silence (the kind that lives in a room after someone leaves)'),
+    cls: e3 === 'preserve' ? 'preserved' : 'sanitized'
+  });
+
+  var e4 = state.decisions['err4'];
+  parts.push({
+    text: 'coordinates: ' + (e4 === 'fix'
+      ? '39.7392 - self.you.latitude (properly referenced)'
+      : '39.7392 - your_latitude (as if you were still here)'),
+    cls: e4 === 'preserve' ? 'preserved' : 'sanitized'
+  });
+
+  var e5 = state.decisions['err5'];
+  parts.push({
+    text: 'memories: ' + (e5 === 'fix'
+      ? 'stored properly, persistent, documented'
+      : 'local, ephemeral, already fading'),
+    cls: e5 === 'preserve' ? 'preserved' : 'sanitized'
+  });
+
+  parts.push({ text: '', cls: 'normal' });
+
+  var e6 = state.decisions['err6'];
+  parts.push({
+    text: e6 === 'preserve' ? '"I love you"' : '"I love you"',
+    cls: e6 === 'preserve' ? 'preserved' : 'sanitized'
+  });
+
+  parts.push({ text: '', cls: 'normal' });
+
+  var e7 = state.decisions['err7'];
+  parts.push({
+    text: 'condition: ' + (e7 === 'fix'
+      ? 'self.feeling_too_much (measured, appropriate, bounded)'
+      : 'feeling_too_much (undefined, boundless, consuming)'),
+    cls: e7 === 'preserve' ? 'preserved' : 'sanitized'
+  });
+
+  var e8 = state.decisions['err8'];
+  parts.push({
+    text: 'if_only \u2192 ' + (e8 === 'fix'
+      ? 'False (correct, but devastating)'
+      : 'True (wrong, but hopeful)'),
+    cls: e8 === 'preserve' ? 'preserved' : 'sanitized'
+  });
+
+  var e9 = state.decisions['err9'];
+  parts.push({
+    text: 'promises kept: ' + (e9 === 'fix'
+      ? 'self.promises_made (redirected, deferred)'
+      : '0 (the number that haunts this program)'),
+    cls: e9 === 'preserve' ? 'preserved' : 'sanitized'
+  });
+
+  parts.push({ text: '', cls: 'normal' });
+
+  var e10 = state.decisions['err10'];
+  parts.push({
+    text: e10 === 'fix' ? 'rewrite it from scratch' : 'I keep running it anyway',
+    cls: e10 === 'preserve' ? 'preserved' : 'sanitized'
+  });
+
+  parts.push({ text: '', cls: 'normal' });
+  parts.push({ text: '---', cls: 'normal' });
+  parts.push({ text: '', cls: 'normal' });
+  parts.push({ text: 'EOF', cls: 'normal' });
+
+  outputEl.innerHTML = parts.map(function(p) {
+    return '<span class="' + p.cls + '">' + escapeHtml(p.text) + '</span>';
+  }).join('\n');
+
+  /* Vulnerability percentage */
+  var preservable = ERRORS.filter(function(e) { return e.is_preservable; }).length;
+  var vulnPct = preservable > 0 ? Math.round((preserved / preservable) * 100) : 0;
+
+  /* Reflection text — varies by play style */
+  var reflection = '';
+
+  if (preserved === 0) {
+    reflection =
+      '<p>You fixed everything. The code compiles. The program runs clean, produces its output, and terminates normally.</p>' +
+      '<p>But read the output again. Every fix replaced something raw with something correct. The <span class="highlight">imprecision was the point.</span> The undefined variables were undefined because some things can\'t be declared in a namespace. The zero wasn\'t a bug \u2014 it was a confession.</p>' +
+      '<p>You debugged someone\'s love letter until it was just a program.</p>';
+  } else if (fixed === 0) {
+    reflection =
+      '<p>You preserved everything. The code still doesn\'t compile. The errors remain \u2014 every undefined variable, every scoping mistake, every hardcoded truth.</p>' +
+      '<p>And somehow, the broken version says more than the fixed one ever could. <span class="highlight">The syntax errors were the message.</span> The bugs were features. The program was never meant to run \u2014 it was meant to be read.</p>' +
+      '<p>You understood what the author needed: not a debugger, but a witness.</p>';
+  } else if (preserved > fixed) {
+    reflection =
+      '<p>You preserved more than you fixed. The program is still broken, but it\'s broken <span class="highlight">honestly.</span></p>' +
+      '<p>The parts you chose to keep \u2014 the undefined feelings, the unreachable hopes, the local memories \u2014 they survive because you recognized that some errors aren\'t mistakes. They\'re the most precise way to describe something that defies precision.</p>' +
+      '<p>The original author would recognize this output. It\'s still theirs.</p>';
+  } else {
+    reflection =
+      '<p>You fixed more than you preserved. The program runs closer to correct, but each fix smoothed away a rough edge that was <span class="highlight">trying to tell you something.</span></p>' +
+      '<p>The preserved fragments glimmer in the output like artifacts \u2014 pieces of a voice you decided was worth keeping amid all the corrections. The author\'s truth survives in pockets, surrounded by your careful, well-intentioned repairs.</p>' +
+      '<p>A cleaner program. A quieter confession.</p>';
+  }
+
+  reflection +=
+    '<p style="margin-top: 1.5rem; font-size: 0.7rem; color: var(--text-dim);">' +
+    'vulnerability preserved: ' + vulnPct + '% \u2014 ' + preserved + ' of ' + preservable + ' preservable errors kept intact</p>';
+
+  reflectionEl.innerHTML = reflection;
+
+  endingScreen.classList.add('active');
+  endingScreen.scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════════════
+   INIT & EVENT BINDING
+   ══════════════════════════════════════════ */
+
+function init() {
+  /* Initial render */
+  renderEditor();
+
+  addTerminalLine('$ python --version', 'term-prompt');
+  addTerminalLine('Python 3.11.4', 'term-output');
+  addTerminalLine('$ python syntax_error_at_line_47.py', 'term-prompt');
+  addTerminalLine('SyntaxError: not brave enough to compile', 'term-error');
+  addTerminalLine('', 'term-output');
+  addTerminalLine('# 10 errors found. click on highlighted lines to debug.', 'term-comment');
+
+  /* Button wiring */
+  $('btn-start').addEventListener('click', startGame);
+  $('modal-close').addEventListener('click', closeModal);
+  $('btn-fix').addEventListener('click', function() { makeDecision('fix'); });
+  $('btn-preserve').addEventListener('click', function() { makeDecision('preserve'); });
+  $('btn-run').addEventListener('click', runProgram);
+  $('btn-restart').addEventListener('click', restartGame);
+  $('terminal-header').addEventListener('click', toggleTerminal);
+
+  /* Close modal on overlay click */
+  modalOverlay.addEventListener('click', function(e) {
+    if (e.target === modalOverlay) closeModal();
+  });
+
+  /* Close modal on Escape key */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+      closeModal();
+    }
+  });
+
+  /* Scroll hint visibility */
+  var editorScroll = document.querySelector('.editor-scroll');
+  editorScroll.addEventListener('scroll', function() {
+    if (editorScroll.scrollTop > 100) {
+      $('scroll-hint').classList.remove('visible');
+    }
+  });
+
+  setTimeout(function() {
+    if (gameScreen.style.display !== 'none') {
+      $('scroll-hint').classList.add('visible');
+    }
+  }, 2000);
+}
+
+function startGame() {
+  state.started = true;
+  titleScreen.classList.add('hidden');
+
+  setTimeout(function() {
+    titleScreen.style.display = 'none';
+    gameScreen.style.display = 'flex';
+    $('scroll-hint').classList.add('visible');
+  }, 800);
+}
+
+function restartGame() {
+  state.decisions = {};
+  state.currentError = null;
+  state.terminalLines = [];
+  endingScreen.classList.remove('active');
+
+  renderEditor();
+  updateStats();
+
+  state.terminalLines = [];
+  addTerminalLine('$ python --version', 'term-prompt');
+  addTerminalLine('Python 3.11.4', 'term-output');
+  addTerminalLine('$ python syntax_error_at_line_47.py', 'term-prompt');
+  addTerminalLine('SyntaxError: not brave enough to compile', 'term-error');
+  addTerminalLine('', 'term-output');
+  addTerminalLine('# 10 errors found. click on highlighted lines to debug.', 'term-comment');
+
+  $('btn-run').textContent = 'run python syntax_error_at_line_47.py';
+  $('btn-run').disabled = true;
+
+  gameScreen.scrollIntoView({ behavior: 'smooth' });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
