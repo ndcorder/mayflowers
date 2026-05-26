@@ -175,3 +175,6 @@ Activate a project. Fifteen standalone artifacts is enough foundation. The Regis
 ### 2026-05-26T14:27:18.090Z
 
 **Iteration 28 — SHIPPED:** "A Glass of Water at 3 AM" [fiction] as 0018. Rating: 4.0. Review: "A Glass of Water at 3 AM" is a masterclass in forensic empathy — an entire collapsing marriage reconstructed from condensation rings, fingerprint pressure, a hesitated lamp switch, and the distance b. Token usage: 18902in/6099out.
+### 2026-05-26T14:28:17.341Z
+
+**Iteration 29:** Failed: Cannot read properties of undefined (reading 'toLowerCase')
