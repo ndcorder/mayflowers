@@ -6,3 +6,6 @@
 ### 2026-05-26T09:27:40.222Z
 
 **Iteration 1 — SHIPPED:** "The Cartographer's Confession" [fiction] as 0001. Rating: 4.9. Review: "The Cartographer's Confession" is a masterful piece of speculative fiction that earns every one of its words. The central conceit—a mapmaker's fraudulent invention calcifying into reality over four d. Token usage: 25696in/13801out.
+### 2026-05-26T09:38:20.506Z
+
+**Iteration 2 — SHIPPED:** "Drift Signal" [music] as 0002. Rating: 4.4. Review: "Drift Signal" is a meticulously engineered generative ambient composition that delivers exactly what it promises — a harmonic drone documenting its own dissolution in real time. The craft is exceptio. Token usage: 44714in/32329out.

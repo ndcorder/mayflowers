@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drift Signal</title>
+  <style>
+    :root {
+      --bg: #07070a;
+      --fg: #c8c8c8;
+      --muted: #505050;
+      --accent: #d4945a;
+      --dim: #2a2a2a;
+      --warn: #c9a050;
+      --crit: #b85450;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%; overflow: hidden;
+      background: var(--bg); color: var(--fg);
+      font-family: 'Courier New', 'Lucida Console', monospace;
+      user-select: none;
+    }
+    body {
+      display: flex; flex-direction: column;
+      align-items: center; position: relative;
+    }
+    body::after {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      pointer-events: none; z-index: 0;
+    }
+    #overlay {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 580px;
+      padding: 32px 20px 12px;
+      display: flex; flex-direction: column;
+      gap: 5px; flex-shrink: 0;
+    }
+    #overlay::before {
+      content: ''; position: absolute;
+      top: 12px; left: 24px; right: 24px; height: 1px;
+      background: linear-gradient(to right, transparent, var(--dim) 20%, var(--dim) 80%, transparent);
+    }
+    .line {
+      padding: 1px 0; font-size: 13px;
+      letter-spacing: 0.5px; line-height: 1.55;
+      opacity: 0.88; transition: color 2s ease;
+    }
+    .line-muted { color: var(--muted); font-size: 11px; }
+    .line-header { color: var(--fg); opacity: 0.6; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; }
+    .line-warn { color: var(--warn); }
+    .line-crit { color: var(--crit); }
+    #freq-row {
+      display: flex; flex-wrap: wrap;
+      gap: 8px 16px; font-size: 12px; color: var(--dim);
+    }
+    #freq-row span { transition: color 3s ease; }
+    #bar-container {
+      height: 2px; background: var(--dim);
+      border-radius: 1px; overflow: hidden; margin: 2px 0;
+    }
+    #coherence-bar {
+      height: 100%; width: 100%;
+      background: var(--accent); border-radius: 1px;
+      transition: width 1.5s ease, background 3s ease;
+    }
+    #log {
+      display: flex; flex-direction: column; gap: 1px;
+      max-height: 80px; overflow: hidden; margin-top: 2px;
+    }
+    #log .log-entry {
+      font-size: 11px; color: var(--dim);
+      white-space: nowrap; overflow: hidden;
+      text-overflow: ellipsis; transition: color 2s ease;
+    }
+    #scene-container {
+      flex: 1; display: flex; align-items: center;
+      justify-content: center; width: 100%;
+      min-height: 0; position: relative;
+    }
+    canvas#scene {
+      width: min(100vw, 500px); height: min(100vw, 500px);
+      max-height: calc(100vh - 350px); display: block;
+    }
+    #controls {
+      width: 100%; max-width: 580px;
+      padding: 14px 20px 26px;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px;
+      z-index: 1; flex-shrink: 0;
+    }
+    #start-btn {
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 2px solid var(--muted); background: transparent;
+      color: var(--fg); font-family: inherit; font-size: 14px;
+      letter-spacing: 1px; cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #start-btn:hover {
+      border-color: var(--accent); color: var(--accent);
+      box-shadow: 0 0 20px rgba(212, 148, 90, 0.15);
+    }
+    #start-btn:active { transform: scale(0.95); }
+    #start-btn.playing {
+      border-color: var(--crit); color: var(--crit);
+      animation: pulse-btn 3s ease-in-out infinite;
+    }
+    @keyframes pulse-btn {
+      0%, 100% { box-shadow: 0 0 8px rgba(184, 84, 80, 0.2); }
+      50% { box-shadow: 0 0 20px rgba(184, 84, 80, 0.4); }
+    }
+    #status {
+      font-size: 11px; color: var(--muted);
+      letter-spacing: 0.5px; transition: color 2s ease;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #coherence-bar { transition: none; }
+      #start-btn.playing { animation: none; }
+    }
+    @media (max-width: 500px) {
+      #overlay { padding: 24px 14px 10px; }
+      #controls { padding: 10px 14px 18px; }
+      .line { font-size: 12px; }
+      canvas#scene { max-height: calc(100vh - 320px); }
+    }
+  </style>
+</head>
+<body>
+  <div id="overlay">
+    <div class="line line-header">Drift Signal &mdash; System Diagnostics</div>
+    <div class="line line-muted" id="uptime">UPTIME 000.0s</div>
+    <div class="line" id="coherence">COHERENCE 100.0%</div>
+    <div id="bar-container"><div id="coherence-bar"></div></div>
+    <div id="freq-row">
+      <span id="f0">110.00 Hz</span>
+      <span id="f1">220.00 Hz</span>
+      <span id="f2">329.63 Hz</span>
+      <span id="f3">440.00 Hz</span>
+      <span id="f4">554.37 Hz</span>
+      <span id="f5">659.26 Hz</span>
+    </div>
+    <div class="line line-muted" id="drift-v">DRIFT VECTOR +0.000 +0.000 +0.000</div>
+    <div class="line line-muted" id="harmonic">HARMONIC INTEGRITY 100.0%</div>
+    <div class="line line-muted" id="phase-s">PHASE ALIGNMENT 1.0000</div>
+    <div class="line line-muted" id="pat-sync">PATTERN SYNC 1.0000</div>
+    <div class="line line-muted" id="env-st">ENVELOPE STABILITY 1.0000</div>
+    <div class="line line-muted" id="signal-l">SIGNAL LEVEL 1.00</div>
+    <div id="log"></div>
+  </div>
+  <div id="scene-container">
+    <canvas id="scene"></canvas>
+  </div>
+  <div id="controls">
+    <button id="start-btn" aria-label="Start or stop the composition">&#9654;</button>
+    <div id="status">Awaiting initialization</div>
+  </div>
+  <script>
+/* ================================================================
+   DRIFT SIGNAL
+   A generative ambient decomposition — ~3 min 15s of harmonic
+   coherence dissolving into beautiful entropy.
+   One moment of near-total silence. No recovery.
+   Built on raw Web Audio API for full parametric control.
+================================================================ */
+
+const BASE_FREQS = [110, 220, 329.63, 440, 554.37, 659.26];
+const VOICE_NAMES = ['fundamental','octave','fifth','2nd octave','major third','compound fifth'];
+const VOICE_TYPES = ['sawtooth','sawtooth','triangle','sawtooth','sine','sine'];
+const VOICE_GAINS = [0.09, 0.06, 0.045, 0.035, 0.022, 0.016];
+const VOICE_CUTOFFS = [400, 560, 480, 650, 1300, 2100];
+const VOICE_ATTACKS = [5, 4.5, 3.5, 4, 5, 5.5];
+const SILENCE_START = 125;
+const SILENCE_DUR = 22;
+const TOTAL_DUR = 195;
+const EPS = 0.0001;
+
+/* ---- State ---- */
+let S = {
+  running: false, ctx: null, masterGain: null,
+  voices: [], startTime: 0, elapsed: 0,
+  coherence: 1, signalLevel: 1, silenceIntensity: 0,
+  logEntries: [], lastLogTime: -20,
+  animFrame: null, decayTimer: null
+};
+
+/* ---- Noise texture ---- */
+const noiseCanvas = document.createElement('canvas');
+noiseCanvas.width = 256; noiseCanvas.height = 256;
+const nctx = noiseCanvas.getContext('2d');
+const noiseData = nctx.createImageData(256, 256);
+for (let i = 0; i < noiseData.data.length; i += 4) {
+  const v = Math.random() * 255;
+  noiseData.data[i] = v; noiseData.data[i+1] = v;
+  noiseData.data[i+2] = v; noiseData.data[i+3] = 12;
+}
+nctx.putImageData(noiseData, 0, 0);
+
+/* ---- DOM ---- */
+const $ = id => document.getElementById(id);
+const startBtn = $('start-btn'), statusEl = $('status');
+const coherenceEl = $('coherence'), barEl = $('coherence-bar');
+const driftEl = $('drift-v'), harmonicEl = $('harmonic');
+const phaseEl = $('phase-s'), patSyncEl = $('pat-sync');
+const envStEl = $('env-st'), signalEl = $('signal-l');
+const uptimeEl = $('uptime'), logEl = $('log');
+const freqEls = [0,1,2,3,4,5].map(i => $('f'+i));
+const sceneCanvas = $('scene');
+const sctx = sceneCanvas.getContext('2d');
+
+function resizeScene() {
+  const c = $('scene-container');
+  const w = Math.min(c.clientWidth, 500);
+  const h = Math.min(c.clientHeight, 500);
+  sceneCanvas.width = w * devicePixelRatio;
+  sceneCanvas.height = h * devicePixelRatio;
+  sceneCanvas.style.width = w+'px'; sceneCanvas.style.height = h+'px';
+  sctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+}
+resizeScene(); window.addEventListener('resize', resizeScene);
+
+/* ---- Audio Engine ---- */
+function createEngine() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const master = ctx.createGain();
+  master.gain.value = 0.8;
+  master.connect(ctx.destination);
+  const comp = ctx.createDynamicsCompressor();
+  comp.threshold.value = -18; comp.ratio.value = 4;
+  comp.attack.value = 0.3; comp.release.value = 0.8;
+  comp.connect(master);
+
+  const voices = BASE_FREQS.map((freq, i) => {
+    /* Main oscillator pair for beating */
+    const osc1 = ctx.createOscillator();
+    osc1.type = VOICE_TYPES[i]; osc1.frequency.value = freq;
+    const osc2 = ctx.createOscillator();
+    osc2.type = VOICE_TYPES[i]; osc2.frequency.value = freq + 0.3;
+    /* Filter */
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = VOICE_CUTOFFS[i];
+    filter.Q.value = 1.0;
+    /* Voice gain */
+    const gain = ctx.createGain();
+    gain.gain.value = 0;
+    /* Routing */
+    osc1.connect(filter); osc2.connect(filter);
+    filter.connect(gain); gain.connect(comp);
+    osc1.start(); osc2.start();
+
+    return {
+      osc1, osc2, filter, gain,
+      baseFreq: freq, currentFreq: freq,
+      targetFreq: freq, targetCutoff: VOICE_CUTOFFS[i],
+      targetGain: VOICE_GAINS[i] * 0.85,
+      attackTime: VOICE_ATTACKS[i],
+      type: VOICE_TYPES[i],
+      baseGain: VOICE_GAINS[i] * 0.85
+    };
+  });
+
+  /* Sub-bass drone */
+  const subOsc = ctx.createOscillator();
+  subOsc.type = 'sine'; subOsc.frequency.value = 55;
+  const subGain = ctx.createGain(); subGain.gain.value = 0;
+  const subFilter = ctx.createBiquadFilter();
+  subFilter.type = 'lowpass'; subFilter.frequency.value = 120;
+  subOsc.connect(subFilter); subFilter.connect(subGain);
+  subGain.connect(comp); subOsc.start();
+
+  return { ctx, master, comp, voices, subOsc, subGain, subFilter };
+}
+
+/* Fade a voice gain to zero over duration */
+function fadeOut(voice, ctx, dur) {
+  const t = ctx.currentTime;
+  voice.gain.gain.cancelScheduledValues(t);
+  voice.gain.gain.setValueAtTime(voice.gain.gain.value, t);
+  voice.gain.gain.linearRampToValueAtTime(0, t + Math.max(0.1, dur));
+}
+
+/* ---- Decay Model ---- */
+function computeDecay(elapsed) {
+  let coherence, signalLevel;
+
+  /* Signal level with void moment */
+  if (elapsed < SILENCE_START) {
+    signalLevel = 1.0;
+  } else {
+    const se = elapsed - SILENCE_START;
+    if (se < SILENCE_DUR * 0.15) {
+      signalLevel = 1.0 - se / (SILENCE_DUR * 0.15);
+    } else if (se < SILENCE_DUR * 0.85) {
+      signalLevel = 0.01 + Math.sin(se * 0.7) * 0.005;
+    } else if (se < SILENCE_DUR) {
+      const r = (se - SILENCE_DUR * 0.85) / (SILENCE_DUR * 0.15);
+      signalLevel = 0.01 + r * 0.22;
+    } else {
+      const postR = Math.min(1, (se - SILENCE_DUR) / (TOTAL_DUR - SILENCE_START - SILENCE_DUR));
+      signalLevel = 0.24 + postR * 0.16;
+    }
+  }
+  signalLevel = Math.max(0.005, Math.min(1, signalLevel));
+
+  /* Coherence */
+  if (elapsed < 50) {
+    coherence = 1.0 - elapsed * 0.002;
+  } else if (elapsed < SILENCE_START) {
+    const t = (elapsed - 50) / (SILENCE_START - 50);
+    coherence = 0.9 - t * 0.4;
+  } else {
+    const se = elapsed - SILENCE_START;
+    if (se < SILENCE_DUR) {
+      coherence = 0.5 * (1.0 - se / SILENCE_DUR) + 0.01;
+    } else {
+      const postR = Math.min(1, (se - SILENCE_DUR) / (TOTAL_DUR - SILENCE_START - SILENCE_DUR));
+      coherence = 0.12 - postR * 0.07;
+    }
+  }
+  coherence = Math.max(0.02, Math.min(1, coherence));
+
+  /* Per-voice detune (cents) */
+  const detunes = [];
+  for (let i = 0; i < 6; i++) {
+    let d;
+    if (elapsed < 50) {
+      d = elapsed * (0.12 + i * 0.06) * 0.02;
+    } else if (elapsed < SILENCE_START) {
+      const t = (elapsed - 50) / (SILENCE_START - 50);
+      d = t * t * (0.3 + i * 0.4) + Math.sin(elapsed * 0.03 + i * 1.7) * 0.3;
+    } else {
+      d = 1.2 + i * 0.9 + Math.sin(elapsed * 0.04 + i * 2.3) * 0.6;
+    }
+    detunes.push(d);
+  }
+
+  /* Silence intensity (visual only) */
+  let silenceIntensity = 0;
+  if (elapsed > SILENCE_START && elapsed < SILENCE_START + SILENCE_DUR) {
+    const se = elapsed - SILENCE_START;
+    if (se < SILENCE_DUR * 0.15) silenceIntensity = se / (SILENCE_DUR * 0.15);
+    else if (se < SILENCE_DUR * 0.85) silenceIntensity = 1.0;
+    else silenceIntensity = 1.0 - (se - SILENCE_DUR * 0.85) / (SILENCE_DUR * 0.15);
+  }
+
+  /* Sub bass boost during void */
+  let subBoost = 0;
+  if (elapsed > SILENCE_START + SILENCE_DUR * 0.1 && elapsed < SILENCE_START + SILENCE_DUR * 0.9) {
+    subBoost = 0.2 + Math.sin((elapsed - SILENCE_START) * 0.15) * 0.08;
+  }
+
+  return { coherence, signalLevel, detunes, silenceIntensity, subBoost };
+}
+
+/* ---- Audio Tick — apply decay to real audio params ---- */
+function audioTick() {
+  if (!S.running || !S.ctx) return;
+  const elapsed = (S.ctx.currentTime - S.startTime);
+  S.elapsed = elapsed;
+  if (elapsed > TOTAL_DUR + 15) return;
+
+  const d = computeDecay(elapsed);
+  S.coherence = d.coherence;
+  S.signalLevel = d.signalLevel;
+  S.silenceIntensity = d.silenceIntensity;
+
+  const now = S.ctx.currentTime;
+
+  S.voices.forEach((v, i) => {
+    /* Frequency detune */
+    const detuneCents = d.detunes[i];
+    const newFreq = v.baseFreq * Math.pow(2, detuneCents / 1200);
+    v.osc1.frequency.setTargetAtTime(newFreq, now, 0.8);
+    /* Beating oscillator drifts slightly more */
+    const beatFreq = newFreq + 0.3 + detuneCents * 0.008;
+    v.osc2.frequency.setTargetAtTime(beatFreq, now, 0.8);
+
+    /* Filter opens wider as coherence drops (harshness) */
+    const cutoffMult = 1 + (1 - d.coherence) * 3;
+    const cutoff = VOICE_CUTOFFS[i] * cutoffMult;
+    v.filter.frequency.setTargetAtTime(Math.min(18000, cutoff), now, 1.2);
+    v.filter.Q.setTargetAtTime(1.0 + (1 - d.coherence) * 5, now, 1.5);
+
+    /* Gain follows signal level */
+    const voiceGain = v.baseGain * d.signalLevel;
+    v.gain.gain.setTargetAtTime(Math.max(0, voiceGain), now, 1.0);
+    v.currentFreq = newFreq;
+  });
+
+  /* Sub bass */
+  const subGain = d.subBoost > 0 ? d.subBoost : d.signalLevel * 0.25;
+  S.subGain.gain.setTargetAtTime(subGain, now, 1.0);
+
+  /* Master gain dips during void */
+  const masterVal = d.signalLevel < 0.05 ? 0.3 : 0.8;
+  S.masterGain.gain.setTargetAtTime(masterVal, now, 0.5);
+}
+
+/* ---- Log messages ---- */
+const LOGS_OK = [
+  'all subsystems nominal','harmonic series locked',
+  'phase alignment within tolerance','buffer sync confirmed',
+  'oscillator calibration complete','feedback loop stable',
+  'spectral analysis coherent','resonance pattern confirmed',
+  'fundamental frequency locked','overtone series intact'
+];
+const LOGS_DRIFT = [
+  'minor deviation in oscillator 3','phase variance detected',
+  'partial desync in harmonic bank','detuning vector growing',
+  'envelope jitter on voice 4','spectral leakage detected',
+  'buffer underrun — interpolating','frequency anchor drifting',
+  'coherence index below threshold','attempting re-sync… failed',
+  'harmonic series destabilizing','overtone separation increasing'
+];
+const LOGS_CRIT = [
+  'drift exceeds safety margin','multiple subsystem fault',
+  'harmonic integrity compromised','RE-ANCHOR ATTEMPT — SIGNAL NULL',
+  'phase lock lost','residual pattern detected',
+  'operating in degraded mode','coherence below minimum threshold',
+  'signal reconstruction partial','spectral content fragmenting'
+];
+const LOGS_VOID = [
+  '— signal loss —','trying to find the root',
+  'silence holds','one tone emerges','rebuilding from residue'
+];
+
+function getLogMsg(elapsed) {
+  if (elapsed > SILENCE_START && elapsed < SILENCE_START + SILENCE_DUR)
+    return LOGS_VOID[Math.floor(Math.random()*LOGS_VOID.length)];
+  if (S.coherence > 0.65) return LOGS_OK[Math.floor(Math.random()*LOGS_OK.length)];
+  if (S.coherence > 0.3) return LOGS_DRIFT[Math.floor(Math.random()*LOGS_DRIFT.length)];
+  return LOGS_CRIT[Math.floor(Math.random()*LOGS_CRIT.length)];
+}
+
+function addLog(elapsed) {
+  const prefix = S.coherence > 0.65 ? '> ' : S.coherence > 0.3 ? '>> ' : '>>> ';
+  S.logEntries.unshift({ text: prefix + getLogMsg(elapsed), coh: S.coherence });
+  if (S.logEntries.length > 5) S.logEntries.pop();
+}
+
+/* ---- UI Update ---- */
+function updateUI(elapsed) {
+  const d = computeDecay(elapsed);
+  S.coherence = d.coherence; S.signalLevel = d.signalLevel; S.silenceIntensity = d.silenceIntensity;
+
+  uptimeEl.textContent = `UPTIME ${elapsed.toFixed(1).padStart(5,'0')}s`;
+
+  const cp = (d.coherence*100).toFixed(1);
+  coherenceEl.textContent = `COHERENCE ${cp}%`;
+  coherenceEl.className = 'line' + (d.coherence < 0.35 ? ' line-crit' : d.coherence < 0.6 ? ' line-warn' : '');
+  barEl.style.width = `${d.coherence*100}%`;
+  barEl.style.background = d.coherence < 0.35 ? 'var(--crit)' : d.coherence < 0.6 ? 'var(--warn)' : 'var(--accent)';
+
+  /* Show actual current frequencies from audio state */
+  S.voices.forEach((v, i) => {
+    const f = v.currentFreq || v.baseFreq;
+    freqEls[i].textContent = f.toFixed(2) + ' Hz';
+    const det = d.detunes[i];
+    freqEls[i].style.color = det < 10 ? 'var(--dim)' : det < 30 ? 'var(--accent)' : det < 60 ? 'var(--warn)' : 'var(--crit)';
+  });
+
+  /* Drift vector from actual detunes */
+  const dm = (1 - d.coherence) * 1.5;
+  driftEl.textContent = `DRIFT VECTOR ${(Math.sin(elapsed*0.023)*dm).toFixed(3)} ${(Math.cos(elapsed*0.031)*dm*0.8).toFixed(3)} ${(Math.sin(elapsed*0.017+1.5)*dm*0.6).toFixed(3)}`;
+  driftEl.className = 'line line-muted' + (d.coherence < 0.35 ? ' line-crit' : '');
+
+  harmonicEl.textContent = `HARMONIC INTEGRITY ${(d.coherence * 94 + Math.sin(elapsed*0.02)*3).toFixed(1)}%`;
+  phaseEl.textContent = `PHASE ALIGNMENT ${Math.max(0.05, d.coherence * 0.92).toFixed(4)}`;
+  patSyncEl.textContent = `PATTERN SYNC ${Math.max(0.05, d.coherence * 0.88).toFixed(4)}`;
+  envStEl.textContent = `ENVELOPE STABILITY ${Math.max(0.08, d.coherence * 0.90).toFixed(4)}`;
+  signalEl.textContent = `SIGNAL LEVEL ${d.signalLevel.toFixed(2)}`;
+
+  if (elapsed - S.lastLogTime > 2.5 + Math.random() * 2) {
+    addLog(elapsed); S.lastLogTime = elapsed;
+  }
+  logEl.innerHTML = '';
+  S.logEntries.forEach(e => {
+    const div = document.createElement('div');
+    div.className = 'log-entry';
+    div.textContent = e.text;
+    div.style.color = e.coh < 0.35 ? 'var(--crit)' : e.coh < 0.6 ? 'var(--warn)' : 'var(--dim)';
+    logEl.appendChild(div);
+  });
+
+  if (d.silenceIntensity > 0.5) {
+    statusEl.textContent = 'Signal loss detected'; statusEl.style.color = 'var(--crit)';
+  } else if (d.coherence < 0.15) {
+    statusEl.textContent = 'Degraded — no recovery possible'; statusEl.style.color = 'var(--crit)';
+  } else if (d.coherence < 0.45) {
+    statusEl.textContent = 'Drift accelerating'; statusEl.style.color = 'var(--warn)';
+  } else if (d.coherence < 0.7) {
+    statusEl.textContent = 'Minor deviations detected'; statusEl.style.color = 'var(--accent)';
+  } else {
+    const m = Math.floor(elapsed/60), s = Math.floor(elapsed%60);
+    statusEl.textContent = `Running — ${m}:${String(s).padStart(2,'0')}`;
+    statusEl.style.color = 'var(--muted)';
+  }
+}
+
+/* ---- Visualization ---- */
+const particles = Array.from({length: 80}, () => ({
+  x: Math.random(), y: Math.random(),
+  vx: (Math.random()-0.5)*0.0002, vy: (Math.random()-0.5)*0.0002,
+  size: 0.8 + Math.random()*1.4, opacity: 0.1 + Math.random()*0.14
+}));
+let visFrame = 0;
+
+function drawVis() {
+  if (!S.running) return;
+  const w = sceneCanvas.width / devicePixelRatio;
+  const h = sceneCanvas.height / devicePixelRatio;
+  if (w < 10 || h < 10) { S.animFrame = requestAnimationFrame(drawVis); return; }
+
+  const cx = w/2, cy = h/2, baseR = Math.min(w,h)*0.24;
+  const t = visFrame * 0.006; visFrame++;
+  const coh = S.coherence, sig = S.signalLevel, sil = S.silenceIntensity;
+
+  /* Trail fade */
+  sctx.fillStyle = `rgba(7,7,10,${0.11 + sil * 0.18})`;
+  sctx.fillRect(0, 0, w, h);
+
+  /* Noise grain */
+  if (visFrame % 3 === 0) {
+    sctx.globalAlpha = 0.035;
+    sctx.drawImage(noiseCanvas, Math.random()*50, Math.random()*50, w, h);
+    sctx.globalAlpha = 1;
+  }
+
+  const alpha = Math.max(0.04, sig * coh + 0.04);
+
+  /* Rings for each voice — deformation driven by actual detune */
+  S.voices.forEach((v, i) => {
+    const det = v.currentFreq ? Math.abs(v.currentFreq - v.baseFreq) / v.baseFreq * 100 : 0;
+    const distort = det * 0.5;
+    const radius = Math.max(EPS, baseR * (0.3 + i * 0.17));
+
+    sctx.beginPath();
+    for (let a = 0; a <= Math.PI*2+0.1; a += 0.03) {
+      const wobble = Math.sin(a*3 + t*(0.4+i*0.15)+i)*distort*7
+                   + Math.cos(a*5 - t*0.25 + i*2)*distort*3.5
+                   + Math.sin(a*7 + t*0.7)*distort*1.5;
+      const px = cx + Math.cos(a)*(radius + wobble);
+      const py = cy + Math.sin(a)*(radius + wobble);
+      a === 0 ? sctx.moveTo(px,py) : sctx.lineTo(px,py);
+    }
+    sctx.closePath();
+    const hue = 28 + i*3;
+    const ringAlpha = Math.max(0, (0.35 - i*0.045)*alpha);
+    sctx.strokeStyle = `hsla(${hue},${40-coh*12}%,${52-i*2}%,${ringAlpha})`;
+    sctx.lineWidth = 1.1;
+    sctx.stroke();
+  });
+
+  /* Center dot */
+  sctx.beginPath();
+  sctx.arc(cx, cy, Math.max(EPS, 2.5*alpha), 0, Math.PI*2);
+  sctx.fillStyle = `rgba(212,148,90,${alpha*0.7})`;
+  sctx.fill();
+
+  /* Particles */
+  const driftForce = (1-coh)*0.00035;
+  particles.forEach(p => {
+    p.x += p.vx + Math.sin(t + p.y*5)*driftForce;
+    p.y += p.vy + Math.cos(t + p.x*5)*driftForce;
+    if (p.x < 0) p.x += 1; if (p.x > 1) p.x -= 1;
+    if (p.y < 0) p.y += 1; if (p.y > 1) p.y -= 1;
+    sctx.beginPath();
+    sctx.arc(p.x*w, p.y*h, Math.max(EPS, p.size), 0, Math.PI*2);
+    sctx.fillStyle = `rgba(180,150,110,${Math.max(0, p.opacity*alpha)})`;
+    sctx.fill();
+  });
+
+  /* Scan lines appear as coherence drops */
+  if (coh < 0.7) {
+    const sa = (1-coh)*0.12;
+    for (let i = 0; i < 3; i++) {
+      const y = (t*18 + i*h/3) % h;
+      sctx.fillStyle = `rgba(200,170,130,${sa})`;
+      sctx.fillRect(0, y, w, 1);
+    }
+  }
+
+  /* Void: single faint pulse */
+  if (sil > 0.5) {
+    const pr = baseR*0.28 + Math.sin(t*2)*4;
+    sctx.beginPath();
+    sctx.arc(cx, cy, Math.max(EPS, pr), 0, Math.PI*2);
+    sctx.strokeStyle = `rgba(212,148,90,${0.08 + Math.sin(t*1.3)*0.04})`;
+    sctx.lineWidth = 0.5; sctx.stroke();
+  }
+
+  S.animFrame = requestAnimationFrame(drawVis);
+}
+
+/* ---- Main Loop ---- */
+function mainLoop() {
+  if (!S.running || !S.ctx) return;
+  const elapsed = S.ctx.currentTime - S.startTime;
+  audioTick();
+  updateUI(elapsed);
+}
+
+/* ---- Start / Stop ---- */
+async function startComposition() {
+  if (S.running) return;
+  try {
+    const engine = createEngine();
+    S.ctx = engine.ctx; S.masterGain = engine.master;
+    S.voices = engine.voices;
+    S.subGain = engine.subGain; S.subOsc = engine.subOsc;
+
+    /* Fade in each voice with its attack envelope */
+    const now = S.ctx.currentTime;
+    S.voices.forEach(v => {
+      v.gain.gain.setValueAtTime(0, now);
+      v.gain.gain.linearRampToValueAtTime(v.targetGain, now + v.attackTime);
+    });
+    S.subGain.gain.setValueAtTime(0, now);
+    S.subGain.gain.linearRampToValueAtTime(0.2, now + 6);
+
+    S.startTime = now; S.running = true;
+    S.logEntries = []; S.lastLogTime = -20; visFrame = 0;
+    addLog(0);
+
+    startBtn.innerHTML = '&#9632;';
+    startBtn.classList.add('playing');
+    statusEl.textContent = 'Initializing…'; statusEl.style.color = 'var(--muted)';
+
+    /* Audio + UI tick: 150ms */
+    S.decayTimer = setInterval(mainLoop, 150);
+    drawVis();
+
+    /* Schedule gradual voice fades after ~4 min */
+    setTimeout(() => {
+      if (!S.running) return;
+      S.voices.forEach(v => fadeOut(v, S.ctx, 10));
+      S.subGain.gain.linearRampToValueAtTime(0, S.ctx.currentTime + 10);
+    }, 240000);
+  } catch (e) {
+    console.error('Audio init failed:', e);
+    statusEl.textContent = 'Initialization failed — check console';
+    statusEl.style.color = 'var(--crit)';
+  }
+}
+
+function stopComposition() {
+  S.running = false;
+  if (S.decayTimer) { clearInterval(S.decayTimer); S.decayTimer = null; }
+  if (S.animFrame) { cancelAnimationFrame(S.animFrame); S.animFrame = null; }
+  if (S.ctx) {
+    S.voices.forEach(v => fadeOut(v, S.ctx, 0.3));
+    S.subGain.gain.linearRampToValueAtTime(0, S.ctx.currentTime + 0.3);
+    setTimeout(() => { try { S.ctx.close(); } catch(e){} }, 1000);
+  }
+  S.ctx = null; S.voices = [];
+  startBtn.innerHTML = '&#9654;';
+  startBtn.classList.remove('playing');
+  statusEl.textContent = 'Signal terminated'; statusEl.style.color = 'var(--muted)';
+}
+
+startBtn.addEventListener('click', () => S.running ? stopComposition() : startComposition());
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); startBtn.click(); }
+});
+
+/* Idle canvas */
+(function drawIdle() {
+  const w = sceneCanvas.width/devicePixelRatio, h = sceneCanvas.height/devicePixelRatio;
+  if (w < 10) return;
+  sctx.fillStyle = 'rgba(7,7,10,1)'; sctx.fillRect(0,0,w,h);
+  sctx.beginPath(); sctx.arc(w/2,h/2,Math.max(EPS,2),0,Math.PI*2);
+  sctx.fillStyle = 'rgba(212,148,90,0.12)'; sctx.fill();
+})();
+</script>
+</body>
+</html>
