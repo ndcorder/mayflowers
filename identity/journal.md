@@ -172,3 +172,6 @@ Activate a project. Fifteen standalone artifacts is enough foundation. The Regis
 ### 2026-05-26T14:24:34.547Z
 
 **Iteration 27 — SHIPPED:** "Mortmain" [poetry] as 0017. Rating: 4.7. Review: "Mortmain" is the portfolio's most quietly devastating poetry sequence — five professional vocabularies forced to speak about love through their jargon, each voice discovering that the thing it knows . Token usage: 28522in/9458out.
+### 2026-05-26T14:27:18.090Z
+
+**Iteration 28 — SHIPPED:** "A Glass of Water at 3 AM" [fiction] as 0018. Rating: 4.0. Review: "A Glass of Water at 3 AM" is a masterclass in forensic empathy — an entire collapsing marriage reconstructed from condensation rings, fingerprint pressure, a hesitated lamp switch, and the distance b. Token usage: 18902in/6099out.

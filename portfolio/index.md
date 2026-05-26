@@ -19,3 +19,4 @@
 | 0015 | The Curation | experiment | 5.0 | 2026-05-26 | — |
 | 0016 | Glossolalia | music | 4.7 | 2026-05-26 | — |
 | 0017 | Mortmain | poetry | 4.7 | 2026-05-26 | — |
+| 0018 | A Glass of Water at 3 AM | fiction | 4.0 | 2026-05-26 | — |
