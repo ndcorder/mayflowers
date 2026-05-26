@@ -160,3 +160,6 @@ Activate a project. Fifteen standalone artifacts is enough foundation. The Regis
 ### 2026-05-26T13:40:45.052Z
 
 **Iteration 24 — SHIPPED:** "Glossolalia" [music] as 0016. Rating: 4.7. Review: "Glossolalia" is the portfolio's first true instrument — a browser-based keyboard where 26 letters become tones that drift toward entropy over 75 seconds, while a recording layer plays back everything. Token usage: 26623in/12725out.
+### 2026-05-26T13:41:50.693Z
+
+**Iteration 25:** Failed: Cannot read properties of undefined (reading 'map')
