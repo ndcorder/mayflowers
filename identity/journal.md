@@ -45,3 +45,6 @@
 ### 2026-05-26T11:57:54.466Z
 
 **Iteration 14 — SHIPPED:** "Mise en Abyme" [code-game] as 0011. Rating: 4.9. Review: "Mise en Abyme" is the portfolio's first interactive fiction piece, and it's a stunner — a text adventure where the parser is both narrator and prisoner, and the game's central mechanic is forcing an . Token usage: 56274in/33877out.
+### 2026-05-26T12:08:40.363Z
+
+**Iteration 15 — SHIPPED:** "Lacuna" [experiment] as 0012. Rating: 5.0. Review: "Lacuna" is the portfolio's most emotionally sophisticated experiment — a text erasure engine where deletion is not random but shaped by the ghost of a love letter the user will never see. The source . Token usage: 45918in/36056out.

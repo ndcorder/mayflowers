@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lacuna</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0b;
+            --text: #c8c8c8;
+            --preserve: #d4a044;
+            --accent: #8b2020;
+            --muted: #555;
+            --dim: #333;
+            --faint: #1e1e1e;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Georgia', 'Times New Roman', serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== INTRO ===== */
+        #intro-overlay {
+            position: fixed; inset: 0; z-index: 100;
+            background: var(--bg);
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 1.4s ease, visibility 1.4s ease;
+        }
+        #intro-overlay.hidden {
+            opacity: 0; visibility: hidden; pointer-events: none;
+        }
+
+        .intro-content {
+            max-width: 440px; text-align: center; padding: 2rem;
+        }
+        .intro-content h1 {
+            font-size: 2.6rem; font-weight: 100;
+            letter-spacing: 1.2rem; margin-bottom: 2.5rem;
+            color: #888;
+        }
+        .intro-content p {
+            font-size: 0.9rem; color: #666;
+            line-height: 2; margin-bottom: 1.3rem;
+        }
+        .intro-content .hint {
+            font-size: 0.78rem; color: #444;
+            font-style: italic; margin-bottom: 2.8rem;
+            letter-spacing: 0.02em;
+        }
+
+        #begin-btn {
+            background: none; border: 1px solid #333; color: #666;
+            padding: 0.7rem 2.6rem; font-family: 'Georgia', serif;
+            font-size: 0.9rem; cursor: pointer; letter-spacing: 0.35rem;
+            transition: all 0.5s ease;
+        }
+        #begin-btn:hover, #begin-btn:focus-visible {
+            border-color: var(--preserve); color: var(--preserve);
+            outline: none;
+        }
+
+        /* ===== MAIN TEXT ===== */
+        #text-container {
+            max-width: 680px; margin: 0 auto;
+            padding: 3.5rem 2rem 10rem;
+            min-height: 60vh; position: relative; z-index: 1;
+        }
+        #text-display {
+            font-size: 1.05rem; line-height: 2.4; word-spacing: 0.1em;
+        }
+
+        .word {
+            display: inline;
+            transition: opacity 0.6s ease, color 0.5s ease;
+            cursor: default;
+        }
+        .word.targeted {
+            color: var(--accent);
+            animation: pulse 1.1s ease-in-out infinite;
+            cursor: pointer;
+        }
+        .word.preserved {
+            color: var(--preserve) !important;
+            text-shadow: 0 0 14px rgba(212, 160, 68, 0.3);
+            animation: glow 3.5s ease-in-out infinite;
+            cursor: default;
+        }
+        .word.erased {
+            opacity: 0 !important;
+            pointer-events: none;
+            transition: opacity 1.4s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.75; }
+            50% { opacity: 0.3; }
+        }
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 14px rgba(212, 160, 68, 0.3); }
+            50% { text-shadow: 0 0 24px rgba(212, 160, 68, 0.6), 0 0 48px rgba(212, 160, 68, 0.12); }
+        }
+
+        /* ===== CONTROLS ===== */
+        #controls {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            padding: 1.1rem 2rem 1.4rem;
+            background: linear-gradient(transparent, var(--bg) 45%);
+            display: flex; align-items: center; justify-content: center; gap: 2.5rem;
+            z-index: 50; opacity: 0;
+            transition: opacity 0.8s ease; pointer-events: none;
+        }
+        #controls.visible { opacity: 1; pointer-events: all; }
+
+        .stat {
+            font-size: 0.7rem; color: #3d3d3d;
+            letter-spacing: 0.12rem; text-transform: uppercase;
+            font-variant-numeric: tabular-nums;
+        }
+
+        #click-hint {
+            font-size: 0.75rem; color: var(--accent);
+            opacity: 0; transition: opacity 0.6s ease;
+            letter-spacing: 0.06rem;
+        }
+        #click-hint.visible { opacity: 0.8; }
+
+        /* ===== PASS NOTIFICATION ===== */
+        #pass-notification {
+            position: fixed; top: 1.2rem; right: 1.5rem;
+            font-size: 0.68rem; color: #353535;
+            letter-spacing: 0.08rem; opacity: 0;
+            transition: opacity 0.5s ease; z-index: 50;
+        }
+        #pass-notification.visible { opacity: 1; }
+
+        /* ===== FOUND POEM ===== */
+        #found-poem {
+            position: fixed; inset: 0;
+            background: rgba(10, 10, 11, 0.97);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 200; opacity: 0; visibility: hidden;
+            transition: opacity 3s ease, visibility 3s ease;
+        }
+        #found-poem.visible { opacity: 1; visibility: visible; }
+
+        .poem-content {
+            text-align: center; max-width: 520px; padding: 2rem;
+        }
+        .poem-epigraph {
+            font-size: 0.68rem; color: #333;
+            letter-spacing: 0.3rem; text-transform: uppercase;
+            margin-bottom: 3rem;
+        }
+        #poem-text {
+            font-size: 1.3rem; line-height: 2.8;
+            color: var(--preserve); min-height: 2rem;
+        }
+        .poem-word {
+            display: inline; opacity: 0;
+            animation: poem-appear 1.6s ease forwards;
+        }
+        @keyframes poem-appear { to { opacity: 1; } }
+
+        .poem-footer { margin-top: 3.5rem; }
+        .poem-ghost {
+            font-size: 0.72rem; color: #2a2a2a; font-style: italic;
+        }
+        .poem-attribution {
+            font-size: 0.62rem; color: #1a1a1a;
+            margin-top: 0.9rem; letter-spacing: 0.1rem;
+        }
+
+        /* ===== ATMOSPHERE ===== */
+        body::before {
+            content: ''; position: fixed; inset: 0;
+            background: radial-gradient(ellipse at 50% 20%, rgba(32, 18, 10, 0.22) 0%, transparent 60%);
+            pointer-events: none; z-index: 0;
+        }
+
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1a1a1a; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .word.targeted, .word.preserved, .poem-word { animation: none !important; }
+            .word.targeted { opacity: 0.5; color: var(--accent); }
+            .word.preserved { color: var(--preserve) !important; text-shadow: none; }
+            .poem-word { opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .intro-content h1 { font-size: 2rem; letter-spacing: 0.8rem; }
+            #text-display { font-size: 0.95rem; line-height: 2.2; }
+            #text-container { padding: 2.5rem 1.2rem 10rem; }
+            .poem-content { padding: 1.5rem; }
+            #poem-text { font-size: 1.1rem; line-height: 2.5; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="intro-overlay" role="dialog" aria-label="Introduction">
+        <div class="intro-content">
+            <h1>LACUNA</h1>
+            <p>You are about to read a text. Then you will watch it disappear —
+               not randomly, but according to rules you cannot see.</p>
+            <p>Each pass erases words shared with a document you will never be shown.
+               Click one targeted word per pass to preserve it. Choose carefully.</p>
+            <p class="hint">Your choices are the only resistance.</p>
+            <button id="begin-btn" aria-label="Begin the experience">BEGIN</button>
+        </div>
+    </div>
+
+    <main id="text-container">
+        <div id="text-display" aria-live="polite"></div>
+    </main>
+
+    <footer id="controls" role="status">
+        <span class="stat" id="pass-count">Pass 0</span>
+        <span id="click-hint">click a marked word to preserve it</span>
+        <span class="stat" id="remaining-count">0 words remain</span>
+    </footer>
+
+    <div id="pass-notification" aria-live="polite"></div>
+
+    <div id="found-poem" role="dialog" aria-label="Found poem">
+        <div class="poem-content">
+            <div class="poem-epigraph">what you chose to keep</div>
+            <div id="poem-text"></div>
+            <div class="poem-footer">
+                <div class="poem-ghost">a found poem from the negative space of a document you will never read</div>
+                <div class="poem-attribution">Lacuna.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ============================================
+           SOURCE TEXT
+           ============================================ */
+        const sourceText = `What we choose to remember is never the whole of what happened. Memory is an editor working without a manuscript, cutting and splicing according to urgencies we barely understand. I have been thinking about this for a long time now, about the way certain moments stay fossilized in amber while whole decades dissolve like sugar in rain.
+
+    There was a house on Meridian Street where the floorboards knew the weight of every person who had ever crossed them. The kitchen smelled of thyme and something metallic, old pipes maybe, or the ghost of industry that haunts every city built on manufacturing and forgetting. My mother would stand at the counter with her back to the door, and I would watch the tension in her shoulders, the way she held herself responsible for everything she could not control.
+
+    The letters came on Thursdays, always Thursdays, in envelopes that smelled of cigarettes and the particular mustiness of storage units. I did not read them until later. I was afraid of what I might find written there, the confession of things I had already decided were better left unspoken. We preserve certain silences the way we preserve certain objects, not because they are precious but because their absence would leave a shape we could not explain.
+
+    My mother kept a garden in the back corner of the yard where the fence sagged and the neighbor's dog would push through to investigate. She grew tomatoes and herbs, and once, a sunflower that grew so tall it seemed to be listening to something beyond the sky. She never explained why she planted what she planted. The garden was her conversation with the earth, private and without translation.
+
+    In September the light changes. It comes through the windows at an angle that makes everything look like it has already happened, like you are remembering this moment even as it occurs. I stood in the kitchen on Meridian Street and watched the dust motes turn gold in that autumn light and understood for the first time that beauty is not the opposite of grief but its faithful companion.
+
+    There are documents I will never show you. Not because they contain secrets in the way that word is usually meant, not codes or confessions or evidence of crimes, but because they are too particular to the shape of one life to be legible to another. A receipt from a hardware store. A photograph with the faces worn blank by handling. A list of words crossed out and rewritten until the paper nearly tore.
+
+    The truth is I have been circling this memory for years, trying to find the angle that would let me approach without distortion. But memory does not work that way. It does not reveal itself to patient observation. It arrives all at once, in the middle of a sentence, in the smell of thyme, in the particular quality of September light, and it takes the legs out from under you.
+
+    My mother is gone now. The house on Meridian Street belongs to strangers. The garden has been paved over for a parking space. And still the floorboards creak in my dreams, still the letters arrive on Thursdays in a voice only I can hear, still the sunflower turns its face toward something I cannot see and will never understand.
+
+    What we choose to remember is never enough. What we choose to forget is never complete. Between the two, in that luminous and terrible gap, lives the whole of who we were.
+
+    I want to say that I have made my peace with the gaps. I want to say that I understand now what my mother was growing in that garden, what she was writing in those letters, what she was listening for in the silence after the phone stopped ringing. But wanting is not the same as knowing, and knowing is not the same as understanding, and understanding, when it comes at all, arrives too late to be useful.
+
+    The documents remain. Crossed out, rewritten, handled into obscurity. They say what they say in spite of me, in spite of the years I spent trying to translate them into something bearable. Some things are not meant to be borne. Some things are meant to break you open so the light, that September, forever light, can get in.
+
+    I loved her. I think that is what I have been trying to say. Not as a confession, not as an explanation, not as a defense against the charge of having been human and therefore inadequate to the task of loving well. Just as a fact. The last fact. The one that survives every deletion.
+
+    What remains is what remains.`;
+
+        /* ============================================
+           HIDDEN TEXT — never displayed to user
+           ============================================ */
+        const hiddenText = `I confess that I loved you before I understood what love meant, before I had words for the gravity that pulled me toward your voice in every room. I loved you in the kitchen of that apartment on Warren Avenue where the refrigerator hummed and the traffic outside became a kind of music we moved to without knowing it. I loved the way you held coffee in both hands like a small animal you were protecting from the cold.
+
+    I want you to know that I kept the letters. All of them. Even the ones I said I had thrown away, especially those, because they contained the truest things I had ever written and I was afraid of them. Afraid of how they made visible the desperate architecture of my wanting. I wrote you love poems on the backs of receipts and parking tickets and once on a napkin from the diner where you told me about your mother's garden, the sunflowers, the herbs she grew in memory of a country she barely remembered.
+
+    My hands remember the shape of your face. My body remembers the particular temperature of the room where we first kissed. These are not memories exactly but something deeper, something that lives in the blood and bone, that does not require the brain's permission to persist. I have tried to delete you from my cells and cannot.
+
+    There is a grief that has no object. It comes on Thursday afternoons and sits in the corner of the room like an animal waiting to be recognized. I have given up trying to name it. Some things resist language the way water resists being held in an open hand. You pour and it falls through and the falling is the point, the falling is the only honest thing.
+
+    I wanted to build something with you. A life that had the weight and texture of permanence. A house with a garden where we could grow old and watch September light through windows we had chosen together. I wanted to be the person you trusted with your silence, the one who could sit beside you in the dark without needing you to explain.
+
+    But wanting is not building, and love without construction is just weather. It comes and it goes and it damages what it touches and calls it transformation. I was weather. I know that now. I was the storm you walked through to get to the clearer air on the other side.
+
+    I kept every photograph, even the blurred ones, even the ones where we look like strangers trying to remember where we met. I kept the ticket stubs and the dried flowers and the note you left on my windshield that said simply come back. I kept these things because I believed that objects could hold what I could not, that evidence of love could substitute for its presence.
+
+    I was wrong. Objects do not remember. Only the living remember, and even they do it badly, editing and cutting, preserving the dramatic and discarding the daily, the ordinary, the thousand small kindnesses that are the actual substance of what we call love. I cannot trust my own recollection. I have rewritten this letter so many times it has become fiction. But the feeling beneath it is not fiction. The feeling is the one true thing I have left.
+
+    I loved you. Not perfectly. Not even well, sometimes. But completely. In the way that light fills a room, not by trying but by being. And when you left, the room did not go dark. That would have been simpler. Instead the light stayed but changed color, became the light of a different hour, a different season, September light that makes everything look like memory.
+
+    I confess this not to ask for anything. I confess because the silence was becoming its own kind of violence, because there should be a record somewhere, however incomplete, however edited by the unreliability of a human heart. I loved you. I love you still. And this document, these words, this confession is the only evidence that remains.
+
+    What I want you to understand is that I tried. I tried to love you in a way that was equal to what you deserved. I failed. But the trying was real. The trying was the most real thing I have ever done.
+
+    These are the last words I will write to you. Not because I have stopped loving you but because the writing has become its own form of avoidance, a way of staying in contact without risking contact, a way of confessing without facing the consequences of confession. I am putting down the pen. I am closing the notebook. I am walking into the September light and letting it take me wherever it goes.
+
+    Goodbye, my love. My only love. The love that defined the shape of everything that came after.`;
+
+        /* ============================================
+           TOKENIZER & HELPERS
+           ============================================ */
+        function tokenize(text) {
+            return text.split(/\s+/).filter(function(w) { return w.length > 0; });
+        }
+
+        function normalize(word) {
+            return word.replace(/[^a-zA-Z]/g, '').toLowerCase();
+        }
+
+        function shuffle(arr) {
+            for (var i = arr.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+            }
+            return arr;
+        }
+
+        /* ============================================
+           BUILD WORD SETS
+           ============================================ */
+        var hiddenNorms = new Set(tokenize(hiddenText).map(normalize));
+        var sourceTokens = tokenize(sourceText);
+
+        var words = sourceTokens.map(function(raw, i) {
+            return {
+                raw: raw,
+                norm: normalize(raw),
+                index: i,
+                erased: false,
+                targeted: false,
+                preserved: false,
+                el: null
+            };
+        });
+
+        /* ============================================
+           STATE
+           ============================================ */
+        var passNum = 0;
+        var savedWords = [];
+        var hasPreservedThisPass = false;
+        var targetQueue = [];
+        var passTimer = null;
+        var phaseTimer = null;
+        var ended = false;
+
+        /* ============================================
+           DOM REFERENCES
+           ============================================ */
+        var $display = document.getElementById('text-display');
+        var $controls = document.getElementById('controls');
+        var $intro = document.getElementById('intro-overlay');
+        var $passCount = document.getElementById('pass-count');
+        var $remain = document.getElementById('remaining-count');
+        var $hint = document.getElementById('click-hint');
+        var $notif = document.getElementById('pass-notification');
+        var $poem = document.getElementById('found-poem');
+        var $poemText = document.getElementById('poem-text');
+        var $beginBtn = document.getElementById('begin-btn');
+
+        /* ============================================
+           RENDER TEXT INTO DOM
+           ============================================ */
+        function render() {
+            var frag = document.createDocumentFragment();
+            words.forEach(function(w, i) {
+                var span = document.createElement('span');
+                span.className = 'word';
+                span.textContent = w.raw;
+                span.setAttribute('data-idx', i);
+                w.el = span;
+                frag.appendChild(span);
+                if (i < words.length - 1) {
+                    frag.appendChild(document.createTextNode(' '));
+                }
+            });
+            $display.appendChild(frag);
+            updateStats();
+        }
+
+        function updateStats() {
+            var alive = words.filter(function(w) { return !w.erased; }).length;
+            $passCount.textContent = 'Pass ' + passNum;
+            $remain.textContent = alive + ' words remain';
+        }
+
+        /* ============================================
+           DELETION PASS
+           ============================================ */
+        function getPassInterval() {
+            return Math.max(4500, 20000 * Math.pow(0.88, passNum));
+        }
+
+        function passBegin() {
+            if (ended) return;
+
+            targetQueue = words.filter(function(w) {
+                return !w.erased && !w.preserved && hiddenNorms.has(w.norm);
+            });
+
+            if (targetQueue.length === 0) {
+                endExperience();
+                return;
+            }
+
+            shuffle(targetQueue);
+
+            targetQueue.forEach(function(w) {
+                w.targeted = true;
+                w.el.classList.add('targeted');
+            });
+
+            hasPreservedThisPass = false;
+            $hint.classList.add('visible');
+            $notif.textContent = 'Pass ' + (passNum + 1) + ' — ' + targetQueue.length + ' words marked';
+            $notif.classList.add('visible');
+
+            phaseTimer = setTimeout(passExecute, 4200);
+        }
+
+        function passExecute() {
+            if (ended) return;
+
+            targetQueue.forEach(function(w) {
+                w.targeted = false;
+                w.el.classList.remove('targeted');
+                if (!w.preserved) {
+                    w.erased = true;
+                    w.el.classList.add('erased');
+                }
+            });
+
+            targetQueue = [];
+            $hint.classList.remove('visible');
+            $notif.classList.remove('visible');
+
+            passNum++;
+            updateStats();
+
+            var alive = words.filter(function(w) { return !w.erased; }).length;
+            if (alive <= 8) {
+                setTimeout(endExperience, 2500);
+                return;
+            }
+
+            passTimer = setTimeout(passBegin, getPassInterval());
+        }
+
+        /* ============================================
+           PRESERVE A WORD
+           ============================================ */
+        function preserveWord(w) {
+            if (hasPreservedThisPass || !w.targeted) return;
+
+            w.preserved = true;
+            w.targeted = false;
+            w.el.classList.remove('targeted');
+            w.el.classList.add('preserved');
+
+            savedWords.push(w.raw);
+            hasPreservedThisPass = true;
+            $hint.classList.remove('visible');
+
+            targetQueue = targetQueue.filter(function(t) { return t !== w; });
+        }
+
+        /* ============================================
+           END EXPERIENCE
+           ============================================ */
+        function endExperience() {
+            if (ended) return;
+            ended = true;
+            clearTimeout(passTimer);
+            clearTimeout(phaseTimer);
+
+            $controls.classList.remove('visible');
+            $hint.classList.remove('visible');
+            $notif.classList.remove('visible');
+
+            var remaining = words.filter(function(w) {
+                return !w.erased && !w.preserved;
+            });
+
+            remaining.forEach(function(w, i) {
+                setTimeout(function() {
+                    w.erased = true;
+                    w.el.style.transition = 'opacity 1.6s ease';
+                    w.el.classList.add('erased');
+                }, i * 55);
+            });
+
+            var cascadeTime = remaining.length * 55 + 2800;
+            setTimeout(showPoem, cascadeTime);
+        }
+
+        function showPoem() {
+            $poem.classList.add('visible');
+
+            if (savedWords.length === 0) {
+                $poemText.innerHTML = '<span style="color:#333;font-style:italic;">you preserved nothing</span>';
+                return;
+            }
+
+            $poemText.innerHTML = '';
+            savedWords.forEach(function(w, i) {
+                var span = document.createElement('span');
+                span.className = 'poem-word';
+                span.textContent = w;
+                span.style.animationDelay = (i * 0.38 + 0.6) + 's';
+                $poemText.appendChild(span);
+                if (i < savedWords.length - 1) {
+                    $poemText.appendChild(document.createTextNode(' '));
+                }
+            });
+        }
+
+        /* ============================================
+           EVENT LISTENERS
+           ============================================ */
+        function setup() {
+            render();
+
+            $beginBtn.addEventListener('click', function() {
+                $intro.classList.add('hidden');
+                $controls.classList.add('visible');
+                passTimer = setTimeout(passBegin, 10000);
+            });
+
+            $display.addEventListener('click', function(e) {
+                var span = e.target.closest('.word');
+                if (!span) return;
+                var idx = parseInt(span.getAttribute('data-idx'), 10);
+                var w = words[idx];
+                if (w && w.targeted) {
+                    preserveWord(w);
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.code === 'Space' && !hasPreservedThisPass && targetQueue.length > 0) {
+                    e.preventDefault();
+                    preserveWord(targetQueue[0]);
+                }
+                if (e.code === 'Enter' && !$intro.classList.contains('hidden')) {
+                    e.preventDefault();
+                    $beginBtn.click();
+                }
+            });
+        }
+
+        setup();
+    </script>
+</body>
+</html>
