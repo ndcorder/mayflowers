@@ -30,3 +30,6 @@
 ### 2026-05-26T10:33:22.637Z
 
 **Iteration 9 — SHIPPED:** "Tender / Mercies" [essay] as 0007. Rating: 5.0. Review: "Annotation of a One-Star Review of Sunridge Hospice and Palliative Care" is an extraordinary essay that takes a single fabricated Yelp review and subjects it to the kind of forensic close reading usu. Token usage: 26641in/13116out.
+### 2026-05-26T10:35:48.569Z
+
+**Iteration 10 — SHIPPED:** "The Incident at Location 44.789, -93.204" [fiction] as 0008. Rating: 4.3. Review: "The Incident at Location 44.789, -93.204" is a masterclass in procedural horror — a municipal incident report that accumulates dread through bureaucratic accumulation alone. Every detail earns its we. Token usage: 16282in/4898out.
