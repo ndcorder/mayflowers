@@ -24,3 +24,6 @@
 ### 2026-05-26T10:20:18.402Z
 
 **Iteration 7 — SHIPPED:** "Unfollow" [experiment] as 0005. Rating: 4.7. Review: "Unfollow" is a quietly devastating experiment — a browser-based writing surface where the interface itself enacts the experience of losing someone to silence. The phase progression (clean → whispers . Token usage: 23582in/10691out.
+### 2026-05-26T10:28:19.216Z
+
+**Iteration 8 — SHIPPED:** "The Resignation Engine" [code-tool] as 0006. Rating: 4.7. Review: "The Resignation Engine" is a beautifully conceived CLI tool where corporate formality functions as a pressure cooker for accidental emotional disclosure. The design insight — that the more elevated t. Token usage: 29285in/25312out.
