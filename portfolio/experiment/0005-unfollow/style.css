@@ -1,0 +1,269 @@
+/* ========================================
+   UNFOLLOW
+   Typography that degrades.
+======================================== */
+
+:root {
+  --ink-color: #1a1714;
+  --bg-color: #f0ebe3;
+  --paper-color: #f7f3ec;
+  --cursor-drift: 0px;
+  --cursor-scale: 1;
+  --cursor-opacity: 1;
+  --blur-amount: 0px;
+  --skew-amount: 0deg;
+  --noise-opacity: 0;
+  --glow-color: transparent;
+  --paper-shift: 0px;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--ink-color);
+  font-family: 'Georgia', 'Times New Roman', 'Noto Serif', serif;
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Noise texture */
+#app::before {
+  content: '';
+  position: fixed;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: var(--noise-opacity);
+  pointer-events: none;
+  z-index: 100;
+  transition: opacity 2s ease;
+}
+
+/* ---------- Instructions ---------- */
+
+#instructions {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: var(--bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 1.2s ease, visibility 1.2s ease;
+}
+
+#instructions.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.instruction-inner {
+  text-align: center;
+  max-width: 480px;
+  padding: 2rem;
+}
+
+.instruction-line {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: var(--ink-color);
+  opacity: 0.85;
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.instruction-line:first-child {
+  font-size: 1.35rem;
+  font-weight: 600;
+  opacity: 1;
+  margin-bottom: 1.2rem;
+}
+
+.instruction-sub {
+  font-size: 0.95rem;
+  opacity: 0.55;
+  margin-bottom: 2.5rem;
+  animation-delay: 0.5s;
+}
+
+.instruction-cta {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  opacity: 0.35;
+  animation-delay: 1s;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 0.95; }
+}
+
+/* ---------- Writing Surface ---------- */
+
+#surface {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 620px;
+  min-height: 100vh;
+  padding: 8rem 2rem 4rem;
+  background: var(--paper-color);
+  box-shadow:
+    0 0 80px rgba(0,0,0,0.04),
+    inset 0 0 120px rgba(0,0,0,0.02);
+  transform: translateY(var(--paper-shift)) skewY(var(--skew-amount));
+  transition: transform 1.5s ease, filter 1.5s ease;
+  filter: blur(var(--blur-amount));
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+#surface::-webkit-scrollbar { display: none; }
+
+#writing-area {
+  position: relative;
+  min-height: 60vh;
+  letter-spacing: 0.02em;
+  word-spacing: 0.15em;
+  line-height: 1.9;
+  font-size: 1.1rem;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  transition:
+    letter-spacing 0.6s ease,
+    word-spacing 0.6s ease,
+    line-height 0.8s ease;
+}
+
+/* ---------- Characters ---------- */
+
+#text-body .char {
+  display: inline;
+  transition: opacity 0.3s ease;
+}
+
+#text-body .char.faded {
+  opacity: 0.12;
+}
+
+#text-body .char.lost {
+  opacity: 0;
+  display: inline-block;
+  width: 0.3em;
+  transition: opacity 1.2s ease;
+}
+
+#text-body .char.struck {
+  text-decoration: line-through;
+  opacity: 0.2;
+}
+
+#text-body .char.whisper {
+  font-size: 0.65em;
+  opacity: 0.18;
+  vertical-align: super;
+}
+
+#text-body .char.gone {
+  opacity: 0;
+  display: none;
+}
+
+/* Clarity sentence */
+#text-body .clarity-line {
+  display: block;
+  margin: 1.5em 0;
+  padding: 0.5em 0;
+  opacity: 1;
+  color: var(--ink-color);
+  border-bottom: 1px solid rgba(26,23,20,0.08);
+  letter-spacing: 0.03em;
+  animation: clarityGlow 3s ease-in-out infinite;
+}
+
+@keyframes clarityGlow {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+/* ---------- Cursor ---------- */
+
+#cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.2em;
+  background-color: var(--ink-color);
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  animation: cursorBlink 1s step-end infinite;
+  transform: translate(var(--cursor-drift), 0) scale(var(--cursor-scale));
+  opacity: var(--cursor-opacity);
+  transition:
+    transform 0.4s ease,
+    opacity 0.3s ease;
+  box-shadow: 0 0 4px var(--glow-color);
+}
+
+@keyframes cursorBlink {
+  0%, 50% { opacity: var(--cursor-opacity); }
+  51%, 100% { opacity: 0; }
+}
+
+/* ---------- Ruin state ---------- */
+
+#surface.ruin {
+  filter: blur(0.4px) grayscale(0.15);
+  transform: translateY(var(--paper-shift)) skewY(var(--skew-amount)) scale(0.98);
+}
+
+#surface.ruin #writing-area {
+  letter-spacing: 0.12em;
+  word-spacing: 0.4em;
+  line-height: 2.4;
+}
+
+#surface.ruin #cursor {
+  width: 1px;
+  height: 1.4em;
+  opacity: 0.15;
+  animation: none;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 640px) {
+  #surface {
+    padding: 6rem 1.2rem 3rem;
+    max-width: 100%;
+  }
+  #writing-area { font-size: 1rem; }
+  .instruction-line { font-size: 1rem; }
+  .instruction-line:first-child { font-size: 1.15rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

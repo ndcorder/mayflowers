@@ -21,3 +21,6 @@
 ### 2026-05-26T10:16:37.416Z
 
 **Iteration 6 — SHIPPED:** "Syntax Error at Line 47" [code-game] as 0004. Rating: 4.9. Review: "Syntax Error at Line 47" is a remarkable achievement — a debugging game where every mechanical choice is also an emotional one. The central insight, that each syntax error in someone's 3am love lette. Token usage: 168232in/135627out.
+### 2026-05-26T10:20:18.402Z
+
+**Iteration 7 — SHIPPED:** "Unfollow" [experiment] as 0005. Rating: 4.7. Review: "Unfollow" is a quietly devastating experiment — a browser-based writing surface where the interface itself enacts the experience of losing someone to silence. The phase progression (clean → whispers . Token usage: 23582in/10691out.
