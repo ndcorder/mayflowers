@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evidence Device #4177 — Mobile Forensic Workstation</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,ght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06090f;
+    --fg: #b0b8c8;
+    --muted: #3a4256;
+    --accent: #d4863a;
+    --card: #0c1018;
+    --border: #1a2030;
+    --danger: #a83232;
+    --phone-bg: #0a0a0a;
+    --phone-card: #141414;
+    --phone-text: #a8a8a8;
+    --phone-dim: #555555;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .mono { font-family: 'Space Mono', monospace; }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(212,134,58,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(212,134,58,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(212,134,58,0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(58,100,212,0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+    animation: ambientDrift 30s ease-in-out infinite alternate;
+  }
+  @keyframes ambientDrift {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-3%, 2%); }
+  }
+
+  #scanlines {
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .forensic-bar {
+    background: linear-gradient(180deg, rgba(6,9,15,0.98), rgba(6,9,15,0.88));
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+  }
+
+  .integrity-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: #1a1a1a;
+    overflow: hidden;
+  }
+  .integrity-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease, background 0.6s ease;
+    position: relative;
+  }
+  .integrity-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 0; bottom: 0;
+    width: 20px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15));
+  }
+
+  .phone-outer {
+    background: linear-gradient(145deg, #222226, #18181c);
+    border-radius: 44px;
+    padding: 12px;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.04),
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      0 20px 60px rgba(0,0,0,0.7),
+      0 0 120px rgba(212,134,58,0.03);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .phone-outer::before {
+    content: '';
+    position: absolute;
+    top: 12px; right: -3px;
+    width: 3px; height: 40px;
+    background: #333;
+    border-radius: 0 2px 2px 0;
+  }
+  .phone-outer::after {
+    content: '';
+    position: absolute;
+    top: 70px; right: -3px;
+    width: 3px; height: 60px;
+    background: #333;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .phone-screen {
+    background: var(--phone-bg);
+    border-radius: 34px;
+    overflow: hidden;
+    width: 375px;
+    height: 740px;
+    position: relative;
+  }
+
+  .phone-notch {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 160px; height: 30px;
+    background: #1a1a1e;
+    border-radius: 0 0 18px 18px;
+    z-index: 50;
+  }
+  .phone-notch::before {
+    content: '';
+    position: absolute;
+    top: 10px; left: 50%;
+    transform: translateX(-50%);
+    width: 50px; height: 4px;
+    border-radius: 2px;
+    background: #2a2a2e;
+  }
+  .phone-notch::after {
+    content: '';
+    position: absolute;
+    top: 7px; right: 30px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #1e1e22;
+    box-shadow: inset 0 0 2px rgba(40,80,160,0.3);
+  }
+
+  .status-bar {
+    height: 48px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 24px 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    z-index: 40;
+    position: relative;
+  }
+
+  .phone-content {
+    height: calc(740px - 48px - 76px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    scrollbar-width: none;
+  }
+  .phone-content::-webkit-scrollbar { display: none; }
+
+  .home-indicator {
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+  }
+  .home-indicator::before {
+    content: '';
+    width: 134px; height: 5px;
+    border-radius: 3px;
+    background: #444;
+    transition: background 0.2s;
+  }
+  .home-indicator:hover::before { background: #666; }
+
+  .app-icon {
+    width: 60px; height: 60px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .app-icon:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+  .app-icon:active { transform: scale(0.95); }
+  .app-icon.opened { opacity: 0.55; }
+
+  .degradation-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 45;
+    border-radius: 34px;
+    overflow: hidden;
+  }
+  .scan-line-anim {
+    position: absolute;
+    width: 100%; height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(212,134,58,0.12), transparent);
+    animation: scanMove 4s linear infinite;
+  }
+  @keyframes scanMove {
+    0% { top: -3px; }
+    100% { top: 100%; }
+  }
+
+  .static-noise {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E");
+    background-size: 128px 128px;
+    mix-blend-mode: overlay;
+    transition: opacity 0.8s;
+  }
+
+  .deg-color-shift {
+    position: absolute;
+    inset: 0;
+    background: rgba(212,134,58,0);
+    mix-blend-mode: multiply;
+    transition: background 1s;
+  }
+
+  @keyframes flicker {
+    0%, 90%, 93%, 95%, 97%, 100% { opacity: 1; }
+    91% { opacity: 0.65; }
+    94% { opacity: 0.8; }
+    96% { opacity: 0.7; }
+    98% { opacity: 0.6; }
+  }
+  .flickering { animation: flicker 4s infinite; }
+
+  .side-panel {
+    width: 380px;
+    min-width: 360px;
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .side-panel::-webkit-scrollbar { width: 4px; }
+  .side-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .toast-container {
+    position: fixed;
+    top: 70px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+    max-width: 520px;
+    width: 90%;
+  }
+  .toast {
+    background: rgba(12,16,24,0.95);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 12px;
+    backdrop-filter: blur(12px);
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+    pointer-events: auto;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.warning { border-left-color: #f59e0b; }
+  .toast.critical { border-left-color: #ef4444; }
+  .toast.evidence { border-left-color: #22d3ee; }
+
+  #wallCanvas { width: 100%; height: 100%; display: block; }
+
+  .video-controls {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 12px 16px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    z-index: 10;
+  }
+  .video-progress {
+    width: 100%; height: 4px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 2px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .video-progress:hover { height: 6px; margin-bottom: 8px; }
+  .video-progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.2s linear;
+  }
+  .video-progress-fill::after {
+    content: '';
+    position: absolute;
+    right: -4px; top: 50%;
+    transform: translateY(-50%);
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .video-progress:hover .video-progress-fill::after { opacity: 1; }
+
+  .photo-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .photo-item:hover { transform: scale(1.03); }
+  .photo-item img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: filter 0.3s;
+  }
+  .photo-item:hover img { filter: brightness(1.1); }
+
+  .app-header {
+    padding: 8px 16px 12px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(10px);
+    z-index: 5;
+  }
+
+  .msg-bubble {
+    max-width: 75%;
+    padding: 9px 13px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.45;
+    margin-bottom: 4px;
+  }
+  .msg-them {
+    background: #2a2a2a;
+    color: #ddd;
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+  }
+  .msg-you {
+    background: #1a3a5c;
+    color: #ddd;
+    border-bottom-right-radius: 4px;
+    align-self: flex-end;
+  }
+
+  .map-container {
+    width: 100%; height: 200px;
+    background: linear-gradient(135deg, #0d1a0d, #0a1510, #0d180d);
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .map-dot {
+    position: absolute;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(212,134,58,0.5);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .map-dot:hover { transform: translate(-50%,-50%) scale(1.5); }
+  .map-dot::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid rgba(212,134,58,0.3);
+    animation: mapPulse 2s ease infinite;
+  }
+  @keyframes mapPulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.8); opacity: 0; }
+  }
+  .map-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(30,60,30,0.25) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30,60,30,0.25) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+  .map-road {
+    position: absolute;
+    background: rgba(40,50,40,0.5);
+    border-radius: 1px;
+  }
+
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: modalIn 0.2s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .panel-section {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--card);
+    overflow: hidden;
+  }
+  .panel-section-header {
+    padding: 10px 14px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    font-family: 'Space Mono', monospace;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-section-body {
+    padding: 12px 14px;
+  }
+
+  .evidence-item {
+    animation: evidenceIn 0.3s ease;
+  }
+  @keyframes evidenceIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes intFlash {
+    0% { box-shadow: inset 0 0 30px rgba(168,50,50,0.3); }
+    100% { box-shadow: none; }
+  }
+  .int-flash { animation: intFlash 0.6s ease; }
+
+  .app-view { animation: appFadeIn 0.2s ease; }
+  @keyframes appFadeIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .cost-badge {
+    font-size: 8px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: rgba(212,134,58,0.15);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+  }
+
+  .unread-badge {
+    position: absolute;
+    top: -3px; right: -3px;
+    min-width: 16px; height: 16px;
+    border-radius: 8px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  @media (max-width: 1100px) {
+    .side-panel { display: none; }
+  }
+  @media (max-width: 500px) {
+    .phone-outer {
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+    .phone-outer::before, .phone-outer::after { display: none; }
+    .phone-screen {
+      border-radius: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+    .degradation-overlay { border-radius: 0; }
+    .phone-notch { display: none; }
+    .status-bar { height: 40px; }
+    .phone-content { height: calc(100vh - 40px - 76px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body class="relative">
+  <div id="scanlines"></div>
+
+  <!-- Forensic Top Bar -->
+  <header class="forensic-bar fixed top-0 left-0 right-0 z-50 px-6 py-3 flex items-center justify-between" role="banner">
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
+        <i class="fas fa-fingerprint text-[var(--accent)] text-sm"></i>
+        <span class="mono text-xs text-[var(--accent)] tracking-wider hidden sm:inline">FORENSIC WORKSTATION v3.2.1</span>
+        <span class="mono text-xs text-[var(--accent)] tracking-wider sm:hidden">MFW v3.2</span>
+      </div>
+      <div class="h-4 w-px bg-[var(--border)]"></div>
+      <span class="mono text-xs text-[var(--muted)]">CASE #CF-2024-0177</span>
+    </div>
+    <div class="flex items-center gap-4 sm:gap-6">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <span class="mono text-[10px] text-[var(--muted)] hidden sm:inline">INTEGRITY</span>
+        <div class="integrity-bar w-24 sm:w-48">
+          <div id="integrityFill" class="integrity-fill" style="width:100%; background:#4ade80;"></div>
+        </div>
+        <span id="integrityText" class="mono text-xs font-bold" style="color:#4ade80;">100%</span>
+      </div>
+      <div class="h-4 w-px bg-[var(--border)] hidden sm:block"></div>
+      <button id="caseFileBtn" class="mono text-[10px] sm:text-xs text-[var(--muted)] hover:text-[var(--accent)] transition-colors cursor-pointer flex items-center gap-1.5" aria-label="Open case file">
+        <i class="fas fa-folder-open"></i> <span class="hidden sm:inline">CASE FILE</span>
+      </button>
+      <button id="toolsBtn" class="mono text-[10px] sm:text-xs text-[var(--muted)] hover:text-[var(--accent)] transition-colors cursor-pointer flex items-center gap-1.5" aria-label="Forensic tools">
+        <i class="fas fa-wrench"></i> <span class="hidden sm:inline">TOOLS</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex items-start justify-center gap-8 pt-24 pb-12 px-4 relative z-10" role="main">
+    <!-- Side Panel -->
+    <aside class="side-panel space-y-4 mt-4" id="sidePanel" role="complementary" aria-label="Forensic analysis panels">
+      <div class="panel-section">
+        <div class="panel-section-header">
+          <span>Forensic Log</span>
+          <span id="logCount" class="text-[var(--muted)]">4 entries</span>
+        </div>
+        <div id="forensicLog" class="panel-section-body mono text-[11px] space-y-2 max-h-56 overflow-y-auto" style="scrollbar-width:thin; scrollbar-color: var(--border) transparent;">
+          <div class="text-[var(--muted)]">14:23:01 — Session initialized. Device image mounted read-only.</div>
+          <div class="text-[var(--muted)]">14:23:01 — Filesystem scan: 847 files catalogued.</div>
+          <div class="text-[var(--muted)]">14:23:02 — Encryption status: disabled (device was unlocked at recovery).</div>
+          <div class="text-[var(--muted)]">14:23:02 — Caution: each read operation introduces measurable degradation to volatile sectors.</div>
+        </div>
+      </div>
+
+      <div id="caseFilePanel" class="panel-section hidden">
+        <div class="panel-section-header">Case File CF-2024-0177</div>
+        <div class="panel-section-body text-xs leading-relaxed space-y-3">
+          <p><span class="text-[var(--accent)] mono text-[10px]">RECOVERY DATE</span><br>2024-03-15, estimated 04:12</p>
+          <p><span class="text-[var(--accent)] mono text-[10px]">LOCATION</span><br>Beneath bench, Platform 3, Meridian Transit Center</p>
+          <p><span class="text-[var(--accent)] mono text-[10px]">DEVICE CONDITION</span><br>Screen cracked (upper-left quadrant). Battery at 2%, connected to forensic charger. No SIM card. SD slot empty.</p>
+          <p><span class="text-[var(--accent)] mono text-[10px]">OWNER STATUS</span><br>Unidentified. No lock screen identity. No emergency contacts. "Me" contact entry: single VoIP number (disconnected).</p>
+          <p><span class="text-[var(--accent)] mono text-[10px]">NOTABLE ARTIFACT</span><br>Single video file in Camera Roll. Duration 47:00. Content: a wall. Playback analysis pending.</p>
+          <p><span class="text-[var(--accent)] mono text-[10px]">DIRECTIVE</span><br>Reconstruct behavioral profile. Correlate digital traces. Determine if device was intentionally abandoned.</p>
+          <div class="border-t border-[var(--border)] pt-3 mt-3">
+            <p class="text-[var(--muted)] italic text-[11px]">Each interaction draws power from the forensic bridge. Read operations corrupt adjacent sectors. Some data will not survive your attention.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-section-header">
+          <span>Extracted Evidence</span>
+          <span id="evidenceCount" class="text-[var(--muted)]">0</span>
+        </div>
+        <div id="evidencePanel" class="panel-section-body text-xs space-y-2 max-h-72 overflow-y-auto" style="scrollbar-width:thin; scrollbar-color: var(--border) transparent;">
+          <p class="text-[var(--muted)] italic text-[11px]">No evidence extracted yet. Open applications on the device to begin analysis.</p>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-section-header">Behavioral Profile</div>
+        <div id="profilePanel" class="panel-section-body text-xs space-y-2 max-h-60 overflow-y-auto" style="scrollbar-width:thin; scrollbar-color: var(--border) transparent;">
+          <p class="text-[var(--muted)] italic text-[11px]">Insufficient data for profile construction. Extract evidence from device applications.</p>
+        </div>
+      </div>
+
+      <div id="toolsPanel" class="panel-section hidden">
+        <div class="panel-section-header">Forensic Tools</div>
+        <div class="panel-section-body space-y-3">
+          <button onclick="flashEnhance()" class="w-full text-left px-3 py-2.5 bg-[#111820] hover:bg-[#182030] rounded text-xs text-[var(--fg)] transition-colors cursor-pointer flex items-center gap-2.5 border border-transparent hover:border-[var(--border)]" aria-label="Run flash pattern enhancement">
+            <i class="fas fa-bolt text-[var(--accent)] w-4 text-center"></i>
+            <div>
+              <span class="block">Flash Pattern Enhancement</span>
+              <span class="block text-[var(--muted)] text-[10px]">Costs 5% integrity. Requires video viewing.</span>
+            </div>
+          </button>
+          <button onclick="geofenceCorrelate()" class="w-full text-left px-3 py-2.5 bg-[#111820] hover:bg-[#182030] rounded text-xs text-[var(--fg)] transition-colors cursor-pointer flex items-center gap-2.5 border border-transparent hover:border-[var(--border)]" aria-label="Correlate location data">
+            <i class="fas fa-crosshairs text-[var(--accent)] w-4 text-center"></i>
+            <div>
+              <span class="block">Geofence Correlation</span>
+              <span class="block text-[var(--muted)] text-[10px]">Costs 3% integrity. Requires map data.</span>
+            </div>
+          </button>
+          <button onclick="temporalAnalysis()" class="w-full text-left px-3 py-2.5 bg-[#111820] hover:bg-[#182030] rounded text-xs text-[var(--fg)] transition-colors cursor-pointer flex items-center gap-2.5 border border-transparent hover:border-[var(--border)]" aria-label="Run temporal analysis">
+            <i class="fas fa-clock text-[var(--accent)] w-4 text-center"></i>
+            <div>
+              <span class="block">Temporal Analysis</span>
+              <span class="block text-[var(--muted)] text-[10px]">Costs 3% integrity. Requires multiple data sources.</span>
+            </div>
+          </button>
+          <button onclick="integrityCheck()" class="w-full text-left px-3 py-2.5 bg-[#111820] hover:bg-[#182030] rounded text-xs text-[var(--fg)] transition-colors cursor-pointer flex items-center gap-2.5 border border-transparent hover:border-[var(--border)]" aria-label="Check device integrity">
+            <i class="fas fa-heartbeat text-[var(--accent)] w-4 text-center"></i>
+            <div>
+              <span class="block">Integrity Check</span>
+              <span class="block text-[var(--muted)] text-[10px]">No cost. Diagnostic only.</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Phone -->
+    <div class="phone-outer" role="application" aria-label="Recovered smartphone — Evidence Device #4177">
+      <div class="phone-screen" id="phoneScreen">
+        <div class="phone-notch"></div>
+        <div class="status-bar">
+          <span class="mono text-xs">9:41</span>
+          <div class="flex items-center gap-1.5">
+            <i class="fas fa-signal text-[10px]"></i>
+            <i class="fas fa-wifi text-[10px]"></i>
+            <span class="mono text-[10px]">97%</span>
+            <i class="fas fa-battery-full text-[10px]"></i>
+          </div>
+        </div>
+        <div class="phone-content" id="phoneContent"></div>
+        <div class="home-indicator" id="homeBar" role="button" aria-label="Return to home screen" tabindex="0"></div>
+        <div class="degradation-overlay" id="degOverlay">
+          <div class="scan-line-anim"></div>
+          <div class="static-noise" id="staticNoise"></div>
+          <div class="deg-color-shift" id="degColorShift"></div>
+        </div>
+        <div id="phoneModal" class="hidden"></div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+  // ============================================================
+  //  CONFIGURATION
+  // ============================================================
+  const CFG = {
+    initialIntegrity: 100,
+    openCost: 4,
+    readCost: 2,
+    photoCost: 1.5,
+    videoPlayCost: 0.6,
+    videoRewindCost: 3,
+    flashToolCost: 5,
+    geoToolCost: 3,
+    temporalToolCost: 3,
+    thresholds: [15, 35, 60, 85]
+  };
+
+  // ============================================================
+  //  STATE
+  // ============================================================
+  const S = {
+    integrity: CFG.initialIntegrity,
+    currentApp: 'home',
+    openedApps: new Set(),
+    readItems: new Set(),
+    evidence: [],
+    videoPlaying: false,
+    videoTime: 0,
+    videoLastTick: 0,
+    videoFlashesSeen: new Set(),
+    videoAnimFrame: null,
+    logEntries: 4,
+    wallCanvas: null,
+    wallCtx: null,
+    crackPath: [],
+    lastDrainTen: -1
+  };
+
+  // ============================================================
+  //  DATA — Applications
+  // ============================================================
+  const APPS = [
+    { id: 'messages',  name: 'Messages',  icon: 'fa-comment',       bg: '#1a3a2a', cost: CFG.openCost, badge: 2 },
+    { id: 'photos',    name: 'Photos',     icon: 'fa-image',         bg: '#2a1a1a', cost: CFG.openCost, badge: 0 },
+    { id: 'maps',      name: 'Maps',       icon: 'fa-map-marker-alt',bg: '#1a2a1a', cost: CFG.openCost, badge: 0 },
+    { id: 'notes',     name: 'Notes',      icon: 'fa-sticky-note',   bg: '#2a2a1a', cost: CFG.openCost, badge: 0 },
+    { id: 'browser',   name: 'Browser',    icon: 'fa-globe',         bg: '#1a1a2a', cost: CFG.openCost, badge: 0 },
+    { id: 'rideshare', name: 'RideShare',  icon: 'fa-car',           bg: '#2a1a2a', cost: CFG.openCost, badge: 0 },
+    { id: 'delivery',  name: 'Delivery',   icon: 'fa-utensils',      bg: '#1a2a2a', cost: CFG.openCost, badge: 0 },
+    { id: 'camera',    name: 'Video',      icon: 'fa-video',         bg: '#2a2a2a', cost: CFG.openCost, badge: 1 },
+    { id: 'weather',   name: 'Weather',    icon: 'fa-cloud-sun',     bg: '#1a2530', cost: 0,            badge: 0 },
+    { id: 'settings',  name: 'Settings',   icon: 'fa-cog',           bg: '#1a1a1a', cost: 0,            badge: 0 }
+  ];
+
+  // ============================================================
+  //  DATA — Messages
+  // ============================================================
+  const CONVERSATIONS = {
+    J: {
+      name: 'J',
+      lastMsg: 'Please just call me back.',
+      lastTime: 'Mar 14, 11:47 PM',
+      unread: true,
+      messages: [
+        { from: 'them', text: 'Hey. Are you okay? You went quiet again.',           time: '9:02 PM'  },
+        { from: 'you',  text: "I'm fine. Just needed some time.",                    time: '9:15 PM'  },
+        { from: 'them', text: 'You always say that.',                                 time: '9:16 PM'  },
+        { from: 'them', text: "I stopped by your place. You weren't there.",          time: '10:30 PM' },
+        { from: 'you',  text: 'Was out.',                                             time: '10:44 PM' },
+        { from: 'them', text: 'Where?',                                               time: '10:44 PM' },
+        { from: 'you',  text: 'Around.',                                              time: '10:50 PM' },
+        { from: 'them', text: "This isn't like before. This is different.",           time: '11:02 PM' },
+        { from: 'you',  text: "You don't know what before was like.",                 time: '11:10 PM' },
+        { from: 'them', text: 'I know you.',                                          time: '11:11 PM' },
+        { from: 'you',  text: 'No. You knew me.',                                     time: '11:15 PM' },
+        { from: 'them', text: "That's a terrible thing to say.",                      time: '11:16 PM' },
+        { from: 'you',  text: 'I know.',                                              time: '11:20 PM' },
+        { from: 'them', text: 'Please just call me back.',                            time: '11:47 PM' }
+      ]
+    },
+    Mom: {
+      name: 'Mom',
+      lastMsg: 'Love you. Call when you can.',
+      lastTime: 'Mar 12, 6:30 PM',
+      unread: false,
+      messages: [
+        { from: 'them', text: 'Are you eating properly?',                             time: '4:00 PM'  },
+        { from: 'you',  text: 'Yes mom',                                               time: '4:22 PM'  },
+        { from: 'them', text: 'I made extra soup. I can bring some over.',             time: '4:23 PM'  },
+        { from: 'you',  text: "You don't have to do that.",                            time: '4:30 PM'  },
+        { from: 'them', text: "I know I don't have to. I want to.",                    time: '4:31 PM'  },
+        { from: 'you',  text: 'Maybe next week.',                                      time: '4:45 PM'  },
+        { from: 'them', text: 'Love you. Call when you can.',                          time: '6:30 PM'  }
+      ]
+    },
+    Unknown: {
+      name: 'Unknown Number',
+      lastMsg: "I'll be there.",
+      lastTime: 'Mar 15, 1:22 AM',
+      unread: true,
+      messages: [
+        { from: 'them', text: 'The thing you asked about.',                           time: '1:18 AM'  },
+        { from: 'them', text: 'I found it.',                                           time: '1:18 AM'  },
+        { from: 'you',  text: 'And?',                                                  time: '1:20 AM'  },
+        { from: 'them', text: 'Same as you thought.',                                  time: '1:20 AM'  },
+        { from: 'them', text: 'East wall. Just past the support column.',              time: '1:21 AM'  },
+        { from: 'you',  text: 'Tonight?',                                              time: '1:21 AM'  },
+        { from: 'them', text: "I'll be there.",                                        time: '1:22 AM'  }
+      ]
+    }
+  };
+
+  // ============================================================
+  //  DATA — Photos
+  // ============================================================
+  const PHOTOS = [
+    { id: 'p1',  seed: 'wall-kitchen-light',      desc: 'Sun through a kitchen window. Two coffee cups on the counter.',               ev: 'Two cups. Living with someone, or a recent guest.' },
+    { id: 'p2',  seed: 'dinner-candles-untouched', desc: 'A meal for two, mostly untouched. Candles burned low.',                       ev: "The evening was planned. The outcome wasn't." },
+    { id: 'p3',  seed: 'dawn-ocean-pier',          desc: 'Ocean at dawn. Pier visible in the distance.',                                 ev: 'Coastal location, early morning. Not a tourist photo.' },
+    { id: 'p4',  seed: 'sidewalk-weed-crack',      desc: 'A sidewalk crack with a single weed pressing through.',                        ev: 'Found beauty in persistence.' },
+    { id: 'p5',  seed: 'building-lake-reflect',    desc: 'A building reflected perfectly in still water.',                               ev: 'Obsessed with images of images.' },
+    { id: 'p6',  seed: 'empty-bench-night',        desc: 'An empty bench at a transit platform. Night.',                                 ev: 'Same type of location where the device was recovered.' },
+    { id: 'p7',  seed: 'two-hands-shadow',         desc: 'Two hands casting overlapping shadows on concrete.',                           ev: 'Togetherness, or the memory of it.' },
+    { id: 'p8',  seed: 'long-corridor-fluorescent', desc: 'Long corridor under fluorescent lights. Empty.',                              ev: 'Institutional or industrial space. Late hour.' },
+    { id: 'p9',  seed: 'ceramic-creature-shelf',   desc: 'A small ceramic figure on a bookshelf, beside a partially visible spine.',     ev: 'Someone who kept small things close.' },
+    { id: 'p10', seed: 'notebook-erased-pencil',   desc: 'A notebook page with faint pencil marks, mostly erased.',                      ev: 'Written, then removed. What was here before?' },
+    { id: 'p11', seed: 'rain-blurred-lights',      desc: 'Rain on glass. Through it, blurred lights.',                                  ev: 'Observer perspective. Watching from inside.' },
+    { id: 'p12', seed: 'plaster-crack-detail',     desc: 'A crack in plaster, photographed with unusual care.',                          ev: 'The same wall? Documenting decay.' }
+  ];
+
+  // ============================================================
+  //  DATA — Map locations
+  // ============================================================
+  const MAP_LOCATIONS = [
+    { id: 'm1', name: 'Meridian Transit Center',    freq: '23 visits, last Mar 15',  x: 55, y: 35, ev: 'Primary transit hub. Device recovered at Platform 3.' },
+    { id: 'm2', name: '14th & Harbor',              freq: '8 visits, last Mar 14',   x: 75, y: 55, ev: 'Industrial district. Late-night visits. No apparent commercial reason.' },
+    { id: 'm3', name: 'Greendale Park',             freq: '12 visits, last Mar 10',  x: 30, y: 60, ev: 'Large park. Frequent but irregular visits. Solitary activity.' },
+    { id: 'm4', name: 'Home — 745 Riverside Dr',   freq: 'Daily',                   x: 40, y: 45, ev: 'Primary residence. Confirmed address.' },
+    { id: 'm5', name: 'Silver Lake Overlook',       freq: '3 visits, last Mar 13',   x: 20, y: 25, ev: 'Remote scenic point. Long drive for very few visits.' },
+    { id: 'm6', name: 'Central Station — Platform 3', freq: '2 visits, last Mar 15', x: 62, y: 72, ev: 'Late visits. East platform. Connection to video content.' }
+  ];
+
+  // ============================================================
+  //  DATA — Notes
+  // ============================================================
+  const NOTES_DATA = [
+    {
+      id: 'n1', title: 'Untitled (most recent edit)', date: 'Last edited Mar 15, 2:08 AM',
+      body: "I think the thing about walls is they don't ask you to be anything. They don't wonder where you've been or why you came back different. A wall is just a wall. It's the most honest thing in any room.\n\nI've been watching the one in the east wing for three weeks now. The crack started at the corner. Thin. You wouldn't see it unless you sat still long enough. Unless you gave it permission to exist.\n\nIt's grown. Almost an inch now. I measured.\n\n[Remaining text degraded — file corruption detected]",
+      ev: 'Philosophical fixation on a wall. A crack. Measuring it. This connects to the video.'
+    },
+    {
+      id: 'n2', title: 'List (crossed out)', date: 'Last edited Feb 28',
+      body: "\u2022 Call J back ~~called~~\n\u2022 Groceries ~~forgot~~\n\u2022 ~~The thing~~ that appointment\n\u2022 Watch the wall\n\u2022 Don't forget to [illegible]\n\u2022 Tell [illegible] about [illegible]",
+      ev: 'A to-do list with corrections. "Watch the wall" was not crossed out.'
+    },
+    {
+      id: 'n3', title: 'No title', date: 'Created Feb 14',
+      body: "What if the leaving isn't the hard part? What if the hard part is being the kind of person who could stay?",
+      ev: "February 14. Valentine's Day. Written alone, or about leaving."
+    }
+  ];
+
+  // ============================================================
+  //  DATA — Browser history
+  // ============================================================
+  const BROWSER_DATA = [
+    { id: 'b1',  title: "How to know when it's time to leave",                      url: 'quietmind.org/articles/...',    time: 'Mar 15, 12:30 AM', ev: 'Searched guidance on leaving. Self-aware about an impending decision.' },
+    { id: 'b2',  title: 'Meridian area extended forecast — 10 days',                url: 'weather.meridian.com/...',      time: 'Mar 14, 8:15 PM', ev: 'Weather check. Routine, or planning ahead?' },
+    { id: 'b3',  title: 'Long-distance moving services',                            url: 'nwmovers.com/quote',            time: 'Mar 12, 3:40 PM', ev: 'Actively explored moving. Not hypothetical.' },
+    { id: 'b4',  title: 'Lakeside cabins — weekly rates',                           url: 'silverlakerentals.com/...',     time: 'Mar 11, 7:22 PM', ev: 'Retreat or relocation? Silver Lake matches the map pin.' },
+    { id: 'b5',  title: "How to say goodbye to someone who won't understand",       url: 'quietmind.org/articles/...',    time: 'Mar 10, 11:55 PM', ev: "J won't understand. The thought has been rehearsed." },
+    { id: 'b6',  title: 'Meridian Transit Center renovation approved',              url: 'meridianherald.com/...',        time: 'Mar 8, 9:10 AM',  ev: "The transit center is being renovated. The wall might not survive." },
+    { id: 'b7',  title: 'Mail — last accessed Feb 28',                              url: 'mail.service.com/inbox',        time: 'Feb 28, 4:00 PM', ev: 'Email abandoned for two weeks. Unread messages likely.' },
+    { id: 'b8',  title: 'Digital legacy — what happens to your accounts',           url: 'quietmind.org/guides/...',      time: 'Mar 14, 1:30 AM', ev: 'Researched digital afterlife. Preparing for absence.' },
+    { id: 'b9',  title: 'Vostok Amphibia watch — 0% financing',                    url: 'meridian-watches.com/...',      time: 'Mar 5, 2:15 PM',  ev: 'Browsing a specific watch. Limited funds, but forward planning.' },
+    { id: 'b10', title: 'Recipe: one-pot lentil soup',                              url: 'simplecooking.com/...',         time: 'Mar 2, 6:45 PM',  ev: 'Simple, solitary meal. Practical, or reduced circumstances.' }
+  ];
+
+  // ============================================================
+  //  DATA — Ride history
+  // ============================================================
+  const RIDES_DATA = [
+    { id: 'r1', from: '745 Riverside Dr',           to: 'Meridian Transit Center',    time: 'Mar 15, 2:45 AM', fare: '$18.40', ev: 'Last ride. To the station. Device recovered here hours later.' },
+    { id: 'r2', from: '14th & Harbor',              to: '745 Riverside Dr',           time: 'Mar 14, 1:30 AM', fare: '$22.10', ev: 'Returning from the industrial district at 1:30 AM.' },
+    { id: 'r3', from: '745 Riverside Dr',           to: '14th & Harbor',              time: 'Mar 13, 11:15 PM',fare: '$21.80', ev: 'Outbound to Harbor. This is a pattern.' },
+    { id: 'r4', from: 'Meridian Transit Center',    to: 'Silver Lake Overlook',       time: 'Mar 8, 5:50 AM',  fare: '$34.60', ev: 'Dawn trip to the lake. A significant distance.' },
+    { id: 'r5', from: 'Greendale Park',             to: '745 Riverside Dr',           time: 'Mar 6, 4:20 PM',  fare: '$11.20', ev: 'Returning from the park. Afternoon. Routine.' }
+  ];
+
+  // ============================================================
+  //  DATA — Food orders
+  // ============================================================
+  const ORDERS_DATA = [
+    { id: 'o1', restaurant: 'Pho 99',                item: 'Pho Tai, extra lime',                   time: 'Mar 14, 8:22 PM', total: '$14.50', ev: 'Simple order. Solo diner.' },
+    { id: 'o2', restaurant: 'Pho 99',                item: 'Pho Tai, spring rolls',                 time: 'Mar 12, 7:05 PM', total: '$19.00', ev: 'Same restaurant two days apart. Comfort food.' },
+    { id: 'o3', restaurant: 'Mediterranean Kitchen', item: 'Hummus plate, extra pita',              time: 'Mar 10, 6:44 PM', total: '$16.80', ev: 'Light meal. Quick order.' },
+    { id: 'o4', restaurant: 'Pho 99',                item: 'Pho Tai, extra lime',                   time: 'Mar 7, 9:15 PM',  total: '$14.50', ev: 'Exact same order. Ritual behavior.' },
+    { id: 'o5', restaurant: 'Mediterranean Kitchen', item: 'Hummus plate, extra pita, baklava',     time: 'Mar 3, 7:30 PM',  total: '$21.30', ev: 'Added baklava. A small indulgence.' }
+  ];
+
+  // Video flash timestamps (seconds into a 47-minute / 2820-second recording)
+  const FLASH_TIMES = [
+    195, 482, 870, 1310, 1795, 2340, 2920, 3480, 4020, 4500,
+    4900, 5100, 5500, 5800, 6000, 6100, 6200, 6500, 6700, 6900,
+    7000, 7100, 7150, 7200, 7300, 7400, 7500, 7550, 7600, 7700,
+    7750, 7780, 7800
+  ];
+
+  // ============================================================
+  //  UTILITY
+  // ============================================================
+  function timestamp() {
+    const d = new Date();
+    return String(d.getHours()).padStart(2, '0') + ':' +
+           String(d.getMinutes()).padStart(2, '0') + ':' +
+           String(d.getSeconds()).padStart(2, '0');
+  }
+
+  function degText(text) {
+    const d = 100 - S.integrity;
+    if (d < 15) return text;
+    const chance = d < 35 ? 0.12 : d < 60 ? 0.25 : d < 85 ? 0.45 : 0.7;
+    return Array.from(text).map(ch => {
+      if (ch === ' ' || ch === '\n') return ch;
+      return Math.random() < chance ? '\u2588' : ch;
+    }).join('');
+  }
+
+  function setContent(html) {
+    document.getElementById('phoneContent').innerHTML = html;
+  }
+
+  // ============================================================
+  //  FORENSIC LOG
+  // ============================================================
+  function addLog(msg) {
+    const el = document.getElementById('forensicLog');
+    const div = document.createElement('div');
+    div.className = 'text-[var(--fg)]';
+    div.textContent = timestamp() + ' — ' + msg;
+    el.appendChild(div);
+    el.scrollTop = el.scrollHeight;
+    S.logEntries++;
+    document.getElementById('logCount').textContent = S.logEntries + ' entries';
+  }
+
+  // ============================================================
+  //  TOAST NOTIFICATIONS
+  // ============================================================
+  function showToast(msg, type) {
+    type = type || '';
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = 'toast mono text-xs ' + type;
+    toast.textContent = msg;
+    container.appendChild(toast);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => toast.classList.add('show'));
+    });
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 400);
+    }, 4500);
+  }
+
+  // ============================================================
+  //  INTEGRITY
+  // ============================================================
+  function reduceIntegrity(amount, reason) {
+    const prev = S.integrity;
+    S.integrity = Math.max(0, S.integrity - amount);
+    updateIntegrityUI();
+    addLog('Integrity -' + amount.toFixed(1) + '% (' + reason + '). Remaining: ' + S.integrity.toFixed(1) + '%');
+
+    // Red flash on the phone
+    const screen = document.getElementById('phoneScreen');
+    screen.classList.remove('int-flash');
+    void screen.offsetWidth;
+    screen.classList.add('int-flash');
+    setTimeout(() => screen.classList.remove('int-flash'), 600);
+
+    // Threshold warnings
+    const th = CFG.thresholds;
+    if (prev > th[3] && S.integrity <= th[3]) {
+      showToast('MINOR DEGRADATION: Initial data corruption detected in peripheral sectors.', 'warning');
+    }
+    if (prev > th[2] && S.integrity <= th[2]) {
+      showToast('DEGRADED: Widespread read errors. Evidence may be fragmentary.', 'warning');
+    }
+    if (prev > th[1] && S.integrity <= th[1]) {
+      showToast('SEVERE: Storage corruption spreading rapidly. Data retrieval compromised.', 'critical');
+    }
+    if (prev > th[0] && S.integrity <= th[0]) {
+      showToast('CRITICAL: Cascading failure. Device entering terminal state.', 'critical');
+    }
+    if (S.integrity <= 0) {
+      showToast('DEVICE FAILURE. All data corrupted. Session terminated.', 'critical');
+      renderDeath();
+    }
+
+    updateProfile();
+  }
+
+  function updateIntegrityUI() {
+    const pct = S.integrity;
+    const fill = document.getElementById('integrityFill');
+    const txt  = document.getElementById('integrityText');
+    fill.style.width = pct + '%';
+
+    let color;
+    if (pct < 20)      color = '#ef4444';
+    else if (pct < 40) color = '#f59e0b';
+    else if (pct < 65) color = '#eab308';
+    else               color = '#4ade80';
+
+    fill.style.background = color;
+    txt.style.color = color;
+    txt.textContent = pct.toFixed(1) + '%';
+
+    // Degradation visual layers
+    const noise      = document.getElementById('staticNoise');
+    const colorShift = document.getElementById('degColorShift');
+    const noiseLevel = pct < 15 ? 0.15 : pct < 35 ? 0.08 : pct < 60 ? 0.03 : 0;
+    noise.style.opacity = noiseLevel;
+    colorShift.style.background = 'rgba(212,134,58,' + (pct < 30 ? 0.06 : pct < 60 ? 0.03 : 0) + ')';
+
+    const phoneEl = document.getElementById('phoneScreen');
+    if (pct < 25) phoneEl.classList.add('flickering');
+    else          phoneEl.classList.remove('flickering');
+  }
+
+  // ============================================================
+  //  EVIDENCE
+  // ============================================================
+  function addEvidence(app, item, text) {
+    if (S.evidence.find(e => e.item === item)) return;
+    S.evidence.push({ app: app, item: item, text: text, time: timestamp() });
+    renderEvidence();
+    showToast(text.length > 80 ? text.substring(0, 80) + '...' : text, 'evidence');
+  }
+
+  function renderEvidence() {
+    const el = document.getElementById('evidencePanel');
+    document.getElementById('evidenceCount').textContent = S.evidence.length;
+    if (S.evidence.length === 0) {
+      el.innerHTML = '<p class="text-[var(--muted)] italic text-[11px]">No evidence extracted yet.</p>';
+      return;
+    }
+    el.innerHTML = S.evidence.slice().reverse().map(e =>
+      '<div class="evidence-item border-b border-[var(--border)] pb-2 mb-2 last:border-0 last:pb-0 last:mb-0">' +
+        '<div class="flex items-center gap-1.5 mb-0.5">' +
+          '<span class="mono text-[var(--accent)] text-[10px]">[' + e.app + ']</span>' +
+          '<span class="text-[var(--muted)] mono text-[9px]">' + e.time + '</span>' +
+        '</div>' +
+        '<p class="text-[var(--fg)] text-[11px] leading-snug">' + e.text + '</p>' +
+      '</div>'
+    ).join('');
+  }
+
+  // ============================================================
+  //  BEHAVIORAL PROFILE
+  // ============================================================
+  function updateProfile() {
+    const facts = [];
+    const contradictions = [];
+
+    if (S.openedApps.has('messages')) {
+      facts.push('Maintained limited social connections. Primary contact "J" — close relationship, now strained. Mother present but kept at a distance.');
+      if (S.readItems.has('conv_Unknown')) {
+        facts.push('Contact with an unknown number regarding "east wall" and "support column." Coordinated a late-night meeting. Purpose unclear.');
+      }
+    }
+    if (S.openedApps.has('photos')) {
+      facts.push('Documentary photographic habits. Evidence of domestic life (two place settings). Recent travel (coastal). Attentive to small details.');
+    }
+    if (S.openedApps.has('maps')) {
+      facts.push('Frequented transit hubs. Rides to industrial areas during atypical hours. A lake destination visited rarely but deliberately.');
+    }
+    if (S.openedApps.has('notes')) {
+      facts.push('Literary or philosophical inclination. Obsessive revision of a single text fragment. Self-aware about behavioral patterns.');
+    }
+    if (S.openedApps.has('browser')) {
+      facts.push('News and weather habitual. Abandoned email account. Watch purchases suggest forward planning or ritual.');
+    }
+    if (S.openedApps.has('rideshare')) {
+      facts.push('Late-night transit to peripheral locations. Routine patterns with minor variation. Last ride: 2:45 AM to transit center.');
+    }
+    if (S.openedApps.has('delivery')) {
+      facts.push('Systematic food ordering — same two restaurants, same items. Sustenance or schedule maintenance.');
+    }
+    if (S.readItems.has('video')) {
+      facts.push('47-minute video of a wall. No explanation found elsewhere. Recording requires stillness, patience, or obsession.');
+      if (S.videoFlashesSeen.size >= 10) {
+        facts.push('Flash pattern in video is non-random. Frequency accelerates. Consistent with a person present during recording — someone experiencing neurological events.');
+      }
+    }
+
+    // Contradictions
+    if (S.openedApps.has('delivery') && S.openedApps.has('photos')) {
+      contradictions.push('Orders delivery for convenience, yet cooks (two settings photographed). Efficiency or capability in flux.');
+    }
+    if (S.openedApps.has('rideshare') && S.openedApps.has('notes')) {
+      contradictions.push('Rides to the margins of the city. Writes about giving things away. Flight or discharge?');
+    }
+    if (S.openedApps.has('messages') && S.openedApps.has('browser')) {
+      contradictions.push("Tells J \"I don't think about it anymore.\" Searches memory care facilities. The statement is a performance.");
+    }
+    if (S.openedApps.has('maps') && S.openedApps.has('browser')) {
+      contradictions.push('Explored lakeside cabin rentals. Also researched long-distance moving. Retreat or escape?');
+    }
+
+    const el = document.getElementById('profilePanel');
+    if (facts.length === 0) {
+      el.innerHTML = '<p class="text-[var(--muted)] italic text-[11px]">Insufficient data for profile construction.</p>';
+      return;
+    }
+
+    let html = facts.map(f =>
+      '<p class="text-[var(--fg)] text-[11px] leading-snug mb-2"><i class="fas fa-caret-right text-[var(--accent)] mr-1.5 text-[9px]"></i>' + f + '</p>'
+    ).join('');
+
+    if (contradictions.length > 0) {
+      html += '<div class="mt-3 pt-3 border-t border-[var(--border)]">' +
+        '<p class="text-[var(--accent)] mono text-[10px] mb-2 tracking-wider">BEHAVIORAL CONTRADICTIONS</p>' +
+        contradictions.map(c =>
+          '<p class="text-[var(--fg)] italic text-[11px] leading-snug mb-2"><i class="fas fa-exclamation-triangle text-[var(--accent)] mr-1.5 text-[9px]"></i>' + c + '</p>'
+        ).join('') +
+      '</div>';
+    }
+
+    if (facts.length >= 5) {
+      html += '<div class="mt-3 pt-3 border-t border-[var(--border)]">' +
+        '<p class="text-[var(--accent)] mono text-[10px] mb-2 tracking-wider">ASSESSMENT</p>' +
+        '<p class="text-[var(--fg)] italic text-[11px] leading-snug">Subject exhibits controlled withdrawal behavior. Digital traces suggest deliberate erasure of presence — not impulsive but planned over weeks. The video of the wall may be the most honest artifact: a person recording their own absence in real time. Device was not lost. It was placed.</p>' +
+      '</div>';
+    }
+
+    el.innerHTML = html;
+  }
+
+  // ============================================================
+  //  RENDER — Home screen
+  // ============================================================
+  function renderHome() {
+    const appGrid = APPS.map(app => {
+      const isOpen = S.openedApps.has(app.id);
+      const costHtml = app.cost > 0 && !isOpen ? '<span class="cost-badge mt-1">-' + app.cost + '%</span>' : '';
+      const badgeHtml = app.badge > 0 ? '<div class="unread-badge">' + app.badge + '</div>' : '';
+      return '<div class="flex flex-col items-center gap-1">' +
+        '<div class="app-icon ' + (isOpen ? 'opened' : '') + '" style="background:' + app.bg + '" onclick="openApp(\'' + app.id + '\')" role="button" tabindex="0" aria-label="Open ' + app.name + (app.cost > 0 ? ', costs ' + app.cost + '% integrity' : '') + '">' +
+          '<i class="fas ' + app.icon + ' text-white"></i>' +
+          badgeHtml +
+        '</div>' +
+        '<span class="text-[10px] text-[var(--phone-dim)]">' + app.name + '</span>' +
+        costHtml +
+      '</div>';
+    }).join('');
+
+    setContent(
+      '<div class="px-5 pt-2 pb-6 app-view">' +
+        '<p class="text-[var(--phone-dim)] text-xs mb-1">Wednesday, March 15</p>' +
+        '<p class="text-white text-3xl font-light mb-6">9:41 PM</p>' +
+        '<div class="grid grid-cols-4 gap-4 justify-items-center">' + appGrid + '</div>' +
+        (S.integrity < 95 ? '<p class="text-[var(--phone-dim)] text-[10px] mt-8 text-center italic leading-snug">Each unopened app costs integrity to access.<br>Opened apps appear dimmed. Data already extracted.</p>' : '') +
+      '</div>'
+    );
+  }
+
+  // ============================================================
+  //  APP ROUTER
+  // ============================================================
+  function openApp(id) {
+    if (S.integrity <= 0) {
+      showToast('DEVICE FAILURE. All data corrupted.', 'critical');
+      return;
+    }
+    const app = APPS.find(a => a.id === id);
+    if (!app) return;
+
+    const wasOpened = S.openedApps.has(id);
+    S.openedApps.add(id);
+    S.currentApp = id;
+
+    if (app.cost > 0 && !wasOpened) {
+      reduceIntegrity(app.cost, 'Opened ' + app.name);
+      addEvidence('SYS', 'open_' + id, app.name + ' opened. Filesystem accessed.');
+    }
+
+    var renderers = {
+      home: renderHome, messages: renderMessages, photos: renderPhotos,
+      maps: renderMaps, notes: renderNotes, browser: renderBrowser,
+      rideshare: renderRideshare, delivery: renderDelivery,
+      camera: renderCamera, weather: renderWeather, settings: renderSettings
+    };
+    if (renderers[id]) renderers[id]();
+  }
+
+  function goHome() {
+    stopVideo();
+    closeModal();
+    S.currentApp = 'home';
+    renderHome();
+  }
+
+  // ============================================================
+  //  MESSAGES
+  // ============================================================
+  function renderMessages() {
+    var convList = '';
+    Object.keys(CONVERSATIONS).forEach(function(key) {
+      var c = CONVERSATIONS[key];
+      var badge = c.unread ? '<div class="w-2.5 h-2.5 rounded-full bg-[var(--accent)]"></div>' : '';
+      convList +=
+        '<div class="flex items-center gap-3 p-3.5 hover:bg-[#1a1a1a] cursor-pointer transition-colors active:bg-[#222]" onclick="openConversation(\'' + key + '\')" role="button" tabindex="0" aria-label="Open conversation with ' + c.name + '">' +
+          '<div class="w-10 h-10 rounded-full bg-[#2a2a2a] flex items-center justify-center text-sm font-bold text-[var(--phone-dim)] flex-shrink-0">' + c.name[0] + '</div>' +
+          '<div class="flex-1 min-w-0">' +
+            '<div class="flex justify-between items-center">' +
+              '<span class="text-white text-sm font-medium">' + c.name + '</span>' +
+              '<span class="text-[var(--phone-dim)] text-[10px]">' + c.lastTime + '</span>' +
+            '</div>' +
+            '<div class="flex items-center gap-2 mt-0.5">' +
+              '<p class="text-[var(--phone-dim)] text-xs truncate flex-1">' + c.lastMsg + '</p>' +
+              badge +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    });
+
+    setContent(
+      '<div class="app-view">' +
+        '<div class="app-header flex items-center gap-3">' +
+          '<i class="fas fa-chevron-left text-sm cursor-pointer text-[var(--phone-dim)] hover:text-white transition-colors" onclick="goHome()" role="button" tabindex="0" aria-label="Back"></i>' +
+          'Messages' +
+        '</div>' +
+        '<div class="divide-y divide-[#1a1a1a]">' + convList + '</div>' +
+      '</div>'
+    );
+  }
+
+  function openConversation(key) {
+    if (!S.readItems.has('conv_' + key)) {
+      S.readItems.add('conv_' + key);
+      reduceIntegrity(CFG.readCost, 'Read conversation: ' + CONVERSATIONS[key].name);
+      addEvidence('MSG', key, 'Conversation with ' + CONVERSATIONS[key].name + ' extracted.');
+    }
+    var c = CONVERSATIONS[key];
+    var msgs = '';
+    c.messages.forEach(function(m) {
+      var text = S.integrity < 40 ? degText(m.text) : m.text;
+      msgs +=
+        '<div class="flex ' + (m.from === 'you' ? 'justify-end' : 'justify-start') + '">' +
+          '<div class="msg-bubble ' + (m.from === 'you' ? 'msg-you' : 'msg-them') + '">' +
+            '<p class="text-[13px]">' + text + '</p>' +
+            '<p class="text-[10px] text-[var(--phone-dim)] mt-1 ' + (m.from === 'you' ? 'text-right' : '') + '">' + m.time + '</p>' +
+          '</div>' +
+        '</div>';
+    });
+
+    setContent(
+      '<div class="app-view flex flex-col h-full">' +
+        '<div class="app-header flex items-center gap-3 !text-lg">' +
+          '<i class="fas fa-chevron-left text-sm cursor-pointer text-[var(--phone-dim)] hover:text-white transition-colors" onclick="renderMessages()" role="button" tabindex="0" aria-label="Back"></i>' +
+          c.name +
+        '</div>' +
+        '<div class="flex-1 overflow-y-auto px-4 py-3 space-y-1.5" id="msgScroll">' +
+          msgs +
+        '</div>' +
+      '</div>'
+    );
+    var scrollEl = document.getElementById('msgScroll');
+    if (scrollEl) scrollEl.scrollTop = scrollEl.scrollHeight;
+  }
+
+  // ============================================================
+  //  PHOTOS
+  // ============================================================
+  function renderPhotos() {
+    var grid = '';
+    PHOTOS.forEach(function(p, i) {
+      grid +=
+        '<div class="photo-item aspect-square" onclick="viewPhoto(' + i + ')" role="button" tabindex="0" aria-label="View photo ' + (i + 1) + '">' +
+          '<img src="https://picsum.photos/seed/' + p.seed + '/200/200.jpg" alt="Recovered photo" loading="lazy">' +
+        '</div>';
+    });
+
+    setContent(
+      '<div class="app-view">' +
+        '<div class="app-header flex items-center gap-3">' +
+          '<i class="fas fa-chevron-left text-sm cursor-pointer text-[var(--phone-dim)] hover:text-white transition-colors" onclick="goHome()" role="button" tabindex="0" aria-label="Back"></i>' +
+          'Photos' +
+        '</div>' +
+        '<div class="px-3 pb-4">' +
+          '<p class="text-[var(--phone-dim)] text-xs mb-3 px-1">12 items — All from local storage</p>' +
+          '<div class="grid grid-cols-3 gap-1">' + grid + '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function viewPhoto(idx) {
+    var p = PHOTOS[idx];
+    if (!S.readItems.has('photo_' + p.id)) {
+      S.readItems.add('photo_' + p.id);
+      reduceIntegrity(CFG.photoCost, 'Viewed photo ' + (idx + 1));
+      addEvidence('PHO', p.id, p.ev);
+    }
+    var url = 'https://picsum.photos/seed/' + p.seed + '/400/400.jpg';
+    var desc = S.integrity < 45 ? degText(p.desc) : p.desc;
+    var modal = document.getElementById('phoneModal');
+    modal.className = 'modal-overlay';
+    modal.innerHTML =
+      '<div class="text-center" style="max-width:340px;">' +
+        '<img src="' + url + '" class="w-full rounded-lg mb-4" alt="Photo detail view">' +
+        '<p class="text-[var(--phone-text)] text-sm mb-3 leading-relaxed">' + desc + '</p>' +
+        '<p class="text-[var(--phone-dim)] text-[10px] mb-4">EXIF data corrupted. Timestamp unavailable.</p>' +
+        '<button onclick="closeModal()" class="text-[var(--accent)] text-sm font-medium hover:underline cursor-pointer">Close</button>' +
+      '</div>';
+  }
+
+  function closeModal() {
+    var modal = document.getElementById('phoneModal');
+    modal.className = 'hidden';
+    modal.innerHTML = '';
+  }
+
+  // ============================================================
+  //  MAPS
+  // ============================================================
+  function renderMaps() {
+    var dots = '';
+    MAP_LOCATIONS.forEach(function(loc) {
+      dots += '<div class="map-dot" style="left:' + loc.x + '%;top:' + loc.y + '%;transform:translate(-50%,-50%)" title="' + loc.name + '" onclick="viewMapLoc(\'' + loc.id + '\')"></div>';
+    });
+
+    var locList = '';
+    MAP_LOCATIONS.forEach(function(loc) {
+      locList +=
+        '<div class="flex items-start gap-3 p-3 border-b border-[#1a1a1a] last:border-0 cursor-pointer hover:bg-[#111] transition-colors" onclick="viewMapLoc(\'' + loc.id + '\')" role="button" tabindex="0">' +
+          '<div class="w-7 h-7 rounded bg-[#1a2a1a] flex items-center justify-center flex-shrink-0 mt-0.5">' +
+            '<i class="fas fa-map-pin text-[var(--accent)] text-[10px]"></i>' +
+          '</div>' +
+          '<div>' +
+            '<p class="text-white text-sm">' + loc.name + '</p>' +
+            '<p class="text-[var(--phone-dim)] text-[10px]">' + loc.freq + '</p>' +
+          '</div>' +
+        '</div>';
+    });
+
+    setContent(
+      '<div class="app-view">' +
+        '<div class="app-header flex items-center gap-3">' +
+          '<i class="fas fa-chevron-left text-sm cursor-pointer text-[var(--phone-dim)] hover:text-white transition-colors" onclick="goHome()" role="button" tabindex="0" aria-label="Back"></i>' +
+          'Maps' +
+        '</div>' +
+        '<div class="px-4 pb-4">' +
+          '<div class="map-container mb-4">' +
+            '<div class="map-grid"></div>' +
+            '<div class="map-road" style="left:15%;top:45%;width:70%;height:2px;"></div>' +
+            '<div class="map-road" style="left:40%;top:15%;width:2px;height:65%;"></div>' +
+            '<div class="map-road" style="left:58%;top:25%;width:2px;height:50%;"></div>' +
+            '<div class="map-road" style="left:10%;top:60%;width:80%;height:2px;"></div>' +
+            '<div class="map-road" style="left:75%;top:30%;width:2px;height:40%;"></div>' +
+            '<div class="map-road" style="left:25%;top:35%;width:2px;height:30%;"></div>' +
+            dots +
+          '</div>' +
+          '<p class="text-[var(--phone-dim)] text-xs mb-3">Frequent locations — 6 pinned</p>' +
+          locList +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function viewMapLoc(id) {
+    var loc = MAP_LOCATIONS.find(function(l) { return l.id === id; });
+    if (!loc) return;
+    if (!S.readItems.has('map_' + id)) {
+      S.readItems.add('map_' + id);
+      reduceIntegrity(CFG.readCost, 'Viewed location: ' + loc.name);
+      addEvidence('MAP', id, loc.ev);
+    }
+  }
+
+  // ============================================================
+  //  NOTES
+  // ============================================================
+  function renderNotes() {
+    var items = '';
+    NOTES_DATA.forEach(function(n, i) {
+      items +=
+        '<div class="p-3.5 border-b border-[#1a1a1a] cursor-pointer hover:bg-[#111] transition-colors" onclick="viewNote(' + i + ')" role="button" tabindex="0">' +
+          '<p class="text-white text-sm mb-0.5">' + n.title + '</p>' +
+          '<p class="text-[var(--phone-dim)] text-[10px]">' + n.date + '</p>' +
+        '</div>';
+    });
+
+    setContent(
+      '<div class="app-view">' +
+        '<div class="app-header flex items-center gap-3">' +
+          '<i class="fas fa-chevron-left text-sm cursor-pointer text-[var(--phone-dim)] hover:text-white transition-colors" onclick="goHome()" role="button" tabindex="0" aria-label="Back"></i>' +
+          'Notes' +
+        '</div>' +
+        items +
+      '</div>'
+    );
+  }
+
+  function viewNote(idx) {
+    var n = NOTES_DATA[idx];
+    if (!S.readItems.has('note_' + n.id)) {
+      S.readItems.add('note_' + n.id);
+      reduceIntegrity(CFG.readCost, 'Read note: ' + n.title);
+      addEvidence('NOTE', n.id, n.ev);
+    }
+    var body = S.integrity < 45 ? degText(n.body) : n.body;
+    setContent(
+      '<div class="app-view">' +
+        '<div class="app-header flex items-center gap-3 !text-lg">' +
+          '<i class="fas fa-chevron-left text-sm cursor-pointer text-[var(--phone-dim)] hover:text-white transition-colors" onclick="renderNotes()" role="button" tabindex="0" aria-label="Back"></i>' +
+          'Notes' +
+        '</div>' +
+        '<div class="px-5 py-4">' +
+          '<p class="text-white text-base font-semibold mb-1">' + n.title + '</p>' +
+          '<p class="text-[var(--phone-dim)] text-[10px] mb-4">' + n.date + '</p>' +
+          '<div class="text-[var(--phone-text)] text-sm leading-relaxed whitespace-pre-line">' + body + '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  // ============================================================
+  //  BROWSER
+  // ============================================================
+  function renderBrowser() {
+    var items = '';
+    BROWSER_DATA.forEach(function(b, i) {
+      var title = S.integrity < 35 ? degText(b.title) : b.title;
+      items +=
+        '<div class="p-3.5 border-b border-[#1a1a1a] cursor-pointer hover:bg-[#111] transition-colors" onclick="viewBrowserItem(' + i + ')" role="button" tabindex="0">' +
+          '<p class="text-white text-sm mb-1 truncate">' + title + '</p>' +
+          '<p class="text-[var(--phone-dim)] text-[10px] truncate">' + b.url + '</p>' +
+          '<p class="text-[var(--phone-dim)] text-[10px] mt-0.5">' + b.time + '</p>' +
+        '</div>';
+    });
+
+    setContent(
+      '<div class="app-view">' +
+        '<div class="app-header flex items-center gap-3">' +
+          '<i class="fas fa-chevron-left text-sm cursor-pointer text-[var(--phone-dim)] hover:text-white transition-colors" onclick="goHome()" role="button" tabindex="0" aria-label="Back"></i>' +
+          'Browser History' +
+        '</div>' +
+        '<div class="px-3 py-2">' +
+          '<p class="text-[var(--phone-dim)] text-xs mb-2 px-1">10 entries — Last 30 days</p>' +
+          items +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function viewBrowserItem(idx) {
+    var b = BROWSER_DATA[idx];
+    if (!S.readItems.has('url_' + b.id)) {
+      S.readItems.add('url_' + b.id);
+      reduceIntegrity(CFG.readCost * 0.5, 'Loaded: ' + b.title.substring(0, 25));
+      addEvidence('WEB', b.id, b.ev);
+    }
+  }
+
+  // ============================================================
+  //  RIDESHARE
+  // ============================================================
+  function renderRideshare() {
+    var items = '';
+    RIDES_DATA.forEach(function(r, i) {
+      items +=
+        '<div class="p-3.5 border-b border-[#1a1a1a] cursor-pointer hover:bg-[#111] transition-colors" onclick="viewRide(' + i + ')" role="button" tabindex="0">' +
+          '<div class="flex items-start gap-3">' +
+            '<div class="flex flex-col items-center mt-1">' +
+              '<div class="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>' +
+              '<div class="w-px h-5 bg-[#333]"></div>' +
+              '<div class="w-2.5 h-2.5 rounded-full bg-[var(--accent)]"></div>' +
+            '</div>' +
+            '<div class="flex-1">' +
+              '<p class="text-white text-xs">' + r.from + '</p>' +
+              '<p class="text-[var(--phone-dim)] text-xs mt-1.5">' + r.to + '</p>' +
+              '<div class="flex justify-between mt-1.5">' +
+                '<span class="text-[var(--phone-dim)] text-[10px]">' + r.time + '</span>' +
+                '<span class="text-[var(--phone-text)] text-xs font-medium">' + r.fare + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    });
+
+    setContent(
+      '<div class="app-view">' +
+        '<div class="app-header flex items-center gap-3">' +
+          '<i class="fas fa-chevron-left text-sm cursor-pointer text-[var(--phone-dim)] hover:text-white transition-colors" onclick="goHome()" role="button" tabindex="0" aria-label="Back"></i>' +
+          'RideShare' +
+        '</div>' +
+        '<div class="px-3 py-2">' +
+          '<p class="text-[var(--phone-dim)] text-xs mb-2 px-1">Recent rides — 5 total</p>' +
+          items +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function viewRide(idx) {
+    var r = RIDES_DATA[idx];
+    if (!S.readItems.has('ride_' + r.id)) {
+      S.readItems.add('ride_' + r.id);
+      reduceIntegrity(CFG.readCost, 'Loaded ride: ' + r.from + ' to ' + r.to);
+      addEvidence('RIDE', r.id, r.ev);
+    }
+  }
+
+  // ============================================================
+  //  DELIVERY
+  // ============================================================
+  function renderDelivery() {
+    var items = '';
+    ORDERS_DATA.forEach(function(o, i) {
+      items +=
+        '<div class="p-3.5 border-b border-[#1a1a1a] cursor-pointer hover:bg-[#111] transition-colors" onclick="viewOrder(' + i + ')" role="button" tabindex="0">' +
+          '<div class="flex justify-between items-start">' +
+            '<div>' +
+              '<p class="text-white text-sm">' + o.restaurant + '</p>' +
+              '<p class="text-[var(--phone-dim)] text-xs mt-0.5">' + o.item + '</p>' +
+            '</div>' +
+            '<div class="text-right flex-shrink-0 ml-3">' +
+              '<p class="text-[var(--phone-text)] text-sm font-medium">' + o.total + '</p>' +
+              '<p class="text-[var(--phone-dim)] text-[10px]">' + o.time + '</p>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    });
+
+    setContent(
+      '<div class="app-view">' +
+        '<div class="app-header flex items-center gap-3">' +
+          '<i class="fas fa-chevron-left text-sm cursor-pointer text-[var(--phone-dim)] hover:text-white transition-colors" onclick="goHome()" role="button" tabindex="0" aria-label="Back"></i>' +
+          'Delivery' +
+        '</div>' +
+        '<div class="px-3 py-2">' +
+          '<p class="text-[var(--phone-dim)] text-xs mb-2 px-1">Order history — 5 orders</p>' +
+          items +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function viewOrder(idx) {
+    var o = ORDERS_DATA[idx];
+    if (!S.readItems.has('order_' + o.id)) {
+      S.readItems.add('order_' + o.id);
+      reduceIntegrity(CFG.readCost * 0.5, 'Loaded order: ' + o.restaurant);
+      addEvidence('FOOD', o.id, o.ev);
+    }
+  }
+
+  // ============================================================
+  //  WEATHER (no cost, no evidence)
+  // ============================================================
+  function renderWeather() {
+    setContent(
+      '<div class="app-view">' +
+        '<div class="app-header flex items-center gap-3">' +
+          '<i class="fas fa-chevron-left text-sm cursor-pointer text-[var(--phone-dim)] hover:text-white transition-colors" onclick="goHome()" role="button" tabindex="0" aria-label="Back"></i>' +
+          'Weather' +
+        '</div>' +
+        '<div class="px-5 py-6 text-center">' +
+          '<p class="text-[var(--phone-dim)] text-xs mb-1">Meridian</p>' +
+          '<p class="text-white text-6xl font-extralight mb-2">48&#176;</p>' +
+          '<p class="text-[var(--phone-dim)] text-sm mb-1">Overcast</p>' +
+          '<p class="text-[var(--phone-dim)] text-xs mb-6">Light rain expected overnight</p>' +
+          '<div class="flex justify-between text-center text-xs border-t border-[#1a1a1a] pt-4">' +
+            '<div><p class="text-[var(--phone-dim)] text-[10px]">Mon</p><p class="text-white mt-1">51&#176;</p></div>' +
+            '<div><p class="text-[var(--phone-dim)] text-[10px]">Tue</p><p class="text-white mt-1">49&#176;</p></div>' +
+            '<div><p class="text-[var(--phone-dim)] text-[10px]">Wed</p><p class="text-white mt-1">48&#176;</p></div>' +
+            '<div><p class="text-[var(--phone-dim)] text-[10px]">Thu</p><p class="text-white mt-1">45&#176;</p></div>' +
+            '<div><p class="text-[var(--phone-dim)] text-[10px]">Fri</p><p class="text-white mt-1">52&#176;</p></div>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  // ============================================================
+  //  SETTINGS (no cost, no evidence)
+  // ============================================================
+  function renderSettings() {
+    setContent(
+      '<div class="app-view">' +
+        '<div class="app-header flex items-center gap-3">' +
+          '<i class="fas fa-chevron-left text-sm cursor-pointer text-[var(--phone-dim)] hover:text-white transition-colors" onclick="goHome()" role="button" tabindex="0" aria-label="Back"></i>' +
+          'Settings' +
+        '</div>' +
+        '<div class="px-5 py-4 space-y-0">' +
+          '<div class="py-3 border-b border-[#1a1a1a]"><p class="text-white text-sm">Device Name</p><p class="text-[var(--phone-dim)] text-xs mt-0.5">Phone</p></div>' +
+          '<div class="py-3 border-b border-[#1a1a1a]"><p class="text-white text-sm">Model</p><p class="text-[var(--phone-dim)] text-xs mt-0.5">SM-G998U</p></div>' +
+          '<div class="py-3 border-b border-[#1a1a1a]"><p class="text-white text-sm">Storage</p><p class="text-[var(--phone-dim)] text-xs mt-0.5">118 GB / 256 GB used</p></div>' +
+          '<div class="py-3 border-b border-[#1a1a1a]"><p class="text-white text-sm">Last Backup</p><p class="text-[var(--phone-dim)] text-xs mt-0.5">Never</p></div>' +
+          '<div class="py-3 border-b border-[#1a1a1a]"><p class="text-white text-sm">Emergency Contacts</p><p class="text-[var(--phone-dim)] text-xs mt-0.5">None configured</p></div>' +
+          '<div class="py-3"><p class="text-white text-sm">About</p><p class="text-[var(--phone-dim)] text-xs mt-0.5">IMEI: ████████7890</p><p class="text-[var(--phone-dim)] text-xs">Serial: ██████R-4177</p></div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  // ============================================================
+  //  CAMERA / VIDEO
+  // ============================================================
+  function renderCamera() {
+    if (!S.readItems.has('video')) {
+      S.readItems.add('video');
+      addEvidence('VID', 'wall_47min', '47-minute video file in Camera Roll. Content: a wall. Forensic playback analysis available.');
+    }
+
+    setContent(
+      '<div class="app-view flex flex-col h-full">' +
+        '<div class="app-header flex items-center gap-3 !text-lg">' +
+          '<i class="fas fa-chevron-left text-sm cursor-pointer text-[var(--phone-dim)] hover:text-white transition-colors" onclick="stopVideo(); goHome()" role="button" tabindex="0" aria-label="Back"></i>' +
+          'Video — Camera Roll' +
+        '</div>' +
+        '<div class="flex-1 relative bg-black" id="videoContainer">' +
+          '<canvas id="wallCanvas" width="375" height="500"></canvas>' +
+          '<div class="video-controls" id="videoControls">' +
+            '<div class="video-progress" id="videoProgress" onclick="seekVideo(event)" role="slider" aria-label="Video seek bar">' +
+              '<div class="video-progress-fill" id="videoProgressFill" style="width:0%"></div>' +
+            '</div>' +
+            '<div class="flex items-center justify-between">' +
+              '<div class="flex items-center gap-3">' +
+                '<button id="playBtn" onclick="toggleVideo()" class="text-white text-lg hover:text-[var(--accent)] transition-colors cursor-pointer" aria-label="Play or pause video">' +
+                  '<i class="fas fa-play"></i>' +
+                '</button>' +
+                '<span class="mono text-[10px] text-[var(--phone-dim)]"><span id="videoTimeDisplay">00:00</span> / 47:00</span>' +
+              '</div>' +
+              '<span class="mono text-[10px] text-[var(--accent)]" id="flashCounter">Flashes: 0/' + FLASH_TIMES.length + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+
+    initVideo();
+  }
+
+  // ============================================================
+  //  VIDEO ENGINE
+  // ============================================================
+  function generateCrack() {
+    S.crackPath = [];
+    var x = 45, y = 210;
+    for (var i = 0; i < 40; i++) {
+      S.crackPath.push({ x: x, y: y });
+      x += (Math.random() - 0.38) * 9;
+      y += 0.8 + Math.random() * 3.5;
+    }
+  }
+  generateCrack();
+
+  function initVideo() {
+    var canvas = document.getElementById('wallCanvas');
+    if (!canvas) return;
+    S.wallCanvas = canvas;
+    S.wallCtx = canvas.getContext('2d');
+    S.videoTime = 0;
+    S.videoPlaying = false;
+    S.lastDrainTen = -1;
+    drawWall(0);
+    updateVideoUI();
+  }
+
+  function drawWall(time) {
+    var ctx = S.wallCtx;
+    if (!ctx) return;
+    var w = 375, h = 500;
+
+    // Base wall colour
+    ctx.fillStyle = '#8a8078';
+    ctx.fillRect(0, 0, w, h);
+
+    // Deterministic texture noise per frame
+    var seed = Math.floor(time * 0.5);
+    for (var i = 0; i < 100; i++) {
+      var hash = ((seed * 31 + i * 17 + 53) * 2654435761) >>> 0;
+      var px = hash % w;
+      var py = (hash >> 10) % h;
+      var b = ((hash % 30) - 15) * 0.4;
+      ctx.fillStyle = 'rgba(' + (138 + b | 0) + ',' + (128 + b | 0) + ',' + (120 + b | 0) + ',0.12)';
+      ctx.fillRect(px, py, 2 + (hash % 3), 1 + (hash % 2));
+    }
+
+    // Upper-left shadow gradient
+    var grd = ctx.createRadialGradient(0, 0, 5, 0, 0, 280);
+    grd.addColorStop(0, 'rgba(0,0,0,0.12)');
+    grd.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, w, h);
+
+    // Subtle shifting light, lower-right
+    var lightX = 300 + Math.sin(time * 0.001) * 20;
+    var lightY = 400 + Math.cos(time * 0.0008) * 15;
+    var grd2 = ctx.createRadialGradient(lightX, lightY, 10, lightX, lightY, 180);
+    grd2.addColorStop(0, 'rgba(200,190,175,0.06)');
+    grd2.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grd2;
+    ctx.fillRect(0, 0, w, h);
+
+    // Crack grows with video time
+    var progress = Math.min(1, time / 2700);
+    var visSegs = Math.floor(S.crackPath.length * progress);
+    if (visSegs > 1) {
+      ctx.beginPath();
+      ctx.moveTo(S.crackPath[0].x, S.crackPath[0].y);
+      for (var ci = 1; ci < visSegs; ci++) {
+        ctx.lineTo(S.crackPath[ci].x, S.crackPath[ci].y);
+      }
+      ctx.strokeStyle = 'rgba(50,45,40,' + (0.4 + progress * 0.4) + ')';
+      ctx.lineWidth = 1 + progress * 0.5;
+      ctx.stroke();
+
+      // First branch
+      if (progress > 0.35) {
+        var bi = Math.floor(visSegs * 0.45);
+        var bp = S.crackPath[bi];
+        if (bp) {
+          ctx.beginPath();
+          ctx.moveTo(bp.x, bp.y);
+          ctx.lineTo(bp.x - 12 - progress * 5, bp.y + 18 + progress * 8);
+          ctx.strokeStyle = 'rgba(50,45,40,' + (0.2 + progress * 0.2) + ')';
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+      // Second branch
+      if (progress > 0.7) {
+        var bi2 = Math.floor(visSegs * 0.7);
+        var bp2 = S.crackPath[bi2];
+        if (bp2) {
+          ctx.beginPath();
+          ctx.moveTo(bp2.x, bp2.y);
+          ctx.lineTo(bp2.x + 8, bp2.y + 14);
+          ctx.strokeStyle = 'rgba(50,45,40,0.25)';
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Flash detection — subtle light pulses
+    var flashIntensity = 0;
+    for (var fi = 0; fi < FLASH_TIMES.length; fi++) {
+      var dist = Math.abs(time - FLASH_TIMES[fi]);
+      if (dist < 3) {
+        flashIntensity = Math.max(flashIntensity, 1 - dist / 3);
+      }
+    }
+    if (flashIntensity > 0) {
+      ctx.fillStyle = 'rgba(255,255,255,' + (flashIntensity * 0.07) + ')';
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    // VHS timestamp
+    ctx.fillStyle = 'rgba(180,180,180,0.45)';
+    ctx.font = '10px monospace';
+    var mins = Math.floor(time / 60);
+    var secs = Math.floor(time % 60);
+    ctx.fillText('REC ' + String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0'), 14, h - 14);
+
+    // Blinking red rec dot
+    if (Math.floor(time * 0.5) % 2 === 0) {
+      ctx.fillStyle = 'rgba(220,50,50,0.6)';
+      ctx.beginPath();
+      ctx.arc(w - 22, h - 18, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Degradation noise on the video feed
+    if (S.integrity < 60) {
+      var intensity = (60 - S.integrity) / 60;
+      for (var di = 0; di < Math.floor(intensity * 50); di++) {
+        var rx = Math.random() * w;
+        var ry = Math.random() * h;
+        ctx.fillStyle = 'rgba(' + (Math.random() > 0.5 ? 255 : 0) + ',' + (Math.random() > 0.5 ? 255 : 0) + ',' + (Math.random() > 0.5 ? 255 : 0) + ',' + (intensity * 0.08) + ')';
+        ctx.fillRect(rx, ry, Math.random() * 4 + 1, 1);
+      }
+    }
+  }
+
+  function toggleVideo() {
+    if (S.videoPlaying) stopVideo();
+    else startVideo();
+  }
+
+  function startVideo() {
+    if (S.integrity <= 0) {
+      showToast('Cannot play — storage failure.', 'critical');
+      return;
+    }
+    S.videoPlaying = true;
+    S.videoLastTick = performance.now();
+    var btn = document.getElementById('playBtn');
+    if (btn) btn.innerHTML = '<i class="fas fa-pause"></i>';
+    videoLoop();
+  }
+
+  function stopVideo() {
+    S.videoPlaying = false;
+    var btn = document.getElementById('playBtn');
+    if (btn) btn.innerHTML = '<i class="fas fa-play"></i>';
+    if (S.videoAnimFrame) {
+      cancelAnimationFrame(S.videoAnimFrame);
+      S.videoAnimFrame = null;
+    }
+  }
+
+  function videoLoop() {
+    if (!S.videoPlaying) return;
+    var now = performance.now();
+    var delta = Math.min(0.1, (now - S.videoLastTick) / 1000);
+    S.videoLastTick = now;
+    S.videoTime = Math.min(2820, S.videoTime + delta);
+
+    // Integrity drain every 10 seconds of playback
+    var currentTen = Math.floor(S.videoTime / 10);
+    if (currentTen !== S.lastDrainTen && S.integrity > 0) {
+      S.lastDrainTen = currentTen;
+      reduceIntegrity(CFG.videoPlayCost, 'Video playback');
+    }
+
+    // Flash detection
+    for (var fi = 0; fi < FLASH_TIMES.length; fi++) {
+      var ft = FLASH_TIMES[fi];
+      if (Math.abs(S.videoTime - ft) < 1.5 && !S.videoFlashesSeen.has(ft)) {
+        S.videoFlashesSeen.add(ft);
+        var fc = document.getElementById('flashCounter');
+        if (fc) fc.textContent = 'Flashes: ' + S.videoFlashesSeen.size + '/' + FLASH_TIMES.length;
+      }
+    }
+
+    drawWall(S.videoTime);
+    updateVideoUI();
+
+    if (S.videoTime >= 2820) {
+      stopVideo();
+      showToast('Video ended. 47 minutes of a wall.', '');
+      if (S.videoFlashesSeen.size >= 10) {
+        addEvidence('VID', 'flash_pattern', S.videoFlashesSeen.size + ' anomalous light fluctuations detected. Distribution non-random. Interval pattern matches circadian disruption. A person was present — experiencing involuntary neurological episodes.');
+      }
+      return;
+    }
+
+    S.videoAnimFrame = requestAnimationFrame(videoLoop);
+  }
+
+  function seekVideo(e) {
+    var bar = document.getElementById('videoProgress');
+    if (!bar) return;
+    var rect = bar.getBoundingClientRect();
+    var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    var target = pct * 2820;
+    if (target < S.videoTime) {
+      reduceIntegrity(CFG.videoRewindCost, 'Video rewind (sector re-read)');
+    }
+    S.videoTime = target;
+    S.lastDrainTen = Math.floor(S.videoTime / 10);
+    drawWall(S.videoTime);
+    updateVideoUI();
+  }
+
+  function updateVideoUI() {
+    var fill = document.getElementById('videoProgressFill');
+    var display = document.getElementById('videoTimeDisplay');
+    if (fill) fill.style.width = (S.videoTime / 2820 * 100) + '%';
+    if (display) {
+      var m = Math.floor(S.videoTime / 60);
+      var s = Math.floor(S.videoTime % 60);
+      display.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }
+  }
+
+  // ============================================================
+  //  DEATH STATE
+  // ============================================================
+  function renderDeath() {
+    stopVideo();
+    setContent(
+      '<div class="app-view flex items-center justify-center h-full px-8">' +
+        '<div class="text-center">' +
+          '<p class="text-[var(--phone-dim)] text-xs mono mb-4">STORAGE FAILURE</p>' +
+          '<p class="text-white text-lg font-light mb-3">All readable sectors exhausted.</p>' +
+          '<p class="text-[var(--phone-dim)] text-xs leading-relaxed">The device can no longer yield data. What you extracted is all that survives of this person\'s digital presence. Whether it is enough to know them is no longer a technical question.</p>' +
+          '<div class="mt-6 pt-4 border-t border-[#1a1a1a]">' +
+            '<p class="text-[var(--accent)] mono text-[10px]">EVIDENCE COLLECTED: ' + S.evidence.length + ' ITEMS</p>' +
+            '<p class="text-[var(--phone-dim)] mono text-[10px] mt-1">FINAL INTEGRITY: ' + S.integrity.toFixed(1) + '%</p>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  // ============================================================
+  //  FORENSIC TOOLS
+  // ============================================================
+  function flashEnhance() {
+    if (S.integrity <= 0) { showToast('Device failed.', 'critical'); return; }
+    if (S.videoFlashesSeen.size < 5) {
+      showToast('Insufficient flash data. Play the video longer to detect patterns.');
+      return;
+    }
+    reduceIntegrity(CFG.flashToolCost, 'Flash pattern enhancement — intensive sector scan');
+    addEvidence('TOOL', 'flash_enhance', 'Enhanced analysis of ' + S.videoFlashesSeen.size + ' anomalous fluctuations. Distribution is NOT random. Intervals follow a decelerating pattern consistent with prolonged stillness interrupted by micro-events. Medical correlation: pattern matches focal motor seizure activity. Someone was in the room. They were unwell.');
+  }
+
+  function geofenceCorrelate() {
+    if (S.integrity <= 0) { showToast('Device failed.', 'critical'); return; }
+    if (!S.openedApps.has('maps')) {
+      showToast('Location data not yet accessed. Open Maps first.');
+      return;
+    }
+    reduceIntegrity(CFG.geoToolCost, 'Geofence correlation');
+    addEvidence('TOOL', 'geofence', 'Cross-referencing ride-share destinations with map pins reveals convergence: 14th & Harbor appears in both datasets, as does Meridian Transit Center. The Harbor location coincides with rides ordered near midnight. The transit center visits align with the unknown-number conversation about "east wall" and "support column." The wall in the video is at the transit center.');
+  }
+
+  function temporalAnalysis() {
+    if (S.integrity <= 0) { showToast('Device failed.', 'critical'); return; }
+    if (S.openedApps.size < 4) {
+      showToast('Insufficient temporal data. Open more applications to correlate timestamps.');
+      return;
+    }
+    reduceIntegrity(CFG.temporalToolCost, 'Temporal analysis');
+    addEvidence('TOOL', 'temporal', 'Timeline reconstruction: Behavioral changes accelerate after Feb 28 (last email access, last edited list). March 5: starts browsing forward-looking purchases (watch). March 8: visits Silver Lake at dawn. March 10-14: digital traces show systematic withdrawal — telling J goodbye, researching departure, ordering the same meal. March 15, 1:18 AM: final coordination with unknown contact. 2:45 AM: last ride to transit center. 47-minute video recorded. Device left beneath bench. Timeline is consistent with planned disappearance.');
+  }
+
+  function integrityCheck() {
+    var pct = S.integrity;
+    var status;
+    if (pct >= 85)      status = 'NOMINAL';
+    else if (pct >= 60) status = 'MINOR DEGRADATION';
+    else if (pct >= 35) status = 'DEGRADED — READ ERRORS INCREASING';
+    else if (pct >= 15) status = 'SEVERE — WIDESPREAD CORRUPTION';
+    else                status = 'CRITICAL — CASCADING FAILURE';
+    addLog('Manual integrity check: ' + pct.toFixed(1) + '% — ' + status);
+    showToast('Storage integrity: ' + pct.toFixed(1) + '% — ' + status);
+  }
+
+  // ============================================================
+  //  EVENT LISTENERS
+  // ============================================================
+  document.getElementById('homeBar').addEventListener('click', goHome);
+  document.getElementById('homeBar').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goHome(); }
+  });
+
+  document.getElementById('caseFileBtn').addEventListener('click', function() {
+    document.getElementById('caseFilePanel').classList.toggle('hidden');
+  });
+
+  document.getElementById('toolsBtn').addEventListener('click', function() {
+    document.getElementById('toolsPanel').classList.toggle('hidden');
+  });
+
+  // ============================================================
+  //  INIT
+  // ============================================================
+  renderHome();
+  </script>
+</body>
+</html>
