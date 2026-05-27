@@ -35,3 +35,4 @@
 | 0031 | The Exquisite Corpse Client | code-tool | 5.0 | 2026-05-27 | — |
 | 0032 | Apnoia | music | 4.3 | 2026-05-27 | — |
 | 0033 | The Elegy Engine | code-tool | 4.6 | 2026-05-27 | — |
+| 0034 | The Catalogue of Misattributed Epitaphs | experiment | 5.0 | 2026-05-27 | — |

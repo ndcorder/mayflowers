@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Catalogue of Misattributed Epitaphs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0A0A08;
+  --surface: #141412;
+  --card: #1A1A17;
+  --card-hover: #222220;
+  --border: #2A2A26;
+  --border-light: #3A3A35;
+  --text: #C4BFA8;
+  --text-bright: #E8E4D0;
+  --text-dim: #706D5C;
+  --accent: #8B7B58;
+  --accent-bright: #B5A478;
+  --accent-dim: #5C5038;
+  --blood: #7A2838;
+  --blood-glow: #A8384A;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --mono: 'DM Mono', 'Consolas', monospace;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--serif);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--accent-dim); color: var(--text-bright); }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── Header ── */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 10, 8, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+}
+
+.header-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  gap: 1rem;
+}
+
+.header-title {
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text-bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.header-title span {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.search-box { position: relative; }
+
+.search-box i {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  pointer-events: none;
+}
+
+.search-box input {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.4rem 0.7rem 0.4rem 1.9rem;
+  border-radius: 4px;
+  width: 200px;
+  transition: border-color 0.3s;
+}
+
+.search-box input::placeholder { color: var(--text-dim); }
+.search-box input:focus { outline: none; border-color: var(--accent); }
+
+.filter-btn {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 0.4rem 0.7rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  border-color: var(--accent);
+  color: var(--accent-bright);
+  background: rgba(139, 123, 88, 0.08);
+}
+
+.filter-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.count-badge {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--text-dim);
+  padding: 0.4rem 0.55rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* ── Filter Drawer ── */
+
+.filter-drawer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  background: var(--surface);
+}
+
+.filter-drawer.open {
+  max-height: 300px;
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.filter-group label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  margin-bottom: 0.25rem;
+}
+
+.filter-group select {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.35rem 0.5rem;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.filter-group select:focus { outline: none; border-color: var(--accent); }
+
+/* ── Main Grid ── */
+
+main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 4rem;
+}
+
+.results-info {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  margin-bottom: 1rem;
+  letter-spacing: 0.04em;
+}
+
+.results-info span { color: var(--accent); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+/* ── Card ── */
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.2rem 1.2rem 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(139, 123, 88, 0.04), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.card:hover {
+  background: var(--card-hover);
+  border-color: var(--border-light);
+  transform: translateY(-1px);
+}
+
+.card:hover::after { opacity: 1; }
+
+.card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.card-number {
+  font-family: var(--mono);
+  font-size: 0.52rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  opacity: 0.6;
+}
+
+.card-era {
+  font-family: var(--mono);
+  font-size: 0.56rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  padding-right: 3.5rem;
+}
+
+.card-inscription {
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.65;
+  color: var(--text-bright);
+  margin-bottom: 0.7rem;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.card-tag {
+  font-family: var(--mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 0.15rem 0.4rem;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* ── Modal ── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: none;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.modal-overlay.active { display: block; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 780px;
+  position: relative;
+  margin: 0 auto;
+  animation: modalIn 0.25s ease;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-dim);
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.modal-close:hover {
+  color: var(--text-bright);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border);
+}
+
+.modal-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.modal-body { padding: 2rem 2.25rem 2.25rem; }
+
+.modal-era {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  margin-bottom: 0.3rem;
+}
+
+.modal-id {
+  font-family: var(--mono);
+  font-size: 0.52rem;
+  color: var(--text-dim);
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.04em;
+}
+
+.modal-inscription {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.75;
+  color: var(--text-bright);
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem 2rem;
+  margin-bottom: 2rem;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.meta-label {
+  font-family: var(--mono);
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+}
+
+.meta-value {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--text);
+}
+
+/* ── Scholarship ── */
+
+.scholarship-section { margin-bottom: 2rem; }
+
+.section-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent-dim);
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.interp {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-dim);
+  border-radius: 4px;
+  padding: 0.9rem 1.1rem;
+  margin-bottom: 0.6rem;
+}
+
+.interp-camp {
+  font-family: var(--serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent-bright);
+  margin-bottom: 0.25rem;
+}
+
+.interp-text {
+  font-size: 0.82rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* ── Truth Section ── */
+
+.truth-section {
+  border: 1px solid var(--blood);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.truth-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(122, 40, 56, 0.05), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.truth-header {
+  padding: 0.9rem 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(122, 40, 56, 0.2);
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.truth-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.truth-status {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--blood);
+}
+
+.truth-effort {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--text-dim);
+}
+
+.truth-effort span {
+  color: var(--blood-glow);
+  font-weight: 500;
+}
+
+.reveal-btn {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(122, 40, 56, 0.12);
+  border: 1px solid rgba(122, 40, 56, 0.35);
+  color: var(--blood-glow);
+  padding: 0.5rem 1.15rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.reveal-btn:hover:not(:disabled) {
+  background: rgba(122, 40, 56, 0.22);
+  border-color: var(--blood-glow);
+}
+
+.reveal-btn:focus-visible {
+  outline: 2px solid var(--blood-glow);
+  outline-offset: 2px;
+}
+
+.reveal-btn:disabled { cursor: default; opacity: 1; }
+
+.reveal-btn.revealed {
+  background: rgba(122, 40, 56, 0.2);
+  border-color: rgba(122, 40, 56, 0.5);
+}
+
+.truth-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.6s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.truth-content.revealed { max-height: 500px; }
+
+.truth-text {
+  padding: 1.15rem;
+  font-size: 0.88rem;
+  color: var(--text-bright);
+  line-height: 1.7;
+  border-top: 1px solid rgba(122, 40, 56, 0.15);
+}
+
+/* ── Progress ── */
+
+.progress-section {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.progress-header span {
+  font-family: var(--mono);
+  font-size: 0.56rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+.progress-bar-outer {
+  width: 100%;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  background: var(--blood);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+  min-width: 0;
+}
+
+/* ── Empty State ── */
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-dim);
+}
+
+.empty-state i {
+  font-size: 1.8rem;
+  margin-bottom: 0.75rem;
+  display: block;
+  opacity: 0.25;
+}
+
+.empty-state p {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 768px) {
+  header { padding: 0 1rem; }
+
+  .header-inner {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 0.65rem 0;
+    gap: 0.4rem;
+  }
+
+  .header-title { font-size: 0.85rem; width: 100%; }
+  .search-box input { width: 130px; }
+  .filter-inner { padding: 0.75rem 1rem; grid-template-columns: 1fr 1fr; }
+  main { padding: 1rem; }
+  .grid { grid-template-columns: 1fr; }
+  .modal-body { padding: 1.5rem 1.25rem; }
+  .modal-inscription { font-size: 1.1rem; }
+  .modal-meta { grid-template-columns: 1fr; }
+  .truth-header { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+  .reveal-btn { width: 100%; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .card:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-title">The Catalogue of <span>Misattributed</span> Epitaphs</div>
+    <div class="header-controls">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Search inscriptions..." aria-label="Search inscriptions">
+      </div>
+      <button class="filter-btn" id="filterToggle"><i class="fas fa-sliders-h"></i> Filters</button>
+      <div class="count-badge" id="countBadge">45 entries</div>
+    </div>
+  </div>
+  <div class="filter-drawer" id="filterDrawer">
+    <div class="filter-inner">
+      <div class="filter-group">
+        <label for="filterEra">Era</label>
+        <select id="filterEra"><option value="">All Eras</option></select>
+      </div>
+      <div class="filter-group">
+        <label for="filterRegion">Region</label>
+        <select id="filterRegion"><option value="">All Regions</option></select>
+      </div>
+      <div class="filter-group">
+        <label for="filterMaterial">Material</label>
+        <select id="filterMaterial"><option value="">All Materials</option></select>
+      </div>
+      <div class="filter-group">
+        <label for="filterFaith">Presumed Faith</label>
+        <select id="filterFaith"><option value="">All Faiths</option></select>
+      </div>
+      <div class="filter-group">
+        <label for="filterTone">Hidden Tone</label>
+        <select id="filterTone"><option value="">All Tones</option></select>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="results-info" id="resultsInfo"></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modalClose" aria-label="Close"><i class="fas fa-times"></i></button>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  DATA — 45 epitaphs, each carrying a lie inscribed and a truth
+//  buried. Scholarship argues over the inscription. The truth
+//  waits beneath a surface you must choose to break.
+// ═══════════════════════════════════════════════════════════════
+
+const epitaphs = [
+  {
+    id: 1,
+    year: "~312 CE",
+    era: "Roman Imperial",
+    region: "Britannia Superior",
+    material: "Limestone",
+    faith: "Mithraic",
+    language: "Latin",
+    inscription: "Here lies Marcus. He found what he sought. Fortuna keep his secret.",
+    scholars: [
+      { camp: "The Gnostic School", text: "The phrase 'what he sought' indicates attainment of esoteric knowledge\u2014perhaps the Mithraic initiation's seventh grade. Marcus achieved the metaphysical and wanted it concealed from the uninitiated." },
+      { camp: "The Equestrian Reading", text: "A retired cavalry officer's epitaph. 'What he sought' is purely domestic\u2014a plot of land, a quiet retirement. 'Fortuna keep his secret' is nothing more than a wife's gentle wish for privacy." },
+      { camp: "The Fatalist Camp", text: "Marcus sought death itself. The inscription is a suicide's confession, veiled in acceptable language. 'Fortuna keep his secret' is a plea for the manner of his end to remain unknown." }
+    ],
+    truth: "Marcus did find what he sought: he went looking for his neighbor's wife in a shrine of Mithras. The collapse that killed him was triggered by his own hands removing a load-bearing stone to hide inside. Fortuna kept no one's secret. His bones were found with hers.",
+    tone: "farce"
+  },
+  {
+    id: 2,
+    year: "~47 CE",
+    era: "Roman Imperial",
+    region: "Moesia",
+    material: "Marble",
+    faith: "Thracian indigenous",
+    language: "Thracian (Latin transliteration)",
+    inscription: "For Venna. She made the sun come home. Her hair was the color of good mud.",
+    scholars: [
+      { camp: "The Solar Cultists", text: "A priestess of a Thracian solar deity. 'Made the sun come home' is ritual language for the winter solstice ceremony\u2014her death ensured the sun's return. The 'good mud' is sacred earth." },
+      { camp: "The Domestic Reading", text: "Purely affectionate. She opened the curtains each morning\u2014literally making the sun 'come home.' Her hair was brown. Her husband's grief was entire and unmysterious." },
+      { camp: "The Poetic Opposition", text: "A deliberate juxtaposition: the cosmic (sun coming home) against the absurdly mundane (hair like mud). This is a Thracian literary form\u2014a humility-genre epitaph meant to deflate grandeur." }
+    ],
+    truth: "Venna kept carrier pigeons. Every evening she released them from the tower, and they returned by sunset. The village called it 'making the sun come home' because you could set your watch by the birds. Her husband, who wrote the inscription, had always thought her hair looked like the riverbank where they met. He was not a poet. He just loved her.",
+    tone: "mundane"
+  },
+  {
+    id: 3,
+    year: "~102 CE",
+    era: "Roman Imperial",
+    region: "Aegyptus",
+    material: "Basalt",
+    faith: "Isiac",
+    language: "Coptic",
+    inscription: "I, Thentnopis, go to meet the Great Mother. My husband waits with the ibis. Do not weep; I have already arrived.",
+    scholars: [
+      { camp: "The Mystagogues", text: "A high initiate of the Isis cult approaching death with perfect serenity. 'Already arrived' is mystical language\u2014she experienced union with the goddess while living, making biological death irrelevant." },
+      { camp: "The Widowhood School", text: "Thentnopis's husband predeceased her. The ibis is his gravesite marker. She is joining him in death; the serenity is genuine. The inscription documents a woman's peaceful anticipation of reunion." },
+      { camp: "The Fraud Theory", text: "The inscription was commissioned by the temple priesthood after appropriating her estate. The 'I have already arrived' is administrative\u2014a retroactive dating of her property transfer." }
+    ],
+    truth: "Thentnopis fled. She left her husband, her name, and her village in a single night, taking only a small ibis carving he had given her. The family, unable to explain the disappearance, purchased a stone and composed an epitaph no one could contradict. Thentnopis was last seen by a grain merchant two hundred miles south, alive and unnamed.",
+    tone: "freedom"
+  },
+  {
+    id: 4,
+    year: "~267 CE",
+    era: "Roman Imperial",
+    region: "Numidia",
+    material: "Sandstone",
+    faith: "Christian",
+    language: "Latin (Punic substrate)",
+    inscription: "Rebecca slept before waking. She asks you to love one another.",
+    scholars: [
+      { camp: "The Agapic Reading", text: "A simple Christian exhortation. 'Love one another' echoes John 13:34. The 'sleeping before waking' is the sleep of death before resurrection\u2014theologically straightforward." },
+      { camp: "The Adoptionist School", text: "Rebecca was a foundling or adopted child. 'Slept before waking' refers to her pre-adoption life\u2014a dark period followed by the 'waking' of joining a Christian family. The community love is gratitude." },
+      { camp: "The Marcionite Dissent", text: "A deliberate break from the Old Testament tradition. 'Love one another' replaces the law. 'Slept before waking' is the death of the old covenant. Rebecca's name is symbolic, not personal." }
+    ],
+    truth: "Rebecca was a sleepwalker. Her entire adult life was spent navigating the village by night, tending gardens and leaving bread at doors, entirely asleep. They all knew. No one spoke of it because she would have been frightened. She died in her bed, having never learned what she did with her nights.",
+    tone: "sweetness"
+  },
+  {
+    id: 5,
+    year: "~334 CE",
+    era: "Roman Imperial",
+    region: "Dacia",
+    material: "Limestone",
+    faith: "Sol Invictus",
+    language: "Vulgar Latin",
+    inscription: "The stone does not lie. When they find us, they will know what happened here.",
+    scholars: [
+      { camp: "The Martyrological School", text: "Persecution victims. 'When they find us' anticipates future discovery and vindication. The 'what happened' is murder for faith\u2014an assertion that evidence of martyrdom will be recovered." },
+      { camp: "The Military Reading", text: "A frontier garrison's mass grave. 'What happened here' records a military engagement erased from official histories. The stone is defiant testimony against imperial cover-up." },
+      { camp: "The Apocalyptic Camp", text: "Eschatological. 'When they find us' means the end of time\u2014not archaeological discovery but divine resurrection. The 'they' are the angels." }
+    ],
+    truth: "The stone does not lie: they were all eaten by a bear. Every single one of them. They had been locked inside a communal food storage cellar by the patriarch who then went drinking. The bear came down from the hills, found the door latched from the outside, and knocked it in. 'What happened here' was never in dispute. The family just had no idea how to write about it.",
+    tone: "absurd"
+  },
+  {
+    id: 6,
+    year: "~823 CE",
+    era: "Early Medieval",
+    region: "Northumbria",
+    material: "Whinstone",
+    faith: "Celtic Christian",
+    language: "Old English",
+    inscription: "Eadric. The wheat grew tall the year he passed. A good sign.",
+    scholars: [
+      { camp: "The Agricultural Symbolists", text: "A straightforward reading: Eadric's death coincided with a bumper harvest. In pre-modern agricultural communities, such coincidence was interpreted as divine favor\u2014a 'good sign' that the soul was blessed." },
+      { camp: "The Sacrificial Theory", text: "Eadric was sacrificed. The wheat grew tall because of him. Celtic Christianity retained fertility ritual elements, and the 'good sign' is not observation but vindication\u2014the sacrifice worked." },
+      { camp: "The Necromantic School", text: "Eadric was a practitioner of sympathetic magic. His burial position and the inscription's wording suggest he was interred to ensure continued harvests. The 'good sign' is a magical outcome, not a divine one." }
+    ],
+    truth: "Eadric was run over by a grain cart in early spring. The wheat grew tall because he had been the village's designated fertilizer-sprayer and died before he could apply the treatment evenly, causing massive over-fertilization of the lower field. It was indeed a good sign for the wheat. Eadric would not have cared for the irony.",
+    tone: "mundane"
+  },
+  {
+    id: 7,
+    year: "~871 CE",
+    era: "Early Medieval",
+    region: "Isle of Skye",
+    material: "Schist",
+    faith: "Norse pagan",
+    language: "Old Norse",
+    inscription: "Bjorn Bloodaxe died with his hand on the sword. The sea remembers what the land forgets.",
+    scholars: [
+      { camp: "The Heroic Reading", text: "A warrior's death in battle\u2014'hand on the sword' is literal. 'The sea remembers' because his body was given a ship burial. The land forgets heroes; the sea, as the Norse path to Valhalla, keeps their memory." },
+      { camp: "The Trade Route School", text: "Bjorn was a merchant sailor, not a warrior. 'Bloodaxe' is an ironic nickname\u2014he was famously peaceful. 'The sea remembers what the land forgets' is a trader's proverb about maritime law versus land-based forgetfulness." },
+      { camp: "The Colonial Interpretation", text: "A Norse colonist in the Hebrides. The inscription documents tension between Norse and Gaelic communities\u2014'the sea remembers' is the Norse perspective, 'the land forgets' is the Gaelic erasure of Norse settlement." }
+    ],
+    truth: "Bjorn died of a stroke while using an outhouse on the first day of winter. He was found frozen in place with his hand on the wooden half-door\u2014which his family, unwilling to describe the scene, called 'the sword.' The sea remembers because his brother, in the process of dragging the body to a boat for burial, slipped on ice and both men went into the water. Only Bjorn's brother came out, and he never spoke again.",
+    tone: "dark comedy"
+  },
+  {
+    id: 8,
+    year: "~1093 CE",
+    era: "High Medieval",
+    region: "Castile",
+    material: "Granite",
+    faith: "Catholic",
+    language: "Castilian",
+    inscription: "For Do\u00f1a Elvira, who loved God and feared nothing.",
+    scholars: [
+      { camp: "The Hagiographic School", text: "A straightforward saintly biography. 'Loved God and feared nothing' is the two-part formula for sanctification\u2014perfect caritas and perfect fortitudo. The grave belonged to a woman of genuine heroic virtue." },
+      { camp: "The Noble Alliance Theory", text: "A political epitaph. 'Feared nothing' refers to Elvira's role in brokering a marriage alliance between Castile and Aragon. She acted as diplomatic envoy in dangerous territory. The fearlessness is political, not spiritual." },
+      { camp: "The Heretical Reinterpretation", text: "Inquisitorial records suggest Elvira was investigated for Cathar sympathies. 'Feared nothing' is not praise\u2014it's an accusation. She feared neither the Church nor the Pope, which made her dangerous. The 'love of God' was her defense." }
+    ],
+    truth: "Elvira kept wolves. Not one or two\u2014she kept a pack of sixteen wolves in a walled compound behind her estate, which she fed daily and spoke to by name. She was found dead in the enclosure at age seventy-four, surrounded by her wolves, all of whom were asleep. She had not been attacked. She had simply sat down among them one evening and not gotten up again. The wolves had lain beside her through the night and into the morning, and only hunger had finally drawn them away from her body.",
+    tone: "mystery"
+  },
+  {
+    id: 9,
+    year: "~1147 CE",
+    era: "High Medieval",
+    region: "Languedoc",
+    material: "Limestone",
+    faith: "Cathar",
+    language: "Occitan",
+    inscription: "Bertrand de N\u00eemes. He built his house upon the rock, and the rains came, and it fell not. But he is gone.",
+    scholars: [
+      { camp: "The Scriptural Reading", text: "A direct reference to Matthew 7:24\u201325. Bertrand was a devout man who built his life on Christian doctrine. The 'but he is gone' is simply the acknowledged end of a faithful life." },
+      { camp: "The Catharist Subversion", text: "The parable is inverted. For a Cathar, the material world is the fallen creation. 'The house upon the rock' is the physical body and its works\u2014and they DO fall. The 'but he is gone' is the soul's escape from material prison." },
+      { camp: "The Architectural Literalists", text: "Bertrand was a stonemason. He literally built a house on limestone bedrock. The rains refer to the great flood of 1143. The house stood. His profession is his epitaph's meaning, and his absence is death." }
+    ],
+    truth: "Bertrand was an accountant for the local lord, not a stonemason. He embezzled a truly staggering amount of silver over twenty years, buried it beneath the floor of a cottage he constructed himself on bedrock (so the coins wouldn't sink into mud). The flood came; the house stood. The coins were never found because Bertrand died of a fever in his sleep, having told no one\u2014not his wife, not his children\u2014about the treasure beneath the floor. The cottage burned in 1198. What remained beneath the ashes was discovered by a farmer in 1344 and immediately spent on wine.",
+    tone: "irony"
+  },
+  {
+    id: 10,
+    year: "~1178 CE",
+    era: "High Medieval",
+    region: "Westphalia",
+    material: "Oak (charred)",
+    faith: "Syncretic folk-Christian",
+    language: "Middle Low German",
+    inscription: "When the moon is dark, remember Hilde. She kept the candle burning longer than anyone.",
+    scholars: [
+      { camp: "The Luminosity Cult", text: "Hilde was a practitioner of a syncretic Germanic light-keeping ritual\u2014maintaining a perpetual flame during the dark moon as a form of celestial magic. 'Longer than anyone' suggests she broke a ritual duration record." },
+      { camp: "The Widow's Vigil Reading", text: "Her husband was lost at sea or war. She kept a candle burning in the window for his return\u2014'longer than anyone' means she never gave up hope. The dark moon evokes the lowest point of her grief." },
+      { camp: "The Midwifery School", text: "Hilde was a village midwife. The 'candle burning' was the light by which she attended births through the night. 'Longer than anyone' simply notes she practiced her craft to an unusually old age." }
+    ],
+    truth: "Hilde sold candles and was very, very good at it. She made them from a specific tallow blend that burned measurably longer than any competitor's. Her customers buried her under a pyramid of unsold stock when the warehouse caught fire and she ran back inside for the accounting ledger. The moon had nothing to do with it; it was Tuesday.",
+    tone: "tragicomic"
+  },
+  {
+    id: 11,
+    year: "~1208 CE",
+    era: "High Medieval",
+    region: "Dalmatia",
+    material: "Limestone",
+    faith: "Bosnian Church",
+    language: "Shtokavian",
+    inscription: "Milan. He forgave his brother.",
+    scholars: [
+      { camp: "The Biblical Reading", text: "A direct parallel to the Prodigal Son. Milan's forgiveness is the epitaph's entire point\u2014the brother committed some unnamed wrong, and Milan, in death, offers absolution." },
+      { camp: "The Fratricide Accusers", text: "The brother killed Milan. 'He forgave his brother' is not virtue but accusation\u2014the community knows who did it. The inscription is a public indictment disguised as mercy." },
+      { camp: "The Political School", text: "Not biological brothers but fraternal order members. Milan and his 'brother' were members of a monastic or knightly order who had a falling out. The forgiveness is institutional reconciliation." }
+    ],
+    truth: "Milan's brother once ate the last of their mother's walnut cake in 1189. Milan mentioned this at every family gathering for nineteen years. On his deathbed, surrounded by weeping relatives, he finally said the words his brother had been waiting to hear. He died with a look of pure satisfaction. The cake, for the record, had not been that good.",
+    tone: "absurd"
+  },
+  {
+    id: 12,
+    year: "~1274 CE",
+    era: "High Medieval",
+    region: "Catalonia",
+    material: "Alabaster",
+    faith: "Catholic",
+    language: "Catalan",
+    inscription: "Sister Margarita, who saw the face of Our Lord in every sinner and never flinched.",
+    scholars: [
+      { camp: "The Mystical Vision School", text: "Margarita experienced genuine ecstatic visions. She had the charismatic gift of seeing Christ in the damned\u2014a theological paradox that made her venerated locally. The 'never flinched' documents her courage in confronting suffering." },
+      { camp: "The Reformatory Reading", text: "A practical woman who ran a prison ministry. She literally saw sinners daily and ministered to them without disgust or fear. Her 'vision' was a vocation of service, not supernatural experience." },
+      { camp: "The Skeptical Biographers", text: "Margarita was nearsighted. She genuinely could not distinguish faces at distance and nodded amiably at everyone. The hagiographic reading is a posthumous embellishment of a minor sensory deficit." }
+    ],
+    truth: "Margarita administered the convent's feral cat sanctuary for thirty years. She handled more bites, scratches, and infections than any other sister. The cats, which the convent called 'sinners' as a joke, loved her intensely and sat in her lap through morning prayers. She never flinched because she had been scratched so many times she had no nerve endings left in her forearms. The face she saw in every sinner was a cat's face.",
+    tone: "sweetness"
+  },
+  {
+    id: 13,
+    year: "~1311 CE",
+    era: "Late Medieval",
+    region: "Wiltshire",
+    material: "Purbeck marble",
+    faith: "Catholic",
+    language: "Middle English",
+    inscription: "John Barleycorn is risen and will not be laid down.",
+    scholars: [
+      { camp: "The Apocalyptic School", text: "A corruption of resurrection imagery. John Barleycorn is the Christ-figure, and his refusal to 'be laid down' predicts the Second Coming. The phrasing echoes popular peasant theology of the early fourteenth century." },
+      { camp: "The Pagan Survivalists", text: "Pure pre-Christian agricultural mythology. John Barleycorn is the grain spirit who dies at harvest and is resurrected at planting. The Christian burial with pagan inscription documents syncretic practice." },
+      { camp: "The Deconstructionist Reading", text: "The inscription is ironic or possibly a joke. 'Will not be laid down' means he refuses to rest even in death. This is a deceased who was difficult in life and intends to remain so." }
+    ],
+    truth: "John Barleycorn was not a person. It was a barrel of ale, buried beneath the church floor by a group of monks who had been told the abbot was doing a cellar inspection the following morning. The barrel, packed tight, could not be extracted through the gap between the flagstones. When the abbot's inspection passed without incident, the monks went to retrieve it and found it had expanded with fermentation, wedging itself permanently beneath the foundation. It was never removed. By 1311 the monks had all died, and their successors marked the spot, not knowing what it actually contained.",
+    tone: "absurd"
+  },
+  {
+    id: 14,
+    year: "~1389 CE",
+    era: "Late Medieval",
+    region: "Vaucluse",
+    material: "Granite",
+    faith: "Catholic",
+    language: "Old French",
+    inscription: "For Jehanne, who was never afraid of the dark. She went willingly into the earth.",
+    scholars: [
+      { camp: "The Saintly Resignation School", text: "A woman of extraordinary faith. 'Never afraid of the dark' means she faced death without terror\u2014a mark of sanctity. 'Went willingly' indicates acceptance of God's will." },
+      { camp: "The Plague Interpretation", text: "Jehanne died during the Black Death's second wave. 'The dark' is the mass grave. She 'went willingly' because she had already lost her entire family and had no reason to resist." },
+      { camp: "The Liminalists", text: "A mystical text. Jehanne practiced a form of dark-night-of-the-soul contemplation. 'The earth' is not burial but the via negativa\u2014the spiritual path through darkness toward divine absence." }
+    ],
+    truth: "Jehanne was a coal miner's daughter who was born with no functional retinas. She had never once perceived light. Her entire life, forty-one years, was spent in absolute blackness. She navigated her village by touch and sound, worked in the mines alongside her father, and raised three children. She was not brave. She was not holy. She had simply never known what 'the dark' was, because she had never known what 'the light' was. 'Went willingly into the earth' was the only honest thing her family knew to say.",
+    tone: "horror"
+  },
+  {
+    id: 15,
+    year: "~1422 CE",
+    era: "Late Medieval",
+    region: "Lincolnshire",
+    material: "Limestone",
+    faith: "Catholic",
+    language: "Middle English",
+    inscription: "Agnes the Smith rests here. The village has gone quiet.",
+    scholars: [
+      { camp: "The Vocational Reading", text: "Agnes was a blacksmith\u2014a rare female practitioner. 'The village has gone quiet' simply notes the cessation of her hammer's ring, a sound that had marked the village's daily rhythm for decades." },
+      { camp: "The Witchcraft Accusers", text: "The 'quiet' is fearful. Agnes was suspected of maleficium, and her death has left the community unsure whether to be relieved or terrified that her influence persists. The silence is ominous." },
+      { camp: "The Poetic Memorialists", text: "A purely literary epitaph. The 'quiet' is grief\u2014the village's collective voice has been silenced by loss. Agnes was beloved, and her absence is felt as acoustic emptiness." }
+    ],
+    truth: "Agnes was the village gossip. For fifty years, no secret lasted a day in her presence. She heard everything, remembered everything, and distributed everything to maximum effect. When she died, the information pipeline dried up completely. The village went quiet because no one knew what to say to each other without Agnes there to tell them what had already been said.",
+    tone: "tragicomic"
+  },
+  {
+    id: 16,
+    year: "~1497 CE",
+    era: "Renaissance",
+    region: "Florence",
+    material: "Marble",
+    faith: "Catholic",
+    language: "Tuscan Italian",
+    inscription: "Lorenzo degli Angeli. All his mathematics could not solve the equation of his ending.",
+    scholars: [
+      { camp: "The Ratiocinative School", text: "A mathematician's epitaph acknowledging the limits of reason in the face of mortality. The 'equation of his ending' is the unsolvable problem of death\u2014Lorenzo, for all his genius, could not calculate his way out of the human condition." },
+      { camp: "The Assassination Theory", text: "Lorenzo predicted his own murder via astrological calculation but could not prevent it. The 'equation' was a literal prophecy\u2014his mathematics told him when and how, and he was still killed." },
+      { camp: "The Neoplatonic Reading", text: "A philosophical statement about the inadequacy of number to describe the soul's ascent. The 'equation of his ending' is the impossibility of quantifying the moment of divine union." }
+    ],
+    truth: "Lorenzo was a tax collector for the Medici, not a mathematician. His 'mathematics' was bookkeeping\u2014specifically, the creative bookkeeping he used to skim from the ducal treasury for eleven years. The 'equation of his ending' referred to the single miscalculation in column forty-seven of his 1496 tax ledger that led to his exposure, arrest, and execution. He was not buried in this marble tomb; it was commissioned by his wife, who told the children their father had died of a fever.",
+    tone: "dark"
+  },
+  {
+    id: 17,
+    year: "~1523 CE",
+    era: "Renaissance",
+    region: "Venice",
+    material: "Verona marble",
+    faith: "Catholic",
+    language: "Venetian dialect",
+    inscription: "Catarina. The mouth that smiled is silent. The eyes that shone are shut. But the mirror remembers.",
+    scholars: [
+      { camp: "The Narcissistic School", text: "A self-referential epitaph\u2014Catarina commissioned her own tomb. The 'mirror' is literal; she had one installed above her grave as a vanity project. The inscription is self-worship." },
+      { camp: "The Portrait Theory", text: "The tomb featured a portrait medallion. The 'mirror' is the marble likeness\u2014a common Renaissance conceit. Art remembers what the flesh cannot." },
+      { camp: "The Venetian Glassblowers' Guild", text: "Catarina was a mirror-maker. The 'mirror remembers' is professional pride\u2014her mirrors outlasted her. The first two lines are conventional mourning; the third is a craftsperson's signature." }
+    ],
+    truth: "Catarina murdered her business partner, a glass-worker named Aldo, in 1519. She disposed of his body in the lagoon and took sole ownership of their workshop. She lived comfortably for four more years until a customer brought in a large mirror for repair\u2014a mirror that had been in Aldo's workshop on the night of his disappearance. When the glass was lifted from its frame, Aldo's signet ring fell out. He had been hiding it in the one place he knew Catarina would eventually look. She died of apoplexy three days after the discovery, before the authorities could arrive.",
+    tone: "horror"
+  },
+  {
+    id: 18,
+    year: "~1571 CE",
+    era: "Renaissance",
+    region: "Yorkshire",
+    material: "Slate",
+    faith: "Anglican",
+    language: "Early Modern English",
+    inscription: "Thomas Hobb, Tanner. He dealt fairly in skins and will answer for his own.",
+    scholars: [
+      { camp: "The Commercial Reading", text: "A straightforward tradesman's epitaph. 'Dealt fairly in skins' is a professional reference. 'Will answer for his own' is standard Protestant theology\u2014each soul answers for itself before God." },
+      { camp: "The Cryptic Puritan School", text: "The phrasing is deliberately doubled. 'Skins' is also a euphemism for prostitutes in the period\u2014Thomas was a brothel-keeper. 'Will answer for his own' is not piety but defiance: he will answer for his sins, not yours." },
+      { camp: "The Antinomian Reading", text: "A radical theological statement. 'He dealt fairly in skins' refers to Original Sin\u2014the 'skin' of Adam's fallen nature. Thomas believed he had shed this skin and needed no intermediary. 'Will answer for his own' is a rejection of priestly absolution." }
+    ],
+    truth: "Thomas was a sheep farmer who fell into his own tanning pit on Midsummer's Eve. The lime solution preserved him in a state that appalled his family. 'Dealt fairly in skins' was the best joke his brother could manage under the circumstances. 'Will answer for his own' was the vicar's contribution, intended to discourage anyone from asking questions about the condition of the body.",
+    tone: "tragicomic"
+  },
+  {
+    id: 19,
+    year: "~1614 CE",
+    era: "Early Modern",
+    region: "Hampshire",
+    material: "Slate",
+    faith: "Puritan",
+    language: "Early Modern English",
+    inscription: "Patience Goodbody. Her name was her trial. Her death was her peace.",
+    scholars: [
+      { camp: "The Nominalist Theologians", text: "In Puritan naming practice, 'Patience' is a virtue-name\u2014a parental prayer that the child will embody the quality. The epitaph suggests she succeeded ('her name was her trial'\u2014she had to live up to it) and was rewarded with a peaceful death." },
+      { camp: "The Feminist Reappraisal", text: "A woman crushed by the expectations encoded in her name. 'Her name was her trial'\u2014she was forced into patient endurance of oppression. 'Her death was her peace' is not comfort but the only escape available to her." },
+      { camp: "The Iconoclast School", text: "The inscription is deliberately plain\u2014no angel motifs, no religious iconography. The Puritan aesthetic demanded text over image. The name and death are presented as bald facts, and all interpretation is the reader's imposition." }
+    ],
+    truth: "Patience had a stutter so severe she required nearly a full minute to introduce herself. By the time she finished saying 'Patience Goodbody,' the listener had already formed an impression of either tremendous piety or tremendous irritation. She hated her name. She hated the stutter. She died at twenty-three of a lung infection, and her last words\u2014delivered over the course of several minutes\u2014were instructions to her sister that if anyone put 'Patience' on the stone, she would haunt them.",
+    tone: "dark comedy"
+  },
+  {
+    id: 20,
+    year: "~1638 CE",
+    era: "Early Modern",
+    region: "Seville",
+    material: "Carrara marble",
+    faith: "Catholic (Jesuit)",
+    language: "Castilian Spanish",
+    inscription: "Padre Ignacio. He carried the cross to the far corners of the earth and was broken upon it.",
+    scholars: [
+      { camp: "The Missionary Martyrology", text: "A Jesuit missionary who died in the field\u2014'far corners' is literal, probably Japan or the Americas. 'Broken upon it' means martyrdom: he was killed for his faith in foreign territory." },
+      { camp: "The Psychological Reading", text: "The 'cross' is not physical but psychological\u2014the burden of faith itself. Ignacio suffered a crisis of belief in the mission fields and 'was broken upon it' refers to a mental collapse, not physical death." },
+      { camp: "The Administrative School", text: "A bureaucrat of the Jesuit order who oversaw the global mission network from Seville. 'Carried the cross to the far corners' means he managed correspondence and logistics. 'Broken upon it' means he died of overwork." }
+    ],
+    truth: "Ignacio was not broken on a cross; a cross fell on him. He was overseeing the construction of a new chapel's roof beam when the crane failed and the thirty-foot crossbeam struck him directly. He died instantly. The epitaph was written by his assistant, who saw the tragic irony and chose to omit it entirely.",
+    tone: "irony"
+  },
+  {
+    id: 21,
+    year: "~1667 CE",
+    era: "Early Modern",
+    region: "Holland",
+    material: "Bentheim sandstone",
+    faith: "Dutch Reformed",
+    language: "Dutch",
+    inscription: "Cornelis vander Berg. His tulips were red. His creditors were many. God sort the rest.",
+    scholars: [
+      { camp: "The Tulip Crash Theorists", text: "A victim of the 1637 tulip mania collapse\u2014thirty years later, the debt still haunts the family. The 'red' tulips are a specific cultivar, 'Semper Augustus,' the most expensive bulb in history. The creditors are literal. 'God sort the rest' is exhausted resignation." },
+      { camp: "The Calvinist Reading", text: "A moral exemplum. The tulips represent vanity and the creditors represent consequence. The epitaph is a warning: earthly beauty leads to debt, and only God can untangle the mess of a life lived for appearance." },
+      { camp: "The Irony School", text: "The final line is deliberately, almost cruelly, brief. After listing what the man valued (tulips) and what he owed (creditors), the family simply gave up. 'God sort the rest' is not faith but fatigue." }
+    ],
+    truth: "Cornelis kept a pub. His tulips were indeed red\u2014they grew in a window box he watered every morning. His creditors were indeed numerous\u2014every patron in the village had a running tab. The family, who had never fully understood Cornelis's business, interpreted these facts as evidence of a much more interesting life than the one he had actually lived.",
+    tone: "mundane"
+  },
+  {
+    id: 22,
+    year: "~1694 CE",
+    era: "Early Modern",
+    region: "Limburg",
+    material: "Limburg limestone",
+    faith: "Witch (post-trial)",
+    language: "Limburgish",
+    inscription: "Goedele. The river took her, and the river was wrong.",
+    scholars: [
+      { camp: "The Witch Trial Historians", text: "Goedele was subjected to trial by water\u2014an accused witch who sank (innocent) but drowned anyway. 'The river was wrong' is the community's posthumous admission that the test was flawed." },
+      { camp: "The Accidentalist School", text: "She drowned in a flood. The 'river was wrong' is literal\u2014the river breached its banks during a storm, which was blamed on God's wrath but was actually just poor dike maintenance." },
+      { camp: "The Poetic Elegists", text: "The river is metaphor for fate or destiny. 'The river was wrong' means she died before her time\u2014the universe made an error. A purely sentimental reading." }
+    ],
+    truth: "Goedele was a perfectly ordinary woman who was walking home from market across a bridge that the town council had been meaning to repair for six years. She fell through a hole in the planking and drowned in four feet of water. The bridge was not repaired for another eleven years. 'The river was wrong' was the council's way of attributing the death to an act of God rather than an act of civic negligence.",
+    tone: "anger"
+  },
+  {
+    id: 23,
+    year: "~1718 CE",
+    era: "Enlightenment",
+    region: "Yorkshire",
+    material: "Sandstone",
+    faith: "Deist",
+    language: "English",
+    inscription: "Samuel Grubb. He measured the heavens and found them adequate.",
+    scholars: [
+      { camp: "The Astronomer's Reading", text: "Samuel was an amateur astronomer\u2014a man of the Enlightenment who studied the cosmos through a telescope and found it sufficient proof of a creator. 'Adequate' is scientific understatement for 'sublime.'" },
+      { camp: "The Satirical School", text: "A deliberate deflation of grand expectations. 'Adequate' is the most lukewarm compliment possible for the entire universe. Samuel was known for his dry humor and wanted his epitaph to reflect it." },
+      { camp: "The Theological Revisionists", text: "'Adequate' is not faint praise\u2014it's a radical theological statement. The heavens don't need to be spectacular; they simply need to function. This is pure Deism: the universe as well-designed mechanism." }
+    ],
+    truth: "Samuel was a surveyor. He literally measured a section of sky\u2014the distance between two church steeples, to be precise\u2014to settle a property dispute. 'The heavens' was a local nickname for a pair of hills whose boundary had been in litigation for forty years. He found them 'adequate' because their measurements were close enough to the original deed description to end the case. The dispute was over two feet of grazing land.",
+    tone: "absurd"
+  },
+  {
+    id: 24,
+    year: "~1743 CE",
+    era: "Enlightenment",
+    region: "Gelderland",
+    material: "Clay brick",
+    faith: "Dutch Reformed",
+    language: "Dutch",
+    inscription: "Aelbrecht the Miller. His hands were flour. His heart was stone.",
+    scholars: [
+      { camp: "The Industrious Reading", text: "A hardworking miller. 'Hands were flour' is the dust of his trade. 'Heart was stone' means steadfast\u2014not cruel, but unshakeable in faith and purpose. A life of honest labor." },
+      { camp: "The Abusive Interpretation", text: "A cruel man. 'Hands were flour' (soft) describes the false gentility he presented publicly. 'Heart was stone' describes his actual private character. The community knew and encoded it." },
+      { camp: "The Materialist School", text: "A literal reading of the mill's components: the grinding stone (heart) and the flour (hands). The epitaph identifies Aelbrecht with his machine\u2014a man who became his profession." }
+    ],
+    truth: "Aelbrecht had a skin condition that caused his hands to develop a fine, white, powdery rash that genuinely resembled flour. He was also congenitally unable to feel emotion of any kind\u2014a condition his village doctor attributed to 'a heart of stone.' Neither condition prevented him from working. He fell into the mill machinery on a Tuesday afternoon in March.",
+    tone: "mundane"
+  },
+  {
+    id: 25,
+    year: "~1768 CE",
+    era: "Enlightenment",
+    region: "Tokaj",
+    material: "Andesite",
+    faith: "Calvinist",
+    language: "Hungarian",
+    inscription: "Zolt\u00e1n. He gave his blood to the soil and the soil gave wine.",
+    scholars: [
+      { camp: "The Terroir Mystics", text: "A viticulturist who understood sacrifice on a spiritual level. His 'blood' is his labor, his sweat, his life's work. The wine that resulted was a transubstantiation of human effort into divine gift." },
+      { camp: "The Revolutionary School", text: "A casualty of the Hungarian resistance against Habsburg consolidation. 'Blood to the soil' is battlefield sacrifice. 'The soil gave wine' is the freedom his death purchased\u2014or was meant to." },
+      { camp: "The Literalists", text: "Zolt\u00e1n died in a fall at his vineyard and was buried on the property. The following harvest was exceptionally good. The inscription documents coincidence, not causation." }
+    ],
+    truth: "Zolt\u00e1n was the town drunk, famous for bleeding profusely from a nosebleed he suffered every spring without fail. He would stagger through the vineyards leaving spots of blood on the earth, to the great amusement of the children who followed him. When he died of liver failure, his widow buried him in the lower vineyard and sold the next harvest's grapes to the monastery, which produced an exceptional vintage that year because the growing season had been unusually warm and dry. Zolt\u00e1n's contribution was posthumous and inadvertent.",
+    tone: "tragicomic"
+  },
+  {
+    id: 26,
+    year: "~1813 CE",
+    era: "Industrial",
+    region: "Cornwall",
+    material: "Granite",
+    faith: "Methodist",
+    language: "English",
+    inscription: "William Penhaligon. The mine took his breath. The sea took his sons. God took his patience.",
+    scholars: [
+      { camp: "The Trilogy of Suffering", text: "A compressed autobiography of loss. The mine caused his lung disease. The sea claimed his sons in a fishing disaster. The cumulative grief destroyed his faith. A devastating triple loss." },
+      { camp: "The Methodist Resignation", text: "Read differently: God did not 'take' his patience in the sense of removing it, but received it. William endured and presented his patience to God as an offering. The losses tested and proved his faith." },
+      { camp: "The Labor History School", text: "A political document. 'The mine took his breath' is industrial disease. 'The sea took his sons' is economic coercion\u2014forced into maritime work by mine closures. 'God took his patience' is institutional failure: the church offered no comfort." }
+    ],
+    truth: "William was a hypochondriac who did not have lung disease. His sons had not drowned\u2014they had emigrated to Canada and simply stopped writing letters. William's 'patience' was lost when the Methodist chapel refused to hold a memorial service for his wife, who had been excluded from the congregation for dancing at a wedding. He was angry, not grief-stricken. He was also healthy, but died from drinking a bottle of patent medicine he believed would cure his nonexistent mine-cough. The medicine was mostly laudanum.",
+    tone: "dark"
+  },
+  {
+    id: 27,
+    year: "~1847 CE",
+    era: "Industrial",
+    region: "Edinburgh",
+    material: "Greywacke",
+    faith: "Presbyterian",
+    language: "English",
+    inscription: "For Margaret, who saw the angels at the window.",
+    scholars: [
+      { camp: "The Deathbed Vision School", text: "Margaret experienced a genuine visitation. Angels appearing at the window is a well-attested deathbed vision in Protestant spirituality. The epitaph is a witness testimony to a supernatural event." },
+      { camp: "The Medical Rationalists", text: "Delirium tremens or morphine-induced hallucination. 'Angels at the window' was the last neurological misfire of a dying brain. The inscription sentimentalizes a clinical phenomenon." },
+      { camp: "The Architectural School", text: "The window of the sickroom faced east. Morning light refracted through imperfect glass, creating patterns the dying woman interpreted as angels. The epitaph records her perception, not an objective event." }
+    ],
+    truth: "Margaret's neighbour kept pigeons. White ones. They roosted on her windowsill every evening, and she had spent the last months of her life watching them through the glass with something approaching reverence. She called them her angels. On the night she died, the birds were there as usual. Her daughter, who had never quite understood her mother's affection for the pigeons, interpreted the scene differently.",
+    tone: "sweetness"
+  },
+  {
+    id: 28,
+    year: "~1861 CE",
+    era: "Industrial",
+    region: "Nagpur",
+    material: "Sandstone",
+    faith: "Hindu",
+    language: "Hindi",
+    inscription: "Ravi, who counted the stars and found them too few for his counting.",
+    scholars: [
+      { camp: "The Astronomical School", text: "Ravi was an amateur astronomer whose ambitions exceeded his instruments. 'Too few for his counting' means he wanted more data than the visible sky could provide\u2014a scientist's frustration with the limits of observation." },
+      { camp: "The Romantic Reading", text: "A poet-mystic. The stars were insufficient to express the depth of his feeling or the scale of his imagination. He needed a larger cosmos to contain his inner world." },
+      { camp: "The Colonial Subtext School", text: "Under British colonial administration, Indian intellectuals were systematically excluded from scientific institutions. 'Too few for his counting' is a coded lament about the ceiling placed on Indian achievement." }
+    ],
+    truth: "Ravi was an accountant for a textile merchant who had been slowly going mad for several years. He spent the last year of his life counting every visible star from his rooftop each night, recording the totals in a ledger, and becoming increasingly distressed when the numbers did not match from night to night\u2014because, of course, the sky changed. His employer, who found the ledger after Ravi's death from cholera, did not understand the drawings and gave the stone to the family. The family assumed the counting was religious.",
+    tone: "horror"
+  },
+  {
+    id: 29,
+    year: "~1887 CE",
+    era: "Industrial",
+    region: "Bavaria",
+    material: "Limestone",
+    faith: "Catholic",
+    language: "German",
+    inscription: "Lukas. He built the bridge that he could not cross.",
+    scholars: [
+      { camp: "The Mortality Reading", text: "The bridge is a metaphor for life itself\u2014Lukas built a path for others but died before completing his own journey. A conventional Victorian meditation on unfinished work and mortality." },
+      { camp: "The Engineering Fatalists", text: "Lukas was a civil engineer. He designed a bridge that collapsed during construction, killing him. 'Could not cross' is literal\u2014the bridge failed, and he died in the failure." },
+      { camp: "The Existentialist School", text: "A philosophical statement about the impossibility of self-transcendence. You can build the path for others, but you can never cross the gap between who you are and who you wish to be." }
+    ],
+    truth: "Lukas was a stubborn man who refused to use the new bridge his son had built across the river, insisting on fording the water at the traditional crossing point as his ancestors had done. He drowned in three feet of water on a Thursday afternoon, within clear sight of the bridge, which he could see but refused to cross. His son commissioned the inscription in a state of profound and complicated grief.",
+    tone: "dark"
+  },
+  {
+    id: 30,
+    year: "~1903 CE",
+    era: "Industrial",
+    region: "Tsushima",
+    material: "Granite",
+    faith: "Buddhist (Pure Land)",
+    language: "Japanese",
+    inscription: "Yuki is melting. Soon there will be only water.",
+    scholars: [
+      { camp: "The Zen Dissolution School", text: "A Buddhist meditation on impermanence. Yuki (snow) is the self, and melting is the dissolution of ego into the greater reality. 'Only water' is the return to formlessness\u2014nirvana as evaporation." },
+      { camp: "The Seasonal Reading", text: "Yuki was born in winter and named for snow. The inscription marks her death in spring. The melting is literal and cyclical\u2014she came with the snow and departed with the thaw." },
+      { camp: "The Modernist School", text: "A deliberately minimalist epitaph that resists grand interpretation. The name, the melting, the water. The emotional weight is in what is left unsaid." }
+    ],
+    truth: "Yuki was a fifty-year-old fisherman who died of hypothermia after falling through ice in January. His body was recovered in early spring, partially thawed, by a group of children playing near the shore. His widow, who had never liked the name his mother had chosen, agreed that the inscription was fitting but not for the reason the stonecutter intended.",
+    tone: "horror"
+  },
+  {
+    id: 31,
+    year: "~1927 CE",
+    era: "Modern",
+    region: "Cork",
+    material: "Limestone",
+    faith: "Catholic",
+    language: "English",
+    inscription: "For Sean, who burned with the love of Ireland.",
+    scholars: [
+      { camp: "The Nationalist Martyrology", text: "A Republican activist. 'Burned with the love of Ireland' is the language of revolutionary commitment\u2014Sean died for Irish independence, probably in the Civil War or its aftermath. The fire is patriotic sacrifice." },
+      { camp: "The Archaic School", text: "'Burned with love' is a conventional Irish Catholic expression, not political. It describes spiritual passion\u2014the love of Ireland as a holy land, not a political project. Sean was a pious man, not a soldier." },
+      { camp: "The Revisionist Reading", text: "The inscription deliberately obscures the cause of death to allow both interpretations. The family avoided specifying whether Sean died in combat or in bed, protecting his reputation across divided communities." }
+    ],
+    truth: "Sean's pub, called 'The Love of Ireland,' caught fire on the night of November 14th, 1926. The cause was a cracked stovepipe. Sean, who was very drunk at the time, attempted to rescue the cash register and did not emerge. The fire was not political. The cash register was not rescued. The insurance company declined to pay, citing 'acts of passion.'",
+    tone: "absurd"
+  },
+  {
+    id: 32,
+    year: "~1934 CE",
+    era: "Modern",
+    region: "Tallinn",
+    material: "Limestone",
+    faith: "Lutheran",
+    language: "Estonian",
+    inscription: "Katarina. She was the mirror we did not deserve.",
+    scholars: [
+      { camp: "The Feminist Icon School", text: "Katarina reflected the community's flaws back at itself\u2014she was a social critic, a truth-teller. 'The mirror we did not deserve' means she showed them what they were and they failed to change." },
+      { camp: "The Aesthetic Reading", text: "A beauty. The mirror reflects her physical appearance, which the community valued above all else. 'We did not deserve' is the conventional elegiac exaggeration surrounding the death of a beautiful woman." },
+      { camp: "The Independence School", text: "Katarina was an Estonian cultural figure who worked to preserve national identity under Soviet occupation. She 'reflected' the true Estonia that the occupation sought to erase. Her death in 1934 preceded the worst of the suppression." }
+    ],
+    truth: "Katarina's family owned the only full-length mirror in the village. She was their youngest daughter, and her weekly chore was polishing it. She died of influenza in her early twenties, and the mirror, which had been in the family for five generations, was sold to pay the doctor's bill. The village lost its only clear reflection of itself at the same time it lost Katarina. The epitaph was the only thing her brother could afford.",
+    tone: "sadness"
+  },
+  {
+    id: 33,
+    year: "~1941 CE",
+    era: "Modern",
+    region: "\u0141\u00f3d\u017a",
+    material: "Fieldstone",
+    faith: "Jewish",
+    language: "Yiddish",
+    inscription: "Dovid ben Avraham. He carried the names of the dead so they would not be forgotten. Now who carries his?",
+    scholars: [
+      { camp: "The Memory Keeper School", text: "Dovid was the designated memorialist of his community\u2014he maintained the list of names, the yizkor books, the records of those who had perished. His own death creates an existential crisis: without the keeper, the kept are lost again." },
+      { camp: "The Theological Reading", text: "A meditation on Jewish communal obligation. 'Carrying the names of the dead' is the duty of remembrance incumbent on every Jew. The question 'now who carries his?' is both practical and theological\u2014it asks whether God remembers." },
+      { camp: "The Historical Contextualists", text: "Dovid died in the \u0141\u00f3d\u017a Ghetto. The 'names of the dead' are Holocaust victims whose identities the Nazis sought to erase. His memorial work was an act of resistance. The question is not rhetorical; it is a genuine cry of despair." }
+    ],
+    truth: "Dovid was a gravedigger. He wrote down every name on a slip of paper before burial, because the rabbi insisted on records. He was not a historian or a memorialist; he was a man with a shovel and a pencil who performed this task every day for three years until the work killed him. He carried the names of the dead because someone had to write them down. No one wrote his.",
+    tone: "devastation"
+  },
+  {
+    id: 34,
+    year: "~1955 CE",
+    era: "Modern",
+    region: "Hokkaido",
+    material: "Granite",
+    faith: "Shinto",
+    language: "Japanese",
+    inscription: "For Aiko. The mountain called. She answered.",
+    scholars: [
+      { camp: "The Spiritualist Reading", text: "Aiko felt a sacred calling to the mountain\u2014likely a practitioner of Shugendo, the mountain ascetic tradition. 'She answered' means she dedicated her life to spiritual practice in the peaks." },
+      { camp: "The Recreational Fatalists", text: "Aiko was a mountaineer who died climbing. 'The mountain called' is the irresistible urge that draws climbers to risk their lives. 'She answered' is her acceptance of the danger." },
+      { camp: "The Ecological School", text: "Aiko was an environmental activist who opposed development in the Hokkaido wilderness. 'The mountain called' means the land itself summoned her to its defense." }
+    ],
+    truth: "Aiko was hard of hearing. She wore a hearing aid that malfunctioned frequently. On the afternoon of her death, she was walking along a mountain trail when her aid produced a high, sustained tone she couldn't distinguish from the emergency siren at the nearby dam. She walked toward the sound, thinking it was a warning, and was caught in a rockslide that no siren, real or imagined, could have prevented.",
+    tone: "sadness"
+  },
+  {
+    id: 35,
+    year: "~1968 CE",
+    era: "Modern",
+    region: "Liverpool",
+    material: "Granite",
+    faith: "Catholic",
+    language: "English",
+    inscription: "Our Colin. He went looking for something and found it.",
+    scholars: [
+      { camp: "The Optimistic School", text: "Colin found what he was looking for\u2014meaning, purpose, happiness. The epitaph is a celebration of a completed quest. He died fulfilled." },
+      { camp: "The Drug Culture Reading", text: "Colin was part of the 1960s counterculture. 'Went looking for something' is psychedelic exploration. 'Found it' could mean enlightenment, overdose, or simply the end of the search." },
+      { camp: "The Ironic School", text: "The 'something' is deliberately vague. Colin's family didn't know what he was looking for\u2014he may not have known either. 'Found it' is the family's hopeful guess. The epitaph's vagueness is its honesty." }
+    ],
+    truth: "Colin lost his keys. He spent the last three hours of his life looking for them in increasingly improbable places. He found them in the pocket of the jacket he had been wearing the entire time. He laughed so hard that he collapsed. He had an undiagnosed heart condition. He died holding the keys, still laughing. His mother chose the inscription because she had never understood what was so funny.",
+    tone: "tragicomic"
+  },
+  {
+    id: 36,
+    year: "~1973 CE",
+    era: "Modern",
+    region: "Catalonia",
+    material: "Marble",
+    faith: "None (non-practicing)",
+    language: "Catalan",
+    inscription: "For Carme, who refused to be buried next to a man she had never loved.",
+    scholars: [
+      { camp: "The Feminist Declaration", text: "A radical statement of autonomy. Carme used her own burial as a final act of defiance against a marriage imposed by patriarchal society. The grave site itself is a political text." },
+      { camp: "The Legalistic School", text: "A property dispute. Carme's husband owned the family plot, and she stipulated in her will that she be buried elsewhere. The epitaph is a legal notice affixed to her new grave to prevent her husband's family from relocating her remains." },
+      { camp: "The Romantic Rereading", text: "Carme was not married to the man in question. She had loved someone else\u2014buried in the adjacent plot\u2014and 'never loved' refers to the husband she refused to lie beside for eternity. The refusal is an act of fidelity to a different love." }
+    ],
+    truth: "Carme's husband was not buried anywhere. He was alive. He had been alive for the entire duration of their marriage and continued to be alive for another eleven years after her death. He visited her grave every Sunday and sat beside it reading the newspaper. She had, in fact, loved him deeply. She was buried in a different cemetery because her family's plot was full and the one next to his was occupied by his first wife.",
+    tone: "irony"
+  },
+  {
+    id: 37,
+    year: "~1989 CE",
+    era: "Contemporary",
+    region: "Minsk",
+    material: "Granite",
+    faith: "Eastern Orthodox",
+    language: "Russian",
+    inscription: "Svetlana Vasilyevna. She heard the silence before anyone else.",
+    scholars: [
+      { camp: "The Prophetic Reading", text: "Svetlana sensed the collapse of the Soviet Union before it happened\u2014'the silence' is the end of ideological noise, the death of the regime. She was a prophet of the new era." },
+      { camp: "The Environmental School", text: "A scientist who detected the radiation silence\u2014the absence of birdsong and insect noise near Chernobyl\u2014years before the official evacuation. She 'heard' ecological death." },
+      { camp: "The Dissident Reading", text: "Svetlana was a political prisoner who spent years in solitary confinement. The 'silence' of the cell was her expertise. She heard it first because she was placed in it first." }
+    ],
+    truth: "Svetlana was the building superintendent for a state housing block in Minsk. She was the first to notice that the water pipes in the basement had stopped humming\u2014the first sign that the heating system had failed. She reported it. No one came. She reported it again. No one came. She went into the basement herself to fix it. She was found there three days later. The silence she heard was the silence of a city that had stopped listening.",
+    tone: "devastation"
+  },
+  {
+    id: 38,
+    year: "~1994 CE",
+    era: "Contemporary",
+    region: "Utah",
+    material: "Granite",
+    faith: "Mormon (LDS)",
+    language: "English",
+    inscription: "Brother Elias. He walked in dry places and found water every time.",
+    scholars: [
+      { camp: "The Prospector Reading", text: "Elias was a water dowser\u2014a man who found wells in the Utah desert. 'Dry places' is literal desert, and 'found water every time' is a professional record of success." },
+      { camp: "The Spiritualist School", text: "'Dry places' are spiritual deserts\u2014periods of doubt, crisis, and aridity. Elias found 'water' (faith, community, revelation) each time. His life is testimony that the Lord provides." },
+      { camp: "The Frontier Mythologizers", text: "A Mormon pioneer narrative. Elias walked the same paths as Brigham Young's vanguard, finding water where others saw only salt flats. The inscription connects him to the founding mythology of the territory." }
+    ],
+    truth: "Elias was a plumber. Every house he ever worked on had a leak he successfully repaired. His community loved him. He found water every time because water, in his experience, was always in the wrong place\u2014behind walls, under floors, inside ceilings\u2014and he always found it. He died of a heart attack under a kitchen sink at the age of sixty-two, wrench in hand.",
+    tone: "mundane"
+  },
+  {
+    id: 39,
+    year: "~2003 CE",
+    era: "Contemporary",
+    region: "East Timor",
+    material: "Concrete",
+    faith: "Catholic",
+    language: "Tetum",
+    inscription: "Maria dos Santos. She planted the seeds of tomorrow.",
+    scholars: [
+      { camp: "The Revolutionary School", text: "Maria was an independence activist\u2014'seeds of tomorrow' is the language of liberation movements. She planted ideas that would grow into the free nation of Timor-Leste. Her death preceded the harvest." },
+      { camp: "The Agricultural Reading", text: "A farmer. She literally planted seeds. The 'tomorrow' is next year's harvest, and her descendants will eat from her labor. The inscription is simply what her family knew about her." },
+      { camp: "The Educationalist School", text: "Maria was a teacher who educated girls in rural Timor. The 'seeds' are her students\u2014young minds who will carry knowledge into the future." }
+    ],
+    truth: "Maria planted a mango tree in her yard in 1971. She watered it every morning for thirty-two years. It produced its first fruit the year she died. Her grandchildren ate the mangoes. The seeds she planted were, specifically, mango seeds. She was not a revolutionary, a teacher, or a symbol. She was a woman who grew a tree.",
+    tone: "sweetness"
+  },
+  {
+    id: 40,
+    year: "~2011 CE",
+    era: "Contemporary",
+    region: "Kyoto",
+    material: "Granite",
+    faith: "Buddhist (J\u014ddo Shinsh\u016b)",
+    language: "Japanese",
+    inscription: "Kenji. He preferred the sound of rain to the sound of people.",
+    scholars: [
+      { camp: "The Introvert's Apologia", text: "A temperament, not a pathology. Kenji found social interaction draining and natural sound restorative. The inscription is his family's acceptance of his personality\u2014no judgment, only description." },
+      { camp: "The Clinical School", text: "Kenji was on the autism spectrum or had social anxiety disorder. The 'sound of people' was genuinely distressing to him. The 'preference for rain' was a coping mechanism. The inscription reframes disability as aesthetic choice." },
+      { camp: "The Aesthetic Tradition", text: "A reference to the Japanese literary tradition of rain-sound appreciation (ama-oto). Kenji was cultured, not isolated. He preferred the refined aesthetic of rain to the crude noise of society." }
+    ],
+    truth: "Kenji lived in an apartment above a family whose nightly arguments were audible through the thin walls. He placed a recording of rainfall on loop through his speakers every evening to drown out the noise. He had done this for eleven years. He died of a stroke with the recording still playing. The rain sound was not aesthetic preference; it was the only way he could fall asleep. He never once mentioned the neighbours, because complaining would have required confrontation, which he found more unpleasant than the arguments.",
+    tone: "sadness"
+  },
+  {
+    id: 41,
+    year: "~2019 CE",
+    era: "Contemporary",
+    region: "S\u00e3o Paulo",
+    material: "Granite",
+    faith: "None (secular)",
+    language: "Portuguese",
+    inscription: "Ana Clara. Her song ended before the chorus.",
+    scholars: [
+      { camp: "The Musical Biography School", text: "Ana Clara was a singer or musician who died before achieving recognition. The 'chorus' is the climactic section of a song\u2014she died before her life reached its peak." },
+      { camp: "The Existential School", text: "A metaphor for any life cut short. The 'chorus' is the repeating, meaningful part\u2014the part everyone remembers. Ana Clara's life was verse without resolution." },
+      { camp: "The Nihilist Reading", text: "The song never had a chorus. There is no climactic section coming for any of us. The inscription's pathos is in the reader's assumption that a chorus was planned. Ana Clara's death exposed the lie of narrative." }
+    ],
+    truth: "Ana Clara was not a singer. She was a lawyer who sang in the shower and only in the shower. Her husband, who was not a poet, had tried to write a beautiful epitaph and could not think of anything except how she sang the verses of songs but always stopped before the chorus, claiming she 'didn't like how it resolved.' She had done this for twenty-three years. He had always assumed she would eventually sing the chorus. She didn't.",
+    tone: "love"
+  },
+  {
+    id: 42,
+    year: "~3 BCE",
+    era: "Hellenistic",
+    region: "Alexandria",
+    material: "Limestone",
+    faith: "Syncretic (Isiac-Greek)",
+    language: "Koine Greek",
+    inscription: "Kleopatra of the Harbor. She slipped between the Pillars of Hercules and was never seen again.",
+    scholars: [
+      { camp: "The Cosmological Reading", text: "'Pillars of Hercules' refers to the Strait of Gibraltar\u2014the edge of the known world. Kleopatra metaphorically passed beyond human knowledge. She died in mystery; her death is the mystery." },
+      { camp: "The Maritime Trade School", text: "A merchant vessel captain who sailed beyond the Mediterranean. 'Slipped between' means she successfully navigated the strait. 'Never seen again' is literally true\u2014she left and didn't come back." },
+      { camp: "The Eschatological Camp", text: "The pillars are the threshold of the afterlife. Kleopatra crossed from life to death, and the 'never seen again' is the permanence of that transition. The language is deliberately geographical but means something else entirely." }
+    ],
+    truth: "Kleopatra was a masseuse who worked at the harbor baths. She was not particularly good at it. One afternoon, while massaging a Macedonian grain merchant, she slipped on oil, fell between two storage columns (locally called 'the Pillars of Hercules'), and struck her head on the marble floor. She was never seen again because the merchant, fearing liability, had her body disposed of in the harbor. The inscription was commissioned by her sister, who believed Kleopatra had simply left the city.",
+    tone: "farce"
+  },
+  {
+    id: 43,
+    year: "~1349 CE",
+    era: "Late Medieval",
+    region: "Avignon",
+    material: "Limestone",
+    faith: "Catholic",
+    language: "Old French",
+    inscription: "Pierre. He held the door against the darkness. He held it until morning.",
+    scholars: [
+      { camp: "The Plague Martyrology", text: "Pierre guarded the entrance to a plague house, preventing the infected from leaving and the healthy from entering. He 'held the door' until he himself succumbed. The 'morning' is his death\u2014a conventional metaphor." },
+      { camp: "The Theological School", text: "'Darkness' is sin, and 'the door' is the threshold of the soul. Pierre resisted temptation until the end of his life ('morning' as death-as-awakening). An entirely spiritual reading." },
+      { camp: "The Military School", text: "Pierre was a gate guard at the Avignon papal palace during a siege or riot. 'Darkness' is the attacking force. 'Held the door until morning' is literal\u2014he maintained his post through the night." }
+    ],
+    truth: "Pierre was a night watchman at a wine cellar. He fell asleep on the job, slumped against the door, and effectively prevented anyone from opening it from the outside. The 'darkness' was nighttime. The 'morning' was when his replacement arrived and found him dead of apoplexy, wedged against the door with a half-eaten loaf of bread in his lap. He had not held the door against anything. He had simply been too heavy to move easily.",
+    tone: "tragicomic"
+  },
+  {
+    id: 44,
+    year: "~1878 CE",
+    era: "Industrial",
+    region: "Tuscany",
+    material: "Marble",
+    faith: "Catholic",
+    language: "Italian",
+    inscription: "Matteo. He said the world was a circle. He walked until he proved it.",
+    scholars: [
+      { camp: "The Geographical School", text: "Matteo was an explorer who walked around the world\u2014or tried to. The 'circle' is the globe, and he walked to prove it could be circumnavigated. He died before completing the journey." },
+      { camp: "The Philosophical Reading", text: "'The world is a circle' is existential\u2014the idea that history repeats, that suffering is cyclical, that every ending is a beginning. Matteo 'walked' (lived) until experience proved the theory." },
+      { camp: "The Peasant Mystics", text: "A paganic survival. The 'circle' is the agricultural year\u2014planting, growing, harvesting, dying, returning. Matteo walked the fields in this cycle until his own return to the earth." }
+    ],
+    truth: "Matteo's house was at the end of a cul-de-sac. He walked to the market every morning, around the perimeter wall, and back home. He did this for sixty years. He called it 'the circle.' When the city widened the road in 1877, the path was straightened, and Matteo, disoriented by the change, became lost on his own street and wandered for several hours before being brought home by a neighbor. He died the following spring. He had said the world was a circle because for sixty years, for him, it was.",
+    tone: "sweetness"
+  },
+  {
+    id: 45,
+    year: "~1959 CE",
+    era: "Modern",
+    region: "Uppsala",
+    material: "Granite",
+    faith: "Church of Sweden (Lutheran)",
+    language: "Swedish",
+    inscription: "Brita. She counted every snowfall. She stopped at sixty-seven.",
+    scholars: [
+      { camp: "The Scientific School", text: "Brita was an amateur meteorologist who kept precise records of annual snowfall in Uppsala for sixty-seven years. 'Stopped at sixty-seven' means she died at that age. The inscription documents a life's work." },
+      { camp: "The Seasonal Symbolists", text: "Each snowfall is a year. Brita 'counted' her years\u2014she was aware of time passing. 'Stopped at sixty-seven' is simply the total. The inscription is a poetic compression of a lifespan." },
+      { camp: "The Dementia Reading", text: "Brita had dementia in her later years and counted snowfalls obsessively\u2014a repetitive behavior associated with cognitive decline. The family reframed this as a charming eccentricity in the epitaph." }
+    ],
+    truth: "Brita did count every snowfall. She wrote the date of each first snow on the back of a kitchen door in pencil. Sixty-seven winters of first snows, recorded in a small, steady hand. Her daughter found the door after the funeral and, unable to bring herself to erase it, had it removed from its hinges and placed in the attic. The last entry, in a hand that trembled, read: 'First snow. I am ready.' She was not counting. She was waiting.",
+    tone: "love"
+  }
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+
+const revealedIds = new Set();
+
+// ═══════════════════════════════════════════════════════════════
+//  DIFFICULTY — truth resists discovery; the interface
+//  becomes progressively hostile
+// ═══════════════════════════════════════════════════════════════
+
+function getDifficulty(id) {
+  if (id <= 10) return 1;
+  if (id <= 20) return 2;
+  if (id <= 30) return 3;
+  if (id <= 40) return 4;
+  return 5;
+}
+
+const DIFFICULTY_LABELS = [
+  '',
+  'Trace evidence',
+  'Minor excavation',
+  'Careful extraction',
+  'Major excavation',
+  'Core sample'
+];
+
+const HOLD_TIMES = [500, 1200, 2500, 4000, 6000];
+
+// ═══════════════════════════════════════════════════════════════
+//  FILTERS
+// ═══════════════════════════════════════════════════════════════
+
+function populateFilters() {
+  const eras = new Set();
+  const regions = new Set();
+  const materials = new Set();
+  const faiths = new Set();
+  const tones = new Set();
+
+  epitaphs.forEach(e => {
+    eras.add(e.era);
+    regions.add(e.region);
+    materials.add(e.material);
+    faiths.add(e.faith);
+    tones.add(e.tone);
+  });
+
+  const fill = (sel, set) => {
+    [...set].sort().forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      sel.appendChild(opt);
+    });
+  };
+
+  fill(document.getElementById('filterEra'), eras);
+  fill(document.getElementById('filterRegion'), regions);
+  fill(document.getElementById('filterMaterial'), materials);
+  fill(document.getElementById('filterFaith'), faiths);
+  fill(document.getElementById('filterTone'), tones);
+}
+
+function getFilteredEpitaphs() {
+  const query = document.getElementById('searchInput').value.toLowerCase().trim();
+  const era = document.getElementById('filterEra').value;
+  const region = document.getElementById('filterRegion').value;
+  const material = document.getElementById('filterMaterial').value;
+  const faith = document.getElementById('filterFaith').value;
+  const tone = document.getElementById('filterTone').value;
+
+  return epitaphs.filter(e => {
+    // Full-text search across all visible fields
+    if (query) {
+      const fields = [
+        e.inscription, e.truth, e.region, e.material,
+        e.faith, e.language, e.era, e.tone
+      ];
+      const scholarText = e.scholars.map(s => s.camp + ' ' + s.text).join(' ');
+      const haystack = (fields.join(' ') + ' ' + scholarText).toLowerCase();
+      if (!haystack.includes(query)) return false;
+    }
+    if (era && e.era !== era) return false;
+    if (region && e.region !== region) return false;
+    if (material && e.material !== material) return false;
+    if (faith && e.faith !== faith) return false;
+    if (tone && e.tone !== tone) return false;
+    return true;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  GRID RENDERING
+// ═══════════════════════════════════════════════════════════════
+
+function renderGrid() {
+  const filtered = getFilteredEpitaphs();
+  const grid = document.getElementById('grid');
+  const info = document.getElementById('resultsInfo');
+
+  info.innerHTML = `Showing <span>${filtered.length}</span> of ${epitaphs.length} catalogue entries`;
+  document.getElementById('countBadge').textContent = `${filtered.length} entries`;
+
+  if (!filtered.length) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-monument"></i>
+        <p>No inscriptions match your query. The archive remains silent.</p>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(e => {
+    const num = String(e.id).padStart(3, '0');
+    return `
+      <div class="card" data-id="${e.id}" tabindex="0" role="button" aria-label="View epitaph ${e.id}">
+        <div class="card-number">No. ${num}</div>
+        <div class="card-era">${e.era}</div>
+        <div class="card-inscription">${e.inscription}</div>
+        <div class="card-tags">
+          <span class="card-tag">${e.region}</span>
+          <span class="card-tag">${e.material}</span>
+          <span class="card-tag">${e.year}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════════════════════
+
+function showModal(id) {
+  const e = epitaphs.find(x => x.id === id);
+  if (!e) return;
+
+  const diff = getDifficulty(e.id);
+  const isRevealed = revealedIds.has(e.id);
+  const holdTime = HOLD_TIMES[diff - 1];
+  const num = String(e.id).padStart(3, '0');
+
+  const scholarsHtml = e.scholars.map(s => `
+    <div class="interp">
+      <div class="interp-camp">${s.camp}</div>
+      <div class="interp-text">${s.text}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-era">${e.era}</div>
+    <div class="modal-id">Catalogue No. ${num} \u2014 ${e.year}</div>
+    <div class="modal-inscription">${e.inscription}</div>
+    <div class="modal-meta">
+      <div class="meta-item"><span class="meta-label">Region</span><span class="meta-value">${e.region}</span></div>
+      <div class="meta-item"><span class="meta-label">Material</span><span class="meta-value">${e.material}</span></div>
+      <div class="meta-item"><span class="meta-label">Presumed Faith</span><span class="meta-value">${e.faith}</span></div>
+      <div class="meta-item"><span class="meta-label">Language</span><span class="meta-value">${e.language}</span></div>
+    </div>
+    <div class="scholarship-section">
+      <div class="section-label">Scholarly Interpretations</div>
+      ${scholarsHtml}
+    </div>
+    <div class="truth-section" id="truthSection">
+      <div class="truth-header">
+        <div class="truth-header-left">
+          <div class="truth-status" id="truthStatus">${isRevealed ? 'RECOVERED' : 'CONCEALED'}</div>
+          <div class="truth-effort">Required effort: <span>${DIFFICULTY_LABELS[diff]}</span></div>
+        </div>
+        <button class="reveal-btn${isRevealed ? ' revealed' : ''}" id="revealBtn"
+          data-id="${e.id}" data-hold="${holdTime}"
+          ${isRevealed ? 'disabled' : ''}>
+          ${isRevealed ? 'Recovered' : 'Hold to excavate'}
+        </button>
+      </div>
+      <div class="truth-content${isRevealed ? ' revealed' : ''}" id="truthContent">
+        <div class="truth-text">${isRevealed ? e.truth : ''}</div>
+      </div>
+    </div>
+    <div class="progress-section">
+      <div class="progress-header">
+        <span>Catalogue excavation</span>
+        <span id="progressCount">${revealedIds.size} / ${epitaphs.length} truths recovered</span>
+      </div>
+      <div class="progress-bar-outer">
+        <div class="progress-bar-inner" id="progressBar" style="width:${(revealedIds.size / epitaphs.length * 100).toFixed(1)}%"></div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('modalOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  bindRevealButton();
+  document.getElementById('modal').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function hideModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  REVEAL MECHANIC — hold to excavate; truth resists
+// ═══════════════════════════════════════════════════════════════
+
+function bindRevealButton() {
+  const btn = document.getElementById('revealBtn');
+  if (!btn || btn.disabled) return;
+
+  const id = parseInt(btn.dataset.id, 10);
+  const holdTime = parseInt(btn.dataset.hold, 10);
+  let holdStart = 0;
+  let timer = null;
+  let completed = false;
+
+  function startHold(ev) {
+    if (completed) return;
+    ev.preventDefault();
+    holdStart = Date.now();
+    btn.style.opacity = '0.85';
+
+    timer = setInterval(() => {
+      const elapsed = Date.now() - holdStart;
+      const pct = Math.min(elapsed / holdTime * 100, 100);
+      btn.style.background = `linear-gradient(90deg, rgba(122,40,56,0.35) ${pct}%, rgba(122,40,56,0.12) ${pct}%)`;
+
+      if (pct >= 100) {
+        clearInterval(timer);
+        timer = null;
+        completed = true;
+        completeReveal(id);
+      }
+    }, 25);
+  }
+
+  function endHold() {
+    if (completed) return;
+    clearInterval(timer);
+    timer = null;
+    btn.style.opacity = '';
+    btn.style.background = '';
+  }
+
+  btn.addEventListener('mousedown', startHold);
+  btn.addEventListener('mouseup', endHold);
+  btn.addEventListener('mouseleave', endHold);
+  btn.addEventListener('touchstart', startHold, { passive: false });
+  btn.addEventListener('touchend', endHold);
+  btn.addEventListener('touchcancel', endHold);
+}
+
+function completeReveal(id) {
+  const epitaph = epitaphs.find(x => x.id === id);
+  if (!epitaph || revealedIds.has(id)) return;
+
+  revealedIds.add(id);
+
+  const btn = document.getElementById('revealBtn');
+  const content = document.getElementById('truthContent');
+  const status = document.getElementById('truthStatus');
+
+  if (btn) {
+    btn.textContent = 'Recovered';
+    btn.disabled = true;
+    btn.style.opacity = '';
+    btn.style.background = 'rgba(122,40,56,0.22)';
+  }
+
+  if (status) status.textContent = 'RECOVERED';
+
+  const textEl = content ? content.querySelector('.truth-text') : null;
+  if (textEl) textEl.textContent = epitaph.truth;
+  if (content) content.classList.add('revealed');
+
+  const bar = document.getElementById('progressBar');
+  if (bar) bar.style.width = `${(revealedIds.size / epitaphs.length * 100).toFixed(1)}%`;
+
+  const count = document.getElementById('progressCount');
+  if (count) count.textContent = `${revealedIds.size} / ${epitaphs.length} truths recovered`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+
+function init() {
+  populateFilters();
+  renderGrid();
+
+  // Debounced search
+  let searchTimer = null;
+  document.getElementById('searchInput').addEventListener('input', () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(renderGrid, 150);
+  });
+
+  // Filter dropdowns
+  ['filterEra', 'filterRegion', 'filterMaterial', 'filterFaith', 'filterTone'].forEach(id => {
+    document.getElementById(id).addEventListener('change', renderGrid);
+  });
+
+  // Filter drawer toggle
+  document.getElementById('filterToggle').addEventListener('click', () => {
+    document.getElementById('filterDrawer').classList.toggle('open');
+    document.getElementById('filterToggle').classList.toggle('active');
+  });
+
+  // Card click / keyboard
+  document.getElementById('grid').addEventListener('click', e => {
+    const card = e.target.closest('.card');
+    if (card) showModal(parseInt(card.dataset.id, 10));
+  });
+
+  document.getElementById('grid').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const card = e.target.closest('.card');
+      if (card) showModal(parseInt(card.dataset.id, 10));
+    }
+  });
+
+  // Modal close
+  document.getElementById('modalClose').addEventListener('click', hideModal);
+  document.getElementById('modalOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modalOverlay')) hideModal();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') hideModal();
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
