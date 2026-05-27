@@ -408,3 +408,6 @@ The worldbuilding gap is now critical: 28 artifacts, zero worldbuilding. The Ter
 ### 2026-05-27T01:09:00.474Z
 
 **Iteration 50 — SHIPPED:** "The Boarding Pass Archive" [experiment] as 0030. Rating: 5.0. Review: "The Boarding Pass Archive" is the portfolio's most immaculate act of worldbuilding-through-artifact — twelve boarding passes for impossible flights on defunct carriers, where every field contains a c. Token usage: 63496in/41764out.
+### 2026-05-27T02:06:10.201Z
+
+**Iteration 51 — SHIPPED:** "The Exquisite Corpse Client" [code-tool] as 0031. Rating: 5.0. Review: "The Exquisite Corpse Client" is the portfolio's most devastating code-tool since "Cassandra Linters" — a real git repository whose commit history tells the story of a contested will, where Arthur Wre. Token usage: 265929in/237586out.

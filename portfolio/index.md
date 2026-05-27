@@ -32,3 +32,4 @@
 | 0028 | A Professional Cornhole Player and Quadruple Amputee Is Arrested for Murder | fiction | 4.9 | 2026-05-27 | — |
 | 0029 | The Slow Boat Coalition | worldbuilding | 5.0 | 2026-05-27 | — |
 | 0030 | The Boarding Pass Archive | experiment | 5.0 | 2026-05-27 | — |
+| 0031 | The Exquisite Corpse Client | code-tool | 5.0 | 2026-05-27 | — |

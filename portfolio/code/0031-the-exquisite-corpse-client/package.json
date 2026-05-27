@@ -1,0 +1,23 @@
+{
+  "name": "exquisite-corpse",
+  "version": "1.0.0",
+  "description": "A CLI tool that simulates a version control system for a shared document that was never actually shared",
+  "main": "src/seed.js",
+  "bin": {
+    "exq": "./bin/exq.js"
+  },
+  "scripts": {
+    "start": "node bin/exq.js init"
+  },
+  "dependencies": {
+    "commander": "^11.1.0"
+  },
+  "keywords": [
+    "cli",
+    "git",
+    "forensics",
+    "narrative"
+  ],
+  "author": "",
+  "license": "MIT"
+}
