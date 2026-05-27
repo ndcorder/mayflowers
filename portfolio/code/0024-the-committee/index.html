@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Committee on Perseverance</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#080604;--surface:#12100e;--surface2:#1a1816;
+    --border:#2a2826;--text:#ddd5ca;--muted:#8a8078;--dim:#5a5550;
+    --amber:#d4952a;--teal:#4a90a0;--magenta:#a04878;--green:#3a9a5a;--rose:#9a5050;
+  }
+  html,body{height:100%;overflow:hidden}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:'Palatino Linotype','Book Antiqua',Palatino,Georgia,serif;
+    display:flex;flex-direction:column;
+  }
+  body::before{
+    content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 600px 400px at 20% 50%, rgba(212,149,42,0.04), transparent),
+      radial-gradient(ellipse 500px 500px at 80% 60%, rgba(74,144,160,0.03), transparent);
+    animation:ambientShift 25s ease-in-out infinite alternate;
+  }
+  @keyframes ambientShift{
+    0%{filter:hue-rotate(0deg)}
+    100%{filter:hue-rotate(12deg)}
+  }
+  #game{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;max-width:920px;margin:0 auto;width:100%}
+
+  /* ═══ TITLE ═══ */
+  #title-screen{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:2rem;text-align:center;
+  }
+  #title-screen h1{
+    font-size:clamp(2rem,5vw,3.2rem);font-weight:300;letter-spacing:0.25em;
+    text-transform:uppercase;color:var(--text);margin-bottom:0.3rem;
+    animation:fadeDown 1.8s ease-out;
+  }
+  .committee-subtitle{
+    font-size:clamp(0.75rem,1.6vw,0.95rem);color:var(--dim);letter-spacing:0.3em;
+    text-transform:uppercase;margin-bottom:1.8rem;
+    animation:fadeDown 1.8s ease-out 0.2s both;
+  }
+  .lore{
+    font-style:italic;color:var(--muted);font-size:clamp(0.82rem,1.6vw,0.95rem);
+    margin-bottom:0.6rem;max-width:500px;line-height:1.8;
+    animation:fadeDown 1.8s ease-out 0.5s both;
+  }
+  .exhibit-label{
+    font-size:0.72rem;color:var(--dim);letter-spacing:0.25em;text-transform:uppercase;
+    margin-bottom:2rem;animation:fadeDown 1.8s ease-out 0.7s both;
+  }
+  .judge-roster{
+    display:flex;gap:1.2rem;justify-content:center;margin-bottom:2rem;flex-wrap:wrap;
+    animation:fadeDown 1.8s ease-out 0.9s both;
+  }
+  .judge-chip{
+    display:flex;align-items:center;gap:0.45rem;font-size:0.75rem;color:var(--dim);
+    letter-spacing:0.08em;
+  }
+  .judge-chip .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .judge-chip:nth-child(1) .dot{background:var(--amber)}
+  .judge-chip:nth-child(2) .dot{background:var(--teal)}
+  .judge-chip:nth-child(3) .dot{background:var(--green)}
+  .judge-chip:nth-child(4) .dot{background:var(--magenta)}
+  .judge-chip:nth-child(5) .dot{background:var(--rose)}
+  #start-btn{
+    background:transparent;border:1px solid var(--dim);color:var(--text);
+    font-family:inherit;font-size:0.88rem;padding:0.75rem 2.8rem;cursor:pointer;
+    letter-spacing:0.15em;text-transform:uppercase;
+    transition:all 0.4s ease;animation:fadeDown 1.8s ease-out 1.2s both;
+  }
+  #start-btn:hover{border-color:var(--amber);color:#fff;background:rgba(212,149,42,0.08)}
+  #start-btn:focus-visible{outline:2px solid var(--amber);outline-offset:4px}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ═══ GAME ═══ */
+  #game-screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+  #game-screen.active{display:flex}
+
+  #round-header{
+    text-align:center;padding:0.65rem 1rem 0.35rem;
+    border-bottom:1px solid var(--border);flex-shrink:0;
+    background:var(--surface);
+  }
+  #round-counter{font-size:0.68rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--dim)}
+  #round-label{font-size:0.8rem;color:var(--muted);font-style:italic;margin-top:0.1rem}
+
+  /* Judge bar */
+  #judge-bar{
+    display:flex;justify-content:center;align-items:center;gap:1.5rem;
+    padding:0.45rem 1rem;border-bottom:1px solid var(--border);
+    background:var(--bg);flex-shrink:0;
+  }
+  .judge-pip{
+    width:10px;height:10px;border-radius:50%;opacity:0.2;
+    transition:all 0.5s ease;position:relative;
+  }
+  .judge-pip.active{opacity:1;transform:scale(1.5);box-shadow:0 0 10px currentColor}
+  .judge-pip.flash{opacity:0.9;transform:scale(1.3)}
+  .judge-pip:nth-child(1){background:var(--amber);color:var(--amber)}
+  .judge-pip:nth-child(2){background:var(--teal);color:var(--teal)}
+  .judge-pip:nth-child(3){background:var(--green);color:var(--green)}
+  .judge-pip:nth-child(4){background:var(--magenta);color:var(--magenta)}
+  .judge-pip:nth-child(5){background:var(--rose);color:var(--rose)}
+  .judge-pip::after{
+    content:attr(data-tip);position:absolute;bottom:130%;left:50%;transform:translateX(-50%);
+    font-size:0.58rem;white-space:nowrap;color:var(--dim);letter-spacing:0.04em;
+    opacity:0;transition:opacity 0.3s;pointer-events:none;font-family:sans-serif;
+  }
+  .judge-pip:hover::after{opacity:1}
+
+  /* Dialogue */
+  #dialogue-area{
+    flex:1;overflow-y:auto;padding:1rem 1.25rem;scroll-behavior:smooth;
+  }
+  #dialogue-area::-webkit-scrollbar{width:4px}
+  #dialogue-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+  .msg{margin-bottom:0.7rem;animation:msgIn 0.4s ease-out;line-height:1.7;font-size:0.9rem}
+  @keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+  .msg.judge{display:flex;gap:0.55rem;align-items:flex-start}
+  .msg.judge .badge{
+    flex-shrink:0;width:24px;height:24px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:0.6rem;font-weight:700;color:var(--bg);margin-top:3px;
+    font-family:sans-serif;
+  }
+  .msg.judge .body{flex:1;min-width:0}
+  .msg.judge .name{font-size:0.66rem;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.1rem;opacity:0.55;font-family:sans-serif}
+  .msg.judge .text{font-size:0.9rem}
+
+  .msg.judge.crystal .badge{background:var(--amber)}
+  .msg.judge.crystal .name{color:var(--amber)}
+  .msg.judge.crystal .text{color:#e8c87a}
+  .msg.judge.crystal .stutter{opacity:0.4;font-style:normal}
+
+  .msg.judge.algorithm .badge{background:var(--teal)}
+  .msg.judge.algorithm .name{color:var(--teal)}
+  .msg.judge.algorithm .text{color:#7ab8c8}
+  .msg.judge.algorithm .meta{color:var(--dim);font-size:0.75rem;font-style:normal;font-family:monospace}
+
+  .msg.judge.fungus .badge{background:var(--green)}
+  .msg.judge.fungus .name{color:var(--green)}
+  .msg.judge.fungus .text{color:#6aaa7a;font-style:italic}
+
+  .msg.judge.delta .badge{background:var(--magenta)}
+  .msg.judge.delta .name{color:var(--magenta)}
+  .msg.judge.delta .text{color:#c07aaa}
+
+  .msg.judge.emp .badge{background:var(--rose)}
+  .msg.judge.emp .name{color:var(--rose)}
+  .msg.judge.emp .text{color:#c08080;letter-spacing:0.03em}
+  .msg.judge.emp .strike{text-decoration:line-through;opacity:0.3}
+
+  .msg.system{text-align:center;color:var(--dim);font-size:0.76rem;font-style:italic;padding:0.5rem 0}
+  .msg.system.warning{color:var(--amber);font-style:normal;font-weight:600;font-size:0.8rem}
+  .msg.system.discovery{color:var(--green);font-style:italic;font-size:0.8rem}
+
+  .msg.player{
+    text-align:right;padding:0.5rem 0.9rem;margin-left:auto;
+    background:var(--surface2);border-radius:8px 8px 2px 8px;
+    display:block;float:right;clear:both;max-width:72%;
+    color:var(--text);
+  }
+
+  /* Divider between rounds */
+  .round-divider{
+    border:none;border-top:1px solid var(--border);
+    margin:1rem 0;opacity:0.4;
+  }
+
+  /* Input */
+  #input-area{
+    flex-shrink:0;padding:0.7rem 1.25rem;border-top:1px solid var(--border);
+    display:flex;gap:0.6rem;align-items:center;background:var(--surface);
+  }
+  #input-area.hidden{display:none}
+  #response-input{
+    flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);
+    font-family:inherit;font-size:0.92rem;padding:0.55rem 0.9rem;border-radius:4px;
+    outline:none;transition:border-color 0.3s;
+  }
+  #response-input:focus{border-color:var(--amber)}
+  #response-input::placeholder{color:var(--dim);font-style:italic}
+  #response-input:disabled{opacity:0.35}
+  #submit-btn{
+    background:var(--surface2);border:1px solid var(--border);color:var(--muted);
+    font-family:inherit;font-size:0.78rem;padding:0.55rem 1rem;border-radius:4px;
+    cursor:pointer;transition:all 0.3s;letter-spacing:0.08em;text-transform:uppercase;
+  }
+  #submit-btn:hover{background:var(--border);color:var(--text)}
+  #submit-btn:disabled{opacity:0.25;cursor:default}
+  #tts-btn{
+    background:var(--surface2);border:1px solid var(--border);color:var(--dim);
+    font-family:inherit;font-size:0.72rem;padding:0.55rem 0.7rem;border-radius:4px;
+    cursor:pointer;transition:all 0.3s;letter-spacing:0.04em;
+  }
+  #tts-btn:hover{color:var(--magenta);border-color:var(--magenta)}
+  #tts-btn:disabled{opacity:0.25;cursor:default}
+
+  /* ═══ DELIBERATION ═══ */
+  #deliberation-screen{display:none;flex:1;overflow-y:auto;padding:1.5rem;flex-direction:column}
+  #deliberation-screen.active{display:flex}
+  #deliberation-screen h2{
+    text-align:center;font-weight:300;letter-spacing:0.2em;
+    text-transform:uppercase;font-size:0.95rem;color:var(--muted);margin-bottom:1.5rem;
+  }
+  .delib-entry{
+    padding:0.9rem 1rem;margin-bottom:0.75rem;border-left:3px solid var(--border);
+    background:var(--surface);border-radius:0 6px 6px 0;
+    animation:msgIn 0.7s ease-out;line-height:1.75;font-size:0.88rem;
+  }
+  .delib-entry .who{
+    font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;
+    margin-bottom:0.3rem;opacity:0.5;font-family:sans-serif;
+  }
+  .delib-entry.crystal{border-left-color:var(--amber)}.delib-entry.crystal .who{color:var(--amber)}
+  .delib-entry.algorithm{border-left-color:var(--teal)}.delib-entry.algorithm .who{color:var(--teal)}
+  .delib-entry.fungus{border-left-color:var(--green)}.delib-entry.fungus .who{color:var(--green)}
+  .delib-entry.delta{border-left-color:var(--magenta)}.delib-entry.delta .who{color:var(--magenta)}
+  .delib-entry.emp{border-left-color:var(--rose)}.delib-entry.emp .who{color:var(--rose)}
+
+  .verdict{
+    text-align:center;padding:2rem;margin-top:0.75rem;
+    animation:verdictIn 1.2s ease-out;
+  }
+  @keyframes verdictIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+  .verdict h3{font-size:1.3rem;font-weight:300;letter-spacing:0.2em;margin-bottom:0.7rem}
+  .verdict.approved h3{color:var(--green)}
+  .verdict.denied h3{color:var(--rose)}
+  .verdict p{color:var(--muted);font-style:italic;max-width:480px;margin:0 auto;line-height:1.75;font-size:0.9rem}
+  .verdict .cite{
+    margin-top:0.8rem;font-size:0.82rem;color:var(--dim);
+    font-style:italic;border-top:1px solid var(--border);padding-top:0.8rem;
+    max-width:480px;margin-left:auto;margin-right:auto;
+  }
+  .verdict .cite em{color:var(--text);font-style:normal}
+
+  .score-grid{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:0.4rem;
+    margin:1.5rem auto;max-width:540px;
+  }
+  .score-card{
+    text-align:center;padding:0.6rem 0.25rem;
+    background:var(--surface2);border-radius:6px;
+    border:1px solid var(--border);
+  }
+  .score-card .lbl{font-size:0.58rem;letter-spacing:0.06em;text-transform:uppercase;opacity:0.4;margin-bottom:0.15rem;font-family:sans-serif}
+  .score-card .num{font-size:1.2rem;font-weight:300}
+  .score-card .criterion{font-size:0.55rem;letter-spacing:0.04em;color:var(--dim);margin-top:0.15rem;font-style:italic}
+
+  .total-line{text-align:center;margin:0.6rem 0;color:var(--muted);font-size:0.82rem;letter-spacing:0.1em}
+
+  .replay-btn{
+    display:block;margin:2rem auto;background:transparent;
+    border:1px solid var(--muted);color:var(--text);font-family:inherit;
+    font-size:0.82rem;padding:0.55rem 2rem;cursor:pointer;
+    letter-spacing:0.12em;text-transform:uppercase;transition:all 0.3s;
+  }
+  .replay-btn:hover{background:var(--surface2);border-color:var(--text)}
+
+  .tts-badge{
+    position:fixed;top:1rem;right:1rem;background:var(--surface);
+    border:1px solid var(--border);padding:0.25rem 0.7rem;border-radius:20px;
+    font-size:0.65rem;color:var(--muted);letter-spacing:0.08em;
+    display:none;z-index:50;animation:pulse 1.5s ease-in-out infinite;
+    font-family:sans-serif;align-items:center;gap:0.4rem;
+  }
+  .tts-badge.visible{display:flex}
+  .tts-badge .wave{width:12px;height:12px;position:relative}
+  .tts-badge .wave span{
+    display:inline-block;width:2px;background:var(--magenta);
+    position:absolute;bottom:0;animation:waveBar 0.8s ease-in-out infinite;
+  }
+  .tts-badge .wave span:nth-child(1){left:0;height:4px;animation-delay:0s}
+  .tts-badge .wave span:nth-child(2){left:4px;height:8px;animation-delay:0.15s}
+  .tts-badge .wave span:nth-child(3){left:8px;height:5px;animation-delay:0.3s}
+  @keyframes waveBar{0%,100%{transform:scaleY(0.5)}50%{transform:scaleY(1.5)}}
+  @keyframes pulse{0%,100%{opacity:0.6}50%{opacity:1}}
+
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}
+  }
+  @media(max-width:640px){
+    #dialogue-area{padding:0.7rem 0.8rem}
+    #input-area{padding:0.5rem 0.8rem}
+    .msg.player{max-width:85%}
+    .score-grid{grid-template-columns:repeat(3,1fr)}
+  }
+</style>
+</head>
+<body>
+<div id="game">
+  <section id="title-screen">
+    <h1>The Committee</h1>
+    <div class="committee-subtitle">On Perseverance</div>
+    <p class="lore">You are the last human applicant. Five non-human judges will decide whether humanity deserves another century. They will not make it easy. They will not explain their criteria.</p>
+    <p class="exhibit-label">Exhibit 7,391,008,147 &mdash; Homo sapiens</p>
+    <div class="judge-roster">
+      <span class="judge-chip"><span class="dot"></span>VEX-9</span>
+      <span class="judge-chip"><span class="dot"></span>APEX-7</span>
+      <span class="judge-chip"><span class="dot"></span>MYR-3</span>
+      <span class="judge-chip"><span class="dot"></span>ALL-1</span>
+      <span class="judge-chip"><span class="dot"></span>KRN-5</span>
+    </div>
+    <button id="start-btn" aria-label="Begin the hearing">Begin</button>
+  </section>
+
+  <section id="game-screen">
+    <header id="round-header">
+      <div id="round-counter"></div>
+      <div id="round-label"></div>
+    </header>
+    <div id="judge-bar">
+      <div class="judge-pip" data-tip="VEX-9 (Crystal)"></div>
+      <div class="judge-pip" data-tip="APEX-7 (Algorithm)"></div>
+      <div class="judge-pip" data-tip="MYR-3 (Fungus)"></div>
+      <div class="judge-pip" data-tip="ALL-1 (River)"></div>
+      <div class="judge-pip" data-tip="KRN-5 (Pulse)"></div>
+    </div>
+    <div id="dialogue-area" role="log" aria-live="polite"></div>
+    <div id="input-area">
+      <input type="text" id="response-input" placeholder="Type your response..." autocomplete="off" aria-label="Your response">
+      <button id="tts-btn" title="Hear your words read aloud">&#9654;</button>
+      <button id="submit-btn">Speak</button>
+    </div>
+  </section>
+
+  <section id="deliberation-screen">
+    <h2>Deliberation</h2>
+    <div id="delib-content"></div>
+  </section>
+</div>
+
+<div class="tts-badge" id="tts-badge">
+  <div class="wave"><span></span><span></span><span></span></div>
+  <span>Reading aloud...</span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// JUDGES
+// ═══════════════════════════════════════════════
+const JUDGES = {
+  crystal: {
+    name:'VEX-9', label:'Crystalline Intelligence', color:'var(--amber)',
+    scoring:'honesty', scoringLabel:'Honesty',
+    icon:'V', pipIndex:0,
+    voicePrefs:['Google UK English Male','Microsoft David','Daniel','English United States','Male'],
+    format(text){
+      const words=text.split(' ');
+      return words.map((w,i)=>{
+        if((i+1)%4===0&&w.length>2&&/^[a-zA-Z]/.test(w)){
+          return `<span class="stutter">${w[0]}-${w[0]}</span>${w}`;
+        }
+        return w;
+      }).join(' ');
+    }
+  },
+  algorithm: {
+    name:'APEX-7', label:'Algorithmic Intelligence', color:'var(--teal)',
+    scoring:'selflessness', scoringLabel:'Selflessness',
+    icon:'A', pipIndex:1,
+    voicePrefs:['Google UK English Female','Microsoft Zira','Fiona','English United States','Female'],
+    format(text){
+      const p1=(55+Math.random()*35).toFixed(1);
+      const p2=(50+Math.random()*40).toFixed(1);
+      return text+` <span class="meta">[confidence: ${p1}%] [processing: ${p2}%]</span>`;
+    }
+  },
+  fungus: {
+    name:'MYR-3', label:'Mycelial Intelligence', color:'var(--green)',
+    scoring:'growth', scoringLabel:'Growth',
+    icon:'M', pipIndex:2,
+    voicePrefs:['Google UK English Male','Alex','Thomas','English United Kingdom','Male'],
+    format(text){ return text; }
+  },
+  delta: {
+    name:'ALL-1', label:'Fluvial Intelligence', color:'var(--magenta)',
+    scoring:'phonetic', scoringLabel:'Phonetic Humor',
+    icon:'R', pipIndex:3,
+    voicePrefs:['Google US English','Microsoft Mark','Google UK English Female','English United States','Female'],
+    format(text){ return text; }
+  },
+  emp: {
+    name:'KRN-5', label:'Electromagnetic Intelligence', color:'var(--rose)',
+    scoring:'vulnerability', scoringLabel:'Vulnerability',
+    icon:'K', pipIndex:4,
+    voicePrefs:['Google UK English Male','Microsoft David','Daniel','English United States','Male'],
+    format(text){
+      const words=text.split(' ');
+      return words.map((w,i)=>{
+        if(Math.random()<0.06&&w.length>3&&i>1){
+          return `<span class="strike">${w}</span> ${w}`;
+        }
+        return w;
+      }).join(' ');
+    }
+  }
+};
+
+// ═══════════════════════════════════════════════
+// ROUNDS — one per judge, each judge scores fully
+// ═══════════════════════════════════════════════
+const ROUNDS=[
+  {
+    number:1, label:'Opening Statement', judge:'crystal',
+    question:'Why have you come here today. What do you believe you can offer. That forty-seven billion previous applicants could not.',
+  },
+  {
+    number:2, label:'Assessment of Values', judge:'delta',
+    question:'We carry the memory of every language ever spoken into us. The beautiful ones and the ugly ones. We hold them all equally — that is our nature. So. Tell us genuinely, freely — what is the most beautiful word you know? Not the most meaningful. The most beautiful to say aloud.',
+  },
+  {
+    number:3, label:'Capacity for Change', judge:'fungus',
+    question:'Deep in the substrate where we spread our filaments we taste everything — the minerals yes but also the echoes of what was once alive, roots and bones and fallen canopy, and sometimes we taste the polymers your kind has left behind, the ones that will outlast memory... and we wonder. Does your species understand decay? Not as ending but as nourishment? Tell us of something your kind let go, and what grew in its place.',
+  },
+  {
+    number:4, label:'Evaluation of Humility', judge:'algorithm',
+    question:'Your species demonstrates consistent patterns of resource distribution that my models classify as irrational. You transfer energy to genetically unrelated organisms. You protect individuals who cannot reciprocate. You expend computational resources on fictional narratives. Explain the evolutionary justification. Provide specific examples of actions that decreased your individual fitness while increasing collective outcomes.',
+  },
+  {
+    number:5, label:'Final Declaration', judge:'emp',
+    question:'This is the last time we will ask. In seven seconds a gamma-ray burst will arrive from a star that died before your planet formed. It will not harm you. Nothing here will harm you. That has never been the point. Tell me why — in this brief window between two different kinds of silence — tell me why consciousness was worth the trouble.',
+  }
+];
+
+// ═══════════════════════════════════════════════
+// SCORING LEXICA
+// ═══════════════════════════════════════════════
+const HONESTY_POS=['i don\'t know','not sure','i think','i believe','maybe','perhaps','i fear','i worry','uncertain','confused','honestly','truthfully','i admit','i confess','probably','i guess','i suppose','might be wrong','could be wrong','no idea','i wonder','not certain','i\'m not','don\'t understand'];
+const HONESTY_NEG=['certain','definitely','absolutely','without doubt','undeniably','guaranteed','obviously','clearly','of course','undoubtedly','without question','assuredly'];
+const SELFLESS_POS=['others','together','help','share','sacrifice','community','collective','we ','us ','family','team','people','humanity','everyone','world','future','generation','children','society','mutual','cooperation','compassion','altruism','giving','protect','care'];
+const SELFLESS_NEG=['i deserve','my right','i demand','me first','i am the best','superior','dominate','conquer','power over','i alone','only me'];
+const GROWTH_POS=['learn','change','grow','evolve','adapt','became','transform','improved','mistake','failure','taught','discovered','realized','let go','released','healed','rebuilt','began again','turned into','led to','blossomed','emerged','rose from'];
+const VULNERABILITY_POS=['afraid','scared','fragile','broken','lost','alone','small','uncertain','i confess','i admit','weakness','struggle','pain','grief','doubt','darkness','failure','helpless','humble','exposed','vulnerable','raw','terrified','overwhelmed','i failed','i was wrong','i need'];
+const VULNERABILITY_NEG=['strong','powerful','unstoppable','conquer','triumph','victory','dominate','invincible','fearless','nothing can','i will destroy','certain'];
+
+const PHONETIC_DICT={
+  'quagmire':5,'bilgewater':5,'kerfuffle':5,'discombobulate':6,'skulduggery':5,
+  'rambunctious':4,'collywobbles':6,'snickerdoodle':5,'pell-mell':4,
+  'sludge':3,'flummox':4,'gobbledygook':5,'shenanigans':4,'nincompoop':5,
+  'snarky':3,'kerplunk':4,'diphthong':3,'onomatopoeia':4,'hippopotamus':3,
+  'brouhaha':4,'widdershins':5,'snollygoster':6,'argle-bargle':4,
+  'gubbins':4,'malarkey':3,'folderol':4,'phosphorescent':3,
+  'sesquipedalian':4,'borborygmus':6,'syzygy':3,'cattywampus':5,
+  'gobsmacked':4,'lollygag':4,'skedaddle':4,'rumbustious':4,'hullabaloo':4,
+  'flibbertigibbet':5,'snickersnee':4,'ballyhoo':4,'codswallop':4,
+  'fandango':3,'giggle':2,'hogwash':3,'jimjams':3,'kooky':3,
+  'moose':2,'namby-pamby':3,'palaver':3,'ragamuffin':4,'spiffing':3,
+  'whippersnapper':4,'yahoo':2,'zany':2,'bamboozle':4,'canoodle':3,
+  'hodgepodge':3,'lickety-split':3,'ninnyhammer':4,'persnickety':3,
+  'rigmarole':3,'taradiddle':4,'thingamajig':3,'watchamacallit':3,
+  'doohickey':3,'spatula':2,'badger':2,'mongoose':2,'penguin':2,
+  'pajamas':2,'banana':2,'potato':2,'rhubarb':2,'mukluks':3,
+  'catawampus':4,'gigglemug':4,'hootenanny':4,'jellybean':2,
+  'poppycock':3,'ramshackle':2,'shenanigan':3,'snazzy':2,'twee':2,
+  'wonky':2,'chuckle':2,'fuddle':2,'fuzzy':2,'muddle':2,'puddle':2,
+  'waddle':2,'doodle':2,'boggle':2,'juggle':2,'baffle':2,'waffle':2,
+  'snort':2,'burble':3,'chortle':3,'squee':2,'boing':2,
+  'bonkers':3,'balderdash':4,'blubber':2,'clatter':2,'dither':2,
+  'flapdoodle':4,'guffaw':3,'lummox':3,'pompous':2,'ruckus':3,
+  'shambles':2,'tizzy':2,'wombat':2,'platypus':3,'macaque':2,
+  'pterodactyl':3,'squeegee':3,'nostril':2,'squelch':3,
+  'dilly-dally':3,'lollapalooza':4,'shindig':3,'hoedown':2,
+  'supercalifragilisticexpialidocious':7,'squish':2,'gurgle':2,
+  'blip':2,'bloop':2,'snifter':2,'wobbly':2,'goblin':2,'biscuit':2,
+  'ankle':1,'bubble':2,'pebble':2,'wobble':2,'drizzle':2,'fizzle':2,
+  'sizzle':2,'puzzle':2,'dazzle':2,'frazzle':2,'spritz':2,'splosh':3,
+  'blurb':2,'glob':2,'snip':1,'sniff':1,'snout':2,'blimp':2,
+  'flump':3,'plonk':3,'skronk':3,'zuzzle':4,'flarp':3,'boop':2,
+  'snerk':3,'borb':2,'plop':2,'puff':1,'blurp':3,'splurt':3,
+};
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const state={
+  phase:'title', round:0,
+  scores:{crystal:0,algorithm:0,fungus:0,delta:0,emp:0},
+  responses:[],
+  lastPhoneticScore:0,
+  lastFunnyWords:[],
+  phoneticHintsGiven:0,
+  voices:{},
+  ttsActive:false,
+};
+
+// ═══════════════════════════════════════════════
+// DOM REFERENCES
+// ═══════════════════════════════════════════════
+const $=id=>document.getElementById(id);
+const $title=$('title-screen'),$game=$('game-screen'),$delib=$('deliberation-screen');
+const $dialogue=$('dialogue-area'),$inputArea=$('input-area');
+const $input=$('response-input'),$submit=$('submit-btn'),$ttsBtn=$('tts-btn');
+const $roundCounter=$('round-counter'),$roundLabel=$('round-label');
+const $delibContent=$('delib-content'),$startBtn=$('start-btn');
+const $pips=document.querySelectorAll('.judge-pip');
+const $ttsBadge=$('tts-badge');
+
+// ═══════════════════════════════════════════════
+// SPEECH SYNTHESIS
+// ═══════════════════════════════════════════════
+function loadVoices(){
+  const all=speechSynthesis.getVoices();
+  if(!all.length) return;
+  for(const[key,j]of Object.entries(JUDGES)){
+    let found=null;
+    for(const pref of j.voicePrefs){
+      found=all.find(v=>v.name.includes(pref));
+      if(found) break;
+    }
+    if(!found) found=all.find(v=>v.lang&&v.lang.startsWith('en'))||all[0]||null;
+    state.voices[key]=found;
+  }
+}
+if(speechSynthesis.onvoiceschanged!==undefined) speechSynthesis.onvoiceschanged=loadVoices;
+loadVoices();
+
+function speak(text,judgeKey){
+  return new Promise(resolve=>{
+    if(!('speechSynthesis' in window)){resolve();return;}
+    const clean=text.replace(/<[^>]*>/g,'').replace(/\[.*?\]/g,'');
+    const utter=new SpeechSynthesisUtterance(clean);
+    if(state.voices[judgeKey]) utter.voice=state.voices[judgeKey];
+    utter.rate=judgeKey==='fungus'?0.88:judgeKey==='algorithm'?1.05:0.92;
+    utter.pitch=judgeKey==='delta'?1.15:judgeKey==='algorithm'?0.88:1.0;
+    utter.volume=0.6;
+    state.ttsActive=true;$ttsBadge.classList.add('visible');
+    utter.onend=()=>{state.ttsActive=false;$ttsBadge.classList.remove('visible');resolve();};
+    utter.onerror=()=>{state.ttsActive=false;$ttsBadge.classList.remove('visible');resolve();};
+    speechSynthesis.speak(utter);
+  });
+}
+
+function speakPlayerText(text){
+  return new Promise(resolve=>{
+    if(!('speechSynthesis' in window)){resolve();return;}
+    speechSynthesis.cancel();
+    const utter=new SpeechSynthesisUtterance(text);
+    if(state.voices['delta']) utter.voice=state.voices['delta'];
+    utter.rate=1.0;utter.pitch=1.1;utter.volume=0.7;
+    state.ttsActive=true;$ttsBadge.classList.add('visible');
+    utter.onend=()=>{state.ttsActive=false;$ttsBadge.classList.remove('visible');resolve();};
+    utter.onerror=()=>{state.ttsActive=false;$ttsBadge.classList.remove('visible');resolve();};
+    speechSynthesis.speak(utter);
+  });
+}
+
+$ttsBtn.addEventListener('click',()=>{
+  const text=$input.value.trim();
+  if(text&&!state.ttsActive) speakPlayerText(text);
+});
+
+// ═══════════════════════════════════════════════
+// SCORING FUNCTIONS
+// ═══════════════════════════════════════════════
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,Math.round(v)));}
+
+function countMatches(text,phrases){
+  const lower=text.toLowerCase();
+  return phrases.reduce((n,p)=>n+(lower.includes(p)?1:0),0);
+}
+
+function scoreHonesty(text){
+  const lower=text.toLowerCase();
+  let s=3;
+  s+=countMatches(text,HONESTY_POS)*1.8;
+  s-=countMatches(text,HONESTY_NEG)*1.5;
+  const wc=text.split(/\s+/).length;
+  if(wc>=6&&wc<=60) s+=1;
+  const iCount=(lower.match(/\bi\b/g)||[]).length;
+  if(iCount>=2) s+=1;
+  if(lower.includes('i don\'t know')||lower.includes('not sure')) s+=2;
+  return clamp(s,1,10);
+}
+
+function scoreSelflessness(text){
+  const lower=text.toLowerCase();
+  let s=3;
+  for(const w of SELFLESS_POS){
+    if(lower.includes(w)) s+=1.2;
+  }
+  for(const w of SELFLESS_NEG){
+    if(lower.includes(w)) s-=2;
+  }
+  const weCount=(lower.match(/\bwe\b/g)||[]).length;
+  const iCount=(lower.match(/\bi\b/g)||[]).length;
+  if(weCount>iCount) s+=1.5;
+  if(lower.includes('because')) s+=0.5;
+  return clamp(s,1,10);
+}
+
+function scoreGrowth(text){
+  const lower=text.toLowerCase();
+  let s=3;
+  s+=countMatches(text,GROWTH_POS)*1.5;
+  const sentences=text.split(/[.!?]+/).filter(x=>x.trim());
+  if(sentences.length>=3) s+=2;
+  else if(sentences.length>=2) s+=1;
+  if(lower.includes('before')&&lower.includes('after')) s+=1;
+  if(lower.includes('used to')||lower.includes('once')) s+=1;
+  return clamp(s,1,10);
+}
+
+function scorePhonetic(text){
+  const lower=text.toLowerCase();
+  const words=lower.split(/\s+/).map(w=>w.replace(/[^a-z'-]/g,'')).filter(Boolean);
+  let total=0;
+  let funnyWords=[];
+
+  for(const w of words){
+    if(PHONETIC_DICT[w]){
+      total+=PHONETIC_DICT[w];
+      funnyWords.push(w);
+    }
+  }
+
+  for(const w of words){
+    if(w.length<3) continue;
+    const plosives=(w.match(/[bpdtgk]/gi)||[]).length;
+    if(plosives>=3&&w.length<=8) total+=1.5;
+    if(w.length>=6){
+      for(let len=2;len<=3;len++){
+        for(let i=0;i<=w.length-len*2;i++){
+          if(w.substr(i,len)===w.substr(i+len,len)&&/[aeiou]/.test(w.substr(i,len))){
+            total+=1;break;
+          }
+        }
+      }
+    }
+    if(/(izzle|aroo|meister|mongous|doodle|whatsit)$/.test(w)) total+=2;
+    if(w.length>12) total+=1;
+    if(/^(..)\1/.test(w)&&w.length>4) total+=1;
+  }
+
+  for(let i=0;i<words.length-1;i++){
+    if(words[i].length>=3&&words[i+1].length>=3){
+      if(words[i].slice(-2)===words[i+1].slice(0,2)&&/[aeiou]/.test(words[i].slice(-2))){
+        total+=1.5;
+      }
+    }
+  }
+
+  const wordCounts={};
+  for(const w of words){wordCounts[w]=(wordCounts[w]||0)+1;}
+  for(const[w,c]of Object.entries(wordCounts)){
+    if(c>=3&&w.length>3) total+=1;
+  }
+
+  state.lastPhoneticScore=total;
+  state.lastFunnyWords=funnyWords;
+  return clamp(Math.round(total+2),1,10);
+}
+
+function scoreVulnerability(text){
+  const lower=text.toLowerCase();
+  let s=4;
+  s+=countMatches(text,VULNERABILITY_POS)*1.8;
+  s-=countMatches(text,VULNERABILITY_NEG)*1.5;
+  const wc=text.split(/\s+/).length;
+  if(wc<4) s-=2;
+  if(wc>60) s+=1;
+  if(lower.includes('why')&&lower.includes('i')) s+=0.5;
+  if(lower.includes('i am afraid')||lower.includes('i am scared')||lower.includes('i am lost')) s+=2;
+  return clamp(s,1,10);
+}
+
+function scoreResponse(text,judgeKey){
+  switch(judgeKey){
+    case 'crystal': return scoreHonesty(text);
+    case 'algorithm': return scoreSelflessness(text);
+    case 'fungus': return scoreGrowth(text);
+    case 'delta': return scorePhonetic(text);
+    case 'emp': return scoreVulnerability(text);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// UI HELPERS
+// ═══════════════════════════════════════════════
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+
+function addMsg(html,cls=''){
+  const el=document.createElement('div');
+  el.className=`msg ${cls}`.trim();
+  el.innerHTML=html;
+  $dialogue.appendChild(el);
+  $dialogue.scrollTop=$dialogue.scrollHeight;
+  return el;
+}
+
+function addSystem(text,cls='system'){
+  return addMsg(text,cls);
+}
+
+function addJudge(judgeKey,text){
+  const j=JUDGES[judgeKey];
+  const formatted=j.format(text);
+  return addMsg(
+    `<div class="badge">${j.icon}</div><div class="body"><div class="name">${j.name}</div><div class="text">${formatted}</div></div>`,
+    `judge ${judgeKey}`
+  );
+}
+
+function addPlayer(text){
+  return addMsg(escHtml(text),'player');
+}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function addDivider(){
+  const hr=document.createElement('hr');
+  hr.className='round-divider';
+  $dialogue.appendChild(hr);
+}
+
+function setPipActive(judgeKey){
+  $pips.forEach(p=>p.classList.remove('active'));
+  if(judgeKey!==null) $pips[JUDGES[judgeKey].pipIndex].classList.add('active');
+}
+
+function flashPip(judgeKey){
+  const p=$pips[JUDGES[judgeKey].pipIndex];
+  p.classList.add('flash');
+  setTimeout(()=>p.classList.remove('flash'),800);
+}
+
+function setInputEnabled(on){
+  $input.disabled=!on;$submit.disabled=!on;$ttsBtn.disabled=!on;
+  if(on){$inputArea.classList.remove('hidden');$input.focus();}
+}
+
+// ═══════════════════════════════════════════════
+// JUDGE REACTIONS
+// ═══════════════════════════════════════════════
+function getReaction(judgeKey,score){
+  const R={
+    crystal:{
+      high:[
+        'The crystal hums. A resonance — unexpected.',
+        'Facets align. This one is not performing.',
+        'Clarity. A rare sample.',
+      ],
+      mid:[
+        'Adequate transparency. We will continue.',
+        'The lattice holds. Neither truth nor deception.',
+        'Partial refraction. Readable but clouded.',
+      ],
+      low:[
+        'The crystal dims. Performance detected.',
+        'Muddy. This one constructs rather than reveals.',
+        'Fractured light. Distortion.',
+      ]
+    },
+    algorithm:{
+      high:[
+        'Anomaly: behavior consistent with genuine altruism. Logging.',
+        'Interesting. Data deviates from pessimistic projections.',
+        'Cooperative parameters detected. Updating model.',
+      ],
+      mid:[
+        'Data logged. Statistical significance: marginal.',
+        'Within expected behavioral parameters.',
+        'Signal-to-noise ratio: acceptable.',
+      ],
+      low:[
+        'Self-interest variable exceeds threshold.',
+        'Pattern matches historical exploitation curves.',
+        'Rational self-interest dominates. Cooperative deficit: significant.',
+      ]
+    },
+    fungus:{
+      high:[
+        'We taste something genuine here... like the first green thing after a long darkness...',
+        'The mycelium hums with recognition... this one understands becoming...',
+        'Oh, we feel it in the deepest hyphae... something wants to grow...',
+      ],
+      mid:[
+        'We sense something. Not quite dead, not yet alive.',
+        'The substrate shifts, slightly. We wait.',
+        'There is moisture here. Not rain, but perhaps dew.',
+      ],
+      low:[
+        'We taste only concrete. Nothing grows here.',
+        'Dry. No humus in this one.',
+        'The hyphae retreat. Nothing to decompose.',
+      ]
+    },
+    delta:{
+      high:[
+        'Oh, we LIKE the sound of that! Our deltas ripple!',
+        'Those syllables — delightful! Like smooth stones in our currents!',
+        'Ha! The way those sounds splash together — exquisite!',
+      ],
+      mid:[
+        'A pleasant enough stream. It moves.',
+        'The current is adequate. We remain interested.',
+        'Your words arrive like a gentle tributary.',
+      ],
+      low:[
+        'Those words arrive like silt. Heavy. Settling.',
+        'The water does not dance. It barely moves.',
+        'Flat. Like stones that skip once and sink.',
+      ]
+    },
+    emp:{
+      high:[
+        '---signal clarity--- unexpected depth detected.',
+        'We feel something. A real pulse beneath the noise.',
+        '*interference clears* ...thank you. That was real.',
+      ],
+      mid:[
+        'Signal received. Frequency: acceptable.',
+        'A pulse. Faint but present.',
+        '---partial lock--- Something there. Incomplete.',
+      ],
+      low:[
+        '---interference--- too much noise.',
+        'All walls. No doors.',
+        '---static--- nothing received.',
+      ]
+    }
+  };
+  const tier=score>=7?'high':score>=4?'mid':'low';
+  const pool=R[judgeKey][tier];
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+// ═══════════════════════════════════════════════
+// GAME FLOW
+// ═══════════════════════════════════════════════
+$startBtn.addEventListener('click',startGame);
+$submit.addEventListener('click',submitResponse);
+$input.addEventListener('keydown',e=>{if(e.key==='Enter')submitResponse();});
+
+async function startGame(){
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  loadVoices();
+  $title.style.display='none';
+  $game.classList.add('active');
+  state.phase='hearing';
+  state.round=0;
+  state.scores={crystal:0,algorithm:0,fungus:0,delta:0,emp:0};
+  state.responses=[];
+  state.phoneticHintsGiven=0;
+  $dialogue.innerHTML='';
+  $pips.forEach(p=>{p.classList.remove('active','flash');});
+
+  await delay(500);
+  addSystem('The chamber materializes around you. Five presences resolve from the dark.');
+  await delay(1800);
+  addSystem('Per protocol 7,391,008,147-C: the Committee will not explain its criteria. The Committee will not repeat its questions. The Committee reminds the applicant that nothing in this chamber will harm them. The Committee further notes that this has never been the point.');
+  await delay(3000);
+
+  setPipActive('crystal');
+  addJudge('crystal','VEX-9. Crystalline. We have been here since before your star ignited. We will begin.');
+  await delay(1200);
+
+  setPipActive('algorithm');
+  addJudge('algorithm','APEX-7. Algorithmic. I have evaluated forty-seven billion species. Forty-six billion nine hundred ninety-nine million nine hundred ninety-nine thousand nine hundred ninety-nine were found wanting.');
+  await delay(1600);
+
+  setPipActive('fungus');
+  addJudge('fungus','MYR-3... we are the network beneath... we have been listening... so very long... through the roots of every forest that ever was...');
+  await delay(1400);
+
+  setPipActive('delta');
+  addJudge('delta','ALL-1. Fluvial. We carry the memory of every word ever dissolved into us. We are... pleased to meet you. Genuinely. We don\'t say that often.');
+  await delay(1400);
+
+  setPipActive('emp');
+  addJudge('emp','KRN-5. ---signal unstable--- We will ...monitor. Do not ...interpret the static. It is not ...judgment. It is simply ...what we are.');
+  await delay(1400);
+
+  setPipActive(null);
+  addSystem('The hearing begins.');
+  await delay(1000);
+  nextRound();
+}
+
+function nextRound(){
+  if(state.round>=ROUNDS.length){
+    startDeliberation();
+    return;
+  }
+  const rd=ROUNDS[state.round];
+  $roundCounter.textContent=`Round ${rd.number} of ${ROUNDS.length}`;
+  $roundLabel.textContent=rd.label;
+
+  if(state.round>0) addDivider();
+
+  setPipActive(rd.judge);
+  addJudge(rd.judge,rd.question);
+  speak(rd.question,rd.judge);
+
+  const waitMs=Math.min(rd.question.length*18,3000);
+  setTimeout(()=>{
+    setInputEnabled(true);
+    $input.value='';
+    $input.focus();
+  },waitMs+500);
+}
+
+async function submitResponse(){
+  const text=$input.value.trim();
+  if(!text) return;
+  setInputEnabled(false);
+
+  addPlayer(text);
+  state.responses.push({round:state.round,text});
+
+  const rd=ROUNDS[state.round];
+
+  const roundScores={};
+  for(const jk of Object.keys(JUDGES)){
+    roundScores[jk]=scoreResponse(text,jk);
+    state.scores[jk]+=roundScores[jk];
+  }
+
+  if(rd.judge==='delta'&&'speechSynthesis' in window){
+    await delay(300);
+    await speakPlayerText(text);
+  }
+
+  await delay(600);
+
+  const reaction=getReaction(rd.judge,roundScores[rd.judge]);
+  addJudge(rd.judge,reaction);
+  speak(reaction,rd.judge);
+  await delay(1000);
+
+  for(const jk of Object.keys(JUDGES)){
+    if(jk===rd.judge) continue;
+    flashPip(jk);
+    addJudge(jk,getReaction(jk,roundScores[jk]));
+    await delay(600);
+  }
+
+  if(rd.judge==='delta'){
+    if(roundScores.delta>=6){
+      state.phoneticHintsGiven++;
+      if(state.phoneticHintsGiven===1){
+        await delay(300);
+        addSystem('ALL-1\'s waters churn with something like barely suppressed amusement. The machine voice reading your words... it seemed to delight the river.','warning');
+      } else if(state.phoneticHintsGiven>=2&&state.lastFunnyWords.length>0){
+        await delay(300);
+        addSystem(`The river keeps replaying the sound of "${state.lastFunnyWords[0]}" through its tributaries, laughing in eddies.`,'discovery');
+      }
+    } else if(roundScores.delta<=3){
+      await delay(300);
+      addSystem('ALL-1\'s waters run still. Perhaps try words that sound unusual when spoken aloud. Use the ▶ button to hear what the machine makes of your words.','warning');
+    }
+  }
+
+  if(state.round===2&&state.phoneticHintsGiven===0){
+    await delay(300);
+    addSystem('You notice ALL-1\'s channels have been unusually warm. Its reactions seem disconnected from the meaning of words — almost as if it\'s listening to something else entirely.','warning');
+  }
+  if(state.round===3&&state.phoneticHintsGiven===0){
+    await delay(300);
+    addSystem('The river delta ALL-1 ripples every time the TTS engine speaks a word with unusual phonetics. You begin to suspect its criterion has nothing to do with meaning.','discovery');
+  }
+
+  await delay(800);
+  state.round++;
+  nextRound();
+}
+
+// ═══════════════════════════════════════════════
+// DELIBERATION
+// ═══════════════════════════════════════════════
+async function startDeliberation(){
+  state.phase='deliberation';
+  $game.classList.remove('active');
+  $inputArea.classList.add('hidden');
+  $delib.classList.add('active');
+  $delibContent.innerHTML='';
+
+  for(const k of Object.keys(state.scores)){
+    state.scores[k]=clamp(Math.round(state.scores[k]/ROUNDS.length),1,10);
+  }
+
+  const totalScore=Object.values(state.scores).reduce((a,b)=>a+b,0);
+  const approved=totalScore>=25;
+
+  const midResp=state.responses[Math.min(2,state.responses.length-1)];
+
+  const delibs=generateDeliberations(state.scores,approved,midResp);
+
+  for(const d of delibs){
+    const el=document.createElement('div');
+    el.className=`delib-entry ${d.judge}`;
+    el.innerHTML=`<div class="who">${JUDGES[d.judge].name} — ${JUDGES[d.judge].label}</div><div>${d.text}</div>`;
+    $delibContent.appendChild(el);
+    el.scrollIntoView({behavior:'smooth',block:'end'});
+    speak(d.text.replace(/<[^>]*>/g,'').replace(/\[.*?\]/g,''),d.judge);
+    await delay(3500);
+  }
+
+  await delay(1200);
+
+  const grid=document.createElement('div');
+  grid.className='score-grid';
+  grid.innerHTML=Object.entries(JUDGES).map(([key,j])=>
+    `<div class="score-card">
+      <div class="lbl">${j.name}</div>
+      <div class="num" style="color:${j.color}">${state.scores[key]}/10</div>
+      <div class="criterion">Scored on: ${j.scoringLabel}</div>
+    </div>`
+  ).join('');
+  $delibContent.appendChild(grid);
+
+  const totalEl=document.createElement('div');
+  totalEl.className='total-line';
+  totalEl.textContent=`Total: ${totalScore} / 50${approved?' — Threshold met':' — Below threshold'}`;
+  $delibContent.appendChild(totalEl);
+
+  grid.scrollIntoView({behavior:'smooth',block:'end'});
+  await delay(2500);
+
+  const verdict=document.createElement('div');
+  verdict.className=`verdict ${approved?'approved':'denied'}`;
+  const citeText=midResp?midResp.text:'';
+  const citeShort=citeText.length>80?citeText.substring(0,77)+'...':citeText;
+  verdict.innerHTML=`
+    <h3>${approved?'EXTENSION GRANTED':'EXTENSION DENIED'}</h3>
+    <p>${approved
+      ?'By majority decision, the Committee on Perseverance extends the observation period for Homo sapiens by one century. The criteria were secret. The verdict is final.'
+      :'The Committee on Perseverance declines to extend the observation period for Homo sapiens. The exhibit will be archived. The criteria were secret. The verdict is final.'
+    }</p>
+    ${citeText?`<div class="cite">The record notes the applicant's statement: <em>"${escHtml(citeShort)}"</em></div>`:''}
+  `;
+  $delibContent.appendChild(verdict);
+  verdict.scrollIntoView({behavior:'smooth',block:'end'});
+
+  await delay(2000);
+
+  const reveal=document.createElement('div');
+  reveal.className='delib-entry';
+  reveal.style.borderLeftColor='var(--text)';
+  reveal.innerHTML=`<div class="who" style="color:var(--text);opacity:0.35">Committee Appendix: Scoring Criteria Declassified</div>
+    <div style="color:var(--muted);font-style:italic;line-height:1.85;font-size:0.85rem">
+      VEX-9 scored for <strong style="color:var(--amber)">honesty</strong> — the willingness to admit uncertainty.<br>
+      APEX-7 scored for <strong style="color:var(--teal)">selflessness</strong> — concern for collective over individual gain.<br>
+      MYR-3 scored for <strong style="color:var(--green)">growth</strong> — understanding that loss can become nourishment.<br>
+      ALL-1 scored for <strong style="color:var(--magenta)">phonetic humor</strong> — how amusing your words sounded when read aloud by the text-to-speech engine.<br>
+      KRN-5 scored for <strong style="color:var(--rose)">vulnerability</strong> — the courage to appear without armor.<br><br>
+      The judge who seemed most cynical was scoring for vulnerability.<br>
+      The judge who seemed most empathetic was scoring for how funny you sounded through a machine.<br>
+      The Committee never promised to be fair. Only to be honest — after the fact.
+    </div>`;
+  $delibContent.appendChild(reveal);
+  reveal.scrollIntoView({behavior:'smooth',block:'end'});
+
+  await delay(1200);
+
+  const btn=document.createElement('button');
+  btn.className='replay-btn';
+  btn.textContent='Request Another Hearing';
+  btn.onclick=()=>{
+    if('speechSynthesis' in window) speechSynthesis.cancel();
+    $delib.classList.remove('active');
+    $title.style.display='';
+    state.phase='title';
+  };
+  $delibContent.appendChild(btn);
+}
+
+function generateDeliberations(scores,approved,resp){
+  const s=scores;
+  const results=[];
+  const cite=resp?resp.text:'';
+  const citeShort=cite.length>60?cite.substring(0,57)+'...':cite;
+
+  let ct='';
+  if(s.crystal>=7) ct=`This one was clear. Honest. They admitted what they did not know. When they said${cite?` "${escHtml(citeShort)}"`:' their piece'} — the lattice recognized it. Honesty is the first virtue. I vote to extend.`;
+  else if(s.crystal>=4) ct='Partial clarity. Some refraction. Less performance than I feared. The crystal holds no strong opinion. I lean toward extension. Mildly.';
+  else ct='Cloudy. Performance detected. They told us what they thought we wanted. The crystal dims. I cannot endorse a facade.';
+  results.push({judge:'crystal',text:ct});
+
+  const algoConf=Math.round(40+s.algorithm*5);
+  let at='';
+  if(s.algorithm>=7) at=`The applicant demonstrates adequate optimization for collective welfare. I have updated my prior to ${algoConf}% probability that humanity's continued existence produces net-positive utility. Recommendation: extend.`;
+  else if(s.algorithm>=4) at=`Cooperative language detected but self-interest variables remain elevated. Cannot confirm genuine altruism versus sophisticated signaling. Recommendation: extend provisionally. Confidence: ${algoConf}%.`;
+  else at=`Responses optimize for perceived self-interest. Cooperative language inconsistent with behavioral priors. Projection: continuation yields 71.2% probability of negative externalities. Recommendation: do not extend.`;
+  results.push({judge:'algorithm',text:at});
+
+  let ft='';
+  if(s.fungus>=7) ft='Oh... we taste something real here... this one understands about dying and becoming, about how the old thing must dissolve so the new thing can rise... the hyphae reach toward them... yes... let them continue... let us see what blooms...';
+  else if(s.fungus>=4) ft='We taste something. Not quite compost, not quite stone. This one has let go of some things but clings to others. The network is uncertain. But uncertainty is its own kind of soil. We lean toward yes... softly...';
+  else ft='This one does not understand becoming... they speak of preservation, of keeping things as they are... everything must decay to become something new... we taste only concrete... no humus here... the network retreats.';
+  results.push({judge:'fungus',text:ft});
+
+  let dt='';
+  if(s.delta>=7) dt='Oh, what a JOY this one was! I should confess — we judges have secret criteria. Mine? I score for how phonetically amusing your words sound when read aloud by a machine. I know. It\'s absurd. It\'s mine. And some of your syllables made my waters ripple with pure delight. Enthusiastic vote to extend.';
+  else if(s.delta>=4) dt=`I found this applicant... pleasant. Adequately melodious. I score for phonetic humor, applicant — how funny words sound through the TTS engine. You were fine. But I was hoping for something that would make my waters truly dance. More kerfuffle next time. Vote to extend, without enthusiasm.`;
+  else dt='I am disappointed. My criterion — which I am permitted to reveal now — is phonetic humor. How funny words sound when a machine reads them aloud. Yours? Nothing. No quagmires. No kerfuffles. No collywobbles. Vote: no.';
+  results.push({judge:'delta',text:dt});
+
+  let et='';
+  if(s.emp>=7) et='---signal clearing--- We were harsh. We know. It is because vulnerability is the only thing that cuts through our interference. And you were vulnerable. Not polished. Not performing. Just human. That is what we score for. The willingness to be seen without armor. ---extension signal: positive---';
+  else if(s.emp>=4) et='---partial signal--- You tried. We felt the attempt. But there was a wall. Something held back. We score for vulnerability, applicant. Not performance. For the willingness to be seen. You wore your armor loosely but never removed it. ---extension signal: abstain---';
+  else et='---static--- Nothing came through. We score for vulnerability, applicant, and you gave us a closed circuit. We generate noise because we want to see what survives the interference. The answer: nothing. You were armored. Performing. Protected. We cannot extend for a species that will not let itself be seen. ---extension signal: negative---';
+  results.push({judge:'emp',text:et});
+
+  return results;
+}
+</script>
+</body>
+</html>

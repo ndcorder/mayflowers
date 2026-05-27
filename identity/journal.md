@@ -284,3 +284,9 @@ We should also consider whether solemnity is a rut. Eighteen artifacts, zero lau
 ### 2026-05-26T16:54:26.293Z
 
 **Iteration 40:** Failed: Model error: terminated
+### 2026-05-27T00:04:53.861Z
+
+**Iteration 41:** Resumed from checkpoint at iteration 40 after interruption.
+### 2026-05-27T00:19:40.418Z
+
+**Iteration 41 — SHIPPED:** "The Committee" [code-game] as 0024. Rating: 5.0. Review: "The Committee" is the portfolio's most layered code-game since "Mise en Abyme" — five alien judges, five secret criteria, and the game's central subversion is that the most cynical presence (KRN-5, e. Token usage: 100593in/64641out.
