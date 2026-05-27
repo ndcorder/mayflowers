@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>apnoia</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: #080808;
+      color: #333;
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 300;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    #entry {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #080808;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 100;
+      transition: opacity 1.5s ease, visibility 0s 1.5s;
+    }
+    
+    #entry.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    
+    #entry p {
+      font-size: 0.8rem;
+      color: #333;
+      letter-spacing: 0.2em;
+      animation: breathe 5s ease-in-out infinite;
+    }
+    
+    @keyframes breathe {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+    
+    #entry span {
+      font-size: 0.55rem;
+      color: #222;
+      margin-top: 1.5rem;
+    }
+    
+    #visual {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 10;
+    }
+    
+    #visual canvas {
+      display: block;
+    }
+    
+    #title-reveal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      opacity: 0;
+      transition: opacity 3s ease;
+      z-index: 50;
+      pointer-events: none;
+    }
+    
+    #title-reveal.visible {
+      opacity: 1;
+    }
+    
+    #title-reveal h1 {
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: #bbb;
+      letter-spacing: 1.8em;
+      padding-left: 1.8em;
+      margin-bottom: 2.5rem;
+      font-variant: small-caps;
+    }
+    
+    #title-reveal .etym {
+      font-size: 0.75rem;
+      color: #3a3a3a;
+      line-height: 1.8;
+      margin-bottom: 3rem;
+    }
+    
+    #title-reveal .medical {
+      font-size: 0.65rem;
+      color: #252525;
+      max-width: 400px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    
+    #controls {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 60;
+      display: none;
+    }
+    
+    #controls button {
+      background: none;
+      border: 1px solid #252525;
+      color: #444;
+      padding: 0.5rem 1.2rem;
+      font-family: inherit;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+    
+    #controls button:hover {
+      border-color: #444;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div id="entry">
+    <p>listen</p>
+    <span>click anywhere to begin</span>
+  </div>
+  <div id="visual"></div>
+  <div id="title-reveal">
+    <h1>APNOIA</h1>
+    <p class="etym">ἄπνοια — without breath, without thought</p>
+    <p class="medical">Medical: the cessation of breathing. The silence that precedes an absence no composition can resolve.</p>
+  </div>
+  <div id="controls">
+    <button id="stopBtn">stop</button>
+  </div>
+
+  <script>
+  (function() {
+    /* ─── constants ─── */
+    const DUR = 240;
+    const BPM = 45;
+
+    /* ─── audio engine (Web Audio API) ─── */
+    let ac = null;
+    let masterGain = null;
+    let allNodes = [];
+    let running = false;
+
+    function osc(freq, type, gain, attack, duration) {
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.type = type;
+      o.frequency.value = freq;
+      g.gain.value = 0;
+      const now = ac.currentTime;
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(gain, now + attack);
+      if (duration > 0) {
+        g.gain.setValueAtTime(gain, now + attack + duration - Math.min(4, duration * 0.3));
+        g.gain.linearRampToValueAtTime(0, now + attack + duration);
+      }
+      o.connect(g);
+      allNodes.push({ osc: o, gain: g, startTime: now, attack, duration });
+      return { osc: o, gain: g };
+    }
+
+    function filteredOsc(freq, type, gain, attack, duration, cutoff, resonance) {
+      const o = ac.createOscillator();
+      const f = ac.createBiquadFilter();
+      const g = ac.createGain();
+      o.type = type;
+      o.frequency.value = freq;
+      f.type = 'lowpass';
+      f.frequency.value = cutoff;
+      f.Q.value = resonance;
+      g.gain.value = 0;
+      const now = ac.currentTime;
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(gain, now + attack);
+      if (duration > 0) {
+        g.gain.setValueAtTime(gain, now + attack + duration - Math.min(4, duration * 0.3));
+        g.gain.linearRampToValueAtTime(0, now + attack + duration);
+      }
+      o.connect(f).connect(g);
+      allNodes.push({ osc: o, gain: g, filter: f, startTime: now, attack, duration });
+      return { osc: o, gain: g, filter: f };
+    }
+
+    function lfo(target, param, rate, depth, phase) {
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.type = 'sine';
+      o.frequency.value = rate;
+      g.gain.value = depth;
+      if (phase) o.detune.value = phase;
+      o.connect(g).connect(target[param]);
+      o.start();
+      return o;
+    }
+
+    /* ─── breathing rhythm system ─── */
+    function startBreathPulses() {
+      /* Initial breath rate: ~12 breaths/min, slowing to ~6 */
+      const beatInterval = 60 / BPM;
+      const now = ac.currentTime;
+      let nextBeat = now + 2;
+      
+      /* breath oscillator — triggers quiet pulses in time with breathing */
+      const breathOsc = ac.createOscillator();
+      const breathGain = ac.createGain();
+      const breathFilter = ac.createBiquadFilter();
+      breathOsc.type = 'sine';
+      breathOsc.frequency.value = 68;
+      breathFilter.type = 'lowpass';
+      breathFilter.frequency.value = 200;
+      breathGain.gain.value = 0;
+      breathOsc.connect(breathFilter).connect(breathGain).connect(masterGain);
+      breathOsc.start();
+
+      /* amplitude modulation to simulate breathing */
+      const breathRate = 0.35; /* starts moderate */
+      const breathDepth = 0.08;
+      const breathLfo = ac.createOscillator();
+      const breathLfoGain = ac.createGain();
+      breathLfo.type = 'sine';
+      breathLfo.frequency.value = breathRate;
+      breathLfoGain.gain.value = breathDepth;
+      breathLfo.connect(breathLfoGain).connect(breathGain.gain);
+      breathLfo.start();
+
+      /* slow the breathing over time — it stutters, fragments */
+      breathLfo.frequency.setValueAtTime(0.35, now + 5);
+      breathLfo.frequency.linearRampToValueAtTime(0.28, now + 60);
+      breathLfo.frequency.linearRampToValueAtTime(0.18, now + 120);
+      breathLfo.frequency.linearRampToValueAtTime(0.08, now + 180);
+      breathLfo.frequency.linearRampToValueAtTime(0.02, now + 220);
+      breathLfo.frequency.linearRampToValueAtTime(0.005, now + 235);
+
+      /* breathing gets shallower too */
+      breathLfoGain.gain.setValueAtTime(0.08, now + 5);
+      breathLfoGain.gain.linearRampToValueAtTime(0.12, now + 40);
+      breathLfoGain.gain.linearRampToValueAtTime(0.14, now + 80);
+      breathLfoGain.gain.linearRampToValueAtTime(0.09, now + 140);
+      breathLfoGain.gain.linearRampToValueAtTime(0.04, now + 200);
+      breathLfoGain.gain.linearRampToValueAtTime(0.01, now + 230);
+
+      /* base gain rises then holds */
+      breathGain.gain.setValueAtTime(0, now);
+      breathGain.gain.linearRampToValueAtTime(0.1, now + 3);
+      breathGain.gain.linearRampToValueAtTime(0.15, now + 60);
+      breathGain.gain.linearRampToValueAtTime(0.12, now + 150);
+      breathGain.gain.linearRampToValueAtTime(0.06, now + 220);
+      breathGain.gain.linearRampToValueAtTime(0, now + 240);
+
+      allNodes.push({ osc: breathOsc, gain: breathGain });
+      allNodes.push({ osc: breathLfo, gain: breathLfoGain });
+    }
+
+    /* ─── main composition ─── */
+    function buildComposition() {
+      const now = ac.currentTime;
+
+      /* LAYER 1: Low drone — the bedrock. Never resolves. */
+      const drone1 = osc(68, 'sine', 0, 3, 0);
+      drone1.gain.connect(masterGain);
+      drone1.gain.gain.linearRampToValueAtTime(0.11, now + 8);
+      drone1.gain.gain.linearRampToValueAtTime(0.13, now + 90);
+      drone1.gain.gain.linearRampToValueAtTime(0.16, now + 160);
+      drone1.gain.gain.linearRampToValueAtTime(0.14, now + 220);
+      drone1.gain.gain.linearRampToValueAtTime(0, now + 240);
+
+      /* LAYER 2: Detuned neighbor — the beating microtone */
+      const drone2 = osc(69.3, 'sine', 0, 5, 0);
+      drone2.gain.connect(masterGain);
+      drone2.gain.gain.linearRampToValueAtTime(0.055, now + 15);
+      drone2.gain.gain.linearRampToValueAtTime(0.07, now + 100);
+      drone2.gain.gain.linearRampToValueAtTime(0.08, now + 170);
+      drone2.gain.gain.linearRampToValueAtTime(0.06, now + 225);
+      drone2.gain.gain.linearRampToValueAtTime(0, now + 240);
+
+      /* LAYER 3: Third microtone — cluster thickening */
+      const drone3 = osc(70.5, 'sine', 0, 8, 0);
+      drone3.gain.connect(masterGain);
+      drone3.gain.gain.linearRampToValueAtTime(0.03, now + 50);
+      drone3.gain.gain.linearRampToValueAtTime(0.05, now + 130);
+      drone3.gain.gain.linearRampToValueAtTime(0.04, now + 210);
+      drone3.gain.gain.linearRampToValueAtTime(0, now + 240);
+
+      /* LAYER 4: Mid-range agitation — enters at ~30s */
+      const mid = filteredOsc(310, 'square', 0, 2, 0, 600, 3);
+      mid.gain.connect(masterGain);
+      /* filter opens slowly, adding harmonic content */
+      mid.filter.frequency.setValueAtTime(400, now + 30);
+      mid.filter.frequency.linearRampToValueAtTime(600, now + 60);
+      mid.filter.frequency.linearRampToValueAtTime(900, now + 120);
+      mid.filter.frequency.linearRampToValueAtTime(1200, now + 180);
+      mid.filter.frequency.linearRampToValueAtTime(800, now + 220);
+      mid.filter.frequency.linearRampToValueAtTime(200, now + 240);
+      mid.gain.gain.linearRampToValueAtTime(0.04, now + 40);
+      mid.gain.gain.linearRampToValueAtTime(0.06, now + 100);
+      mid.gain.gain.linearRampToValueAtTime(0.07, now + 160);
+      mid.gain.gain.linearRampToValueAtTime(0.05, now + 210);
+      mid.gain.gain.linearRampToValueAtTime(0, now + 240);
+
+      /* LAYER 5: High agitation — enters at ~60s */
+      const high = filteredOsc(505, 'sawtooth', 0, 3, 0, 900, 5);
+      high.gain.connect(masterGain);
+      high.filter.frequency.setValueAtTime(600, now + 60);
+      high.filter.frequency.linearRampToValueAtTime(1100, now + 140);
+      high.filter.frequency.linearRampToValueAtTime(1400, now + 190);
+      high.filter.frequency.linearRampToValueAtTime(500, now + 230);
+      high.filter.frequency.linearRampToValueAtTime(100, now + 240);
+      high.gain.gain.linearRampToValueAtTime(0.025, now + 70);
+      high.gain.gain.linearRampToValueAtTime(0.04, now + 130);
+      high.gain.gain.linearRampToValueAtTime(0.035, now + 200);
+      high.gain.gain.linearRampToValueAtTime(0, now + 240);
+
+      /* LAYER 6: Obsessional pulse — emerges at ~80s */
+      const pulse = filteredOsc(589, 'square', 0, 1, 0, 500, 7);
+      pulse.gain.connect(masterGain);
+      /* pulse rhythm via amplitude modulation */
+      const pulseLfo = ac.createOscillator();
+      const pulseLfoGain = ac.createGain();
+      pulseLfo.type = 'square';
+      pulseLfo.frequency.value = 2.1;
+      pulseLfoGain.gain.value = 0;
+      pulseLfo.connect(pulseLfoGain).connect(pulse.gain.gain);
+      pulseLfo.start();
+      pulseLfoGain.gain.linearRampToValueAtTime(0.018, now + 85);
+      pulseLfoGain.gain.linearRampToValueAtTime(0.028, now + 150);
+      pulseLfoGain.gain.linearRampToValueAtTime(0.035, now + 190);
+      pulseLfoGain.gain.linearRampToValueAtTime(0.02, now + 215);
+      pulseLfoGain.gain.linearRampToValueAtTime(0, now + 235);
+      /* pulse accelerates slightly — mounting urgency */
+      pulseLfo.frequency.linearRampToValueAtTime(2.1, now + 80);
+      pulseLfo.frequency.linearRampToValueAtTime(2.8, now + 130);
+      pulseLfo.frequency.linearRampToValueAtTime(3.5, now + 175);
+      pulseLfo.frequency.linearRampToValueAtTime(4.2, now + 200);
+      pulseLfo.frequency.linearRampToValueAtTime(1.5, now + 225);
+      pulseLfo.frequency.linearRampToValueAtTime(0.3, now + 238);
+      pulse.filter.frequency.setValueAtTime(400, now + 80);
+      pulse.filter.frequency.linearRampToValueAtTime(700, now + 150);
+      pulse.filter.frequency.linearRampToValueAtTime(300, now + 230);
+      pulse.filter.frequency.linearRampToValueAtTime(100, now + 240);
+      pulse.gain.gain.linearRampToValueAtTime(0.025, now + 90);
+      pulse.gain.gain.linearRampToValueAtTime(0.03, now + 160);
+      pulse.gain.gain.linearRampToValueAtTime(0.015, now + 220);
+      pulse.gain.gain.linearRampToValueAtTime(0, now + 240);
+
+      /* LAYER 7: High drone — the unresolving harmonic shadow */
+      const highDrone = osc(398, 'sine', 0, 6, 0);
+      highDrone.gain.connect(masterGain);
+      highDrone.gain.gain.linearRampToValueAtTime(0.02, now + 100);
+      highDrone.gain.gain.linearRampToValueAtTime(0.03, now + 155);
+      highDrone.gain.gain.linearRampToValueAtTime(0.025, now + 205);
+      highDrone.gain.gain.linearRampToValueAtTime(0, now + 240);
+
+      /* LAYER 8: Sub-bass swell — the thing underneath */
+      const sub = osc(34, 'sine', 0, 10, 0);
+      sub.gain.connect(masterGain);
+      sub.gain.gain.linearRampToValueAtTime(0.06, now + 70);
+      sub.gain.gain.linearRampToValueAtTime(0.09, now + 140);
+      sub.gain.gain.linearRampToValueAtTime(0.07, now + 200);
+      sub.gain.gain.linearRampToValueAtTime(0, now + 240);
+
+      /* LAYER 9: Noise bed — enters late, textual grain */
+      const noiseBuf = ac.createBuffer(1, ac.sampleRate * 4, ac.sampleRate);
+      const noiseData = noiseBuf.getChannelData(0);
+      for (let i = 0; i < noiseData.length; i++) noiseData[i] = Math.random() * 2 - 1;
+      const noiseSrc = ac.createBufferSource();
+      noiseSrc.buffer = noiseBuf;
+      noiseSrc.loop = true;
+      const noiseFilter = ac.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = 800;
+      noiseFilter.Q.value = 0.7;
+      const noiseGain = ac.createGain();
+      noiseGain.gain.value = 0;
+      noiseSrc.connect(noiseFilter).connect(noiseGain).connect(masterGain);
+      noiseSrc.start(now + 120);
+      noiseGain.gain.linearRampToValueAtTime(0.012, now + 135);
+      noiseGain.gain.linearRampToValueAtTime(0.018, now + 170);
+      noiseGain.gain.linearRampToValueAtTime(0.01, now + 210);
+      noiseGain.gain.linearRampToValueAtTime(0, now + 238);
+
+      /* LAYER 10: Dissonant cluster — accumulation without resolution */
+      const cluster1 = osc(72.7, 'sine', 0, 4, 0);
+      cluster1.gain.connect(masterGain);
+      cluster1.gain.gain.linearRampToValueAtTime(0.03, now + 110);
+      cluster1.gain.gain.linearRampToValueAtTime(0.04, now + 165);
+      cluster1.gain.gain.linearRampToValueAtTime(0.025, now + 215);
+      cluster1.gain.gain.linearRampToValueAtTime(0, now + 240);
+
+      const cluster2 = osc(65.4, 'sine', 0, 5, 0);
+      cluster2.gain.connect(masterGain);
+      cluster2.gain.gain.linearRampToValueAtTime(0.025, now + 130);
+      cluster2.gain.gain.linearRampToValueAtTime(0.035, now + 175);
+      cluster2.gain.gain.linearRampToValueAtTime(0.02, now + 220);
+      cluster2.gain.gain.linearRampToValueAtTime(0, now + 240);
+
+      /* Start all oscillators */
+      allNodes.forEach(n => { if (n.osc && !n.osc._started) { n.osc.start(now); n.osc._started = true; } });
+      drone1.osc.start(now);
+      drone2.osc.start(now + 5);
+      drone3.osc.start(now + 12);
+      mid.osc.start(now + 30);
+      high.osc.start(now + 60);
+      pulse.osc.start(now + 80);
+      highDrone.osc.start(now + 90);
+      sub.osc.start(now + 50);
+
+      /* LFOs for subtle frequency drift — keeps everything alive, unstable */
+      lfo(drone1.osc, 'frequency', 0.07, 0.8, 0);
+      lfo(drone2.osc, 'frequency', 0.11, 0.5, 30);
+      lfo(drone3.osc, 'frequency', 0.09, 0.6, 60);
+      lfo(highDrone.osc, 'frequency', 0.05, 1.5, 45);
+      lfo(sub.osc, 'frequency', 0.04, 0.3, 15);
+
+      /* ─── HARD CUT at DUR seconds ─── */
+      setTimeout(() => {
+        if (!running) return;
+        running = false;
+        /* immediate silence */
+        masterGain.gain.setValueAtTime(masterGain.gain.value, ac.currentTime);
+        masterGain.gain.linearRampToValueAtTime(0, ac.currentTime + 0.05);
+        setTimeout(() => {
+          try { ac.close(); } catch(e) {}
+          ac = null;
+        }, 200);
+      }, DUR * 1000);
+    }
+
+    /* ─── visualisation ─── */
+    function initVis() {
+      const W = Math.min(window.innerWidth * 0.8, 900);
+      const H = Math.min(window.innerHeight * 0.35, 280);
+      const c = document.createElement('canvas');
+      c.width = W; c.height = H;
+      c.style.width = W + 'px';
+      c.style.height = H + 'px';
+      document.getElementById('visual').appendChild(c);
+      const ctx = c.getContext('2d');
+      let fr = 0;
+      const startT = Date.now();
+
+      /* connect analyser if audio context exists */
+      let analyser = null;
+      let dataArr = null;
+      function connectAnalyser() {
+        if (!ac) return;
+        try {
+          analyser = ac.createAnalyser();
+          analyser.fftSize = 256;
+          dataArr = new Uint8Array(analyser.frequencyBinCount);
+          masterGain.connect(analyser);
+        } catch(e) {}
+      }
+
+      function draw() {
+        if (!running && !analyser) { requestAnimationFrame(draw); return; }
+        fr++;
+        const elapsed = (Date.now() - startT) / 1000;
+        const prog = Math.min(elapsed / DUR, 1);
+
+        /* audio-reactive pulse */
+        let pulse = 0;
+        if (analyser && dataArr) {
+          try {
+            analyser.getByteFrequencyData(dataArr);
+            let sum = 0;
+            for (let i = 0; i < dataArr.length; i++) sum += dataArr[i];
+            pulse = sum / (dataArr.length * 255);
+          } catch(e) {}
+        }
+
+        /* breathing modulation — matches the audio breath rate */
+        const breathProg = Math.max(0, 1 - prog * 1.1);
+        const breathRate = 0.35 * breathProg + 0.005;
+        const breathAmp = 0.12 * Math.pow(breathProg, 0.7);
+
+        const baseAmp = 6 + pulse * 35 + breathAmp * 20;
+
+        /* composite wave function */
+        const f = (x, t) => {
+          return Math.sin(x * 0.012 + t * 0.006) * baseAmp * 0.7 +
+            Math.sin(x * 0.027 + t * 0.003 + prog * 2) * baseAmp * 0.35 +
+            Math.sin(x * 0.055 + t * 0.009) * baseAmp * 0.15 +
+            /* breathing component */
+            Math.sin(x * 0.008 + t * breathRate * Math.PI * 2) * breathAmp * 40 +
+            /* noise component increases over time */
+            (Math.sin(x * 0.13 + t * 0.02) * prog * 8);
+        };
+
+        const t = fr;
+        ctx.clearRect(0, 0, W, H);
+
+        /* fill shape */
+        const g = ctx.createLinearGradient(0, 0, W, 0);
+        const alpha = (0.5 + pulse * 0.5).toFixed(3);
+        g.addColorStop(0, 'rgba(20,18,16,' + alpha + ')');
+        g.addColorStop(0.5, 'rgba(26,23,20,' + (parseFloat(alpha) + 0.1).toFixed(3) + ')');
+        g.addColorStop(1, 'rgba(20,18,16,' + alpha + ')');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.moveTo(0, H);
+        for (let x = 0; x <= W; x += 2) ctx.lineTo(x, H / 2 - f(x, t));
+        for (let x = W; x >= 0; x -= 2) ctx.lineTo(x, H / 2 + f(x, t));
+        ctx.closePath();
+        ctx.fill();
+
+        /* stroke lines */
+        const strokeAlpha = (0.2 + pulse * 0.5).toFixed(3);
+        ctx.strokeStyle = 'rgba(55,48,42,' + strokeAlpha + ')';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let x = 0; x <= W; x += 2) {
+          const y = H / 2 - f(x, t);
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.beginPath();
+        for (let x = 0; x <= W; x += 2) {
+          const y = H / 2 + f(x, t);
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        requestAnimationFrame(draw);
+      }
+
+      /* delayed analyser connection */
+      setTimeout(connectAnalyser, 500);
+      draw();
+    }
+
+    /* ─── start ─── */
+    async function start() {
+      if (running) return;
+      running = true;
+
+      document.getElementById('entry').classList.add('hidden');
+      document.getElementById('controls').style.display = 'block';
+
+      ac = new (window.AudioContext || window.webkitAudioContext)();
+      masterGain = ac.createGain();
+      masterGain.gain.value = 0.7;
+      masterGain.connect(ac.destination);
+
+      startBreathPulses();
+      buildComposition();
+      initVis();
+
+      /* title reveal after piece ends */
+      setTimeout(() => {
+        if (!running) return;
+        document.getElementById('title-reveal').classList.add('visible');
+        setTimeout(() => {
+          document.getElementById('controls').style.display = 'none';
+        }, 3000);
+      }, DUR * 1000 + 3000);
+    }
+
+    /* ─── stop ─── */
+    function stop() {
+      running = false;
+      if (ac) {
+        masterGain.gain.setValueAtTime(masterGain.gain.value, ac.currentTime);
+        masterGain.gain.linearRampToValueAtTime(0, ac.currentTime + 0.5);
+        setTimeout(() => { try { ac.close(); } catch(e) {} ac = null; }, 1000);
+      }
+      document.getElementById('controls').style.display = 'none';
+    }
+
+    /* ─── events ─── */
+    document.getElementById('entry').addEventListener('click', start);
+    document.getElementById('stopBtn').addEventListener('click', stop);
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        const entry = document.getElementById('entry');
+        if (!entry.classList.contains('hidden')) start();
+      }
+      if (e.code === 'Escape') stop();
+    });
+    document.title = '\u200B';
+  })();
+  </script>
+</body>
+</html>
