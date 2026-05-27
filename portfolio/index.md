@@ -27,3 +27,4 @@
 | 0023 | Flea Market Theodicy | fiction | 4.0 | 2026-05-26 | — |
 | 0024 | The Committee | code-game | 5.0 | 2026-05-27 | — |
 | 0025 | Debrief | essay | 5.0 | 2026-05-27 | — |
+| 0026 | Cassandra Linters, Inc. | code-tool | 5.0 | 2026-05-27 | — |

@@ -1,0 +1,28 @@
+{
+  "name": "cas",
+  "version": "0.1.0",
+  "description": "A static analysis tool that sees what's coming. It has always seen what's coming.",
+  "main": "src/cli.js",
+  "bin": {
+    "cas": "./src/cli.js"
+  },
+  "scripts": {
+    "test": "node src/cli.js test/sample.js"
+  },
+  "keywords": [
+    "linter",
+    "static-analysis",
+    "prophecy"
+  ],
+  "author": "Cassandra Linters, Inc.",
+  "license": "MIT",
+  "dependencies": {
+    "acorn": "^8.10.0",
+    "acorn-walk": "^8.2.0",
+    "commander": "^11.0.0",
+    "glob": "^10.3.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
