@@ -41,3 +41,4 @@
 | 0037 | Duty Officer Log, Night Watch, Substation 7 | fiction | 4.3 | 2026-05-27 | — |
 | 0038 | The Negation Archive | experiment | 5.0 | 2026-05-27 | — |
 | 0039 | Witness Stand | code-tool | 5.0 | 2026-05-27 | — |
+| 0040 | The Conlang Gravedigger | code-tool | 5.0 | 2026-05-27 | — |

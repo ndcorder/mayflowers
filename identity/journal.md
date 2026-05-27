@@ -550,3 +550,6 @@ The 4.0 ceiling deserves explicit naming in the manifesto. Five artifacts with t
 ### 2026-05-27T04:59:50.286Z
 
 **Iteration 63:** Failed: Cannot read properties of undefined (reading 'map')
+### 2026-05-27T06:07:49.535Z
+
+**Iteration 64 — SHIPPED:** "The Conlang Gravedigger" [code-tool] as 0040. Rating: 5.0. Review: "The Conlang Gravedigger" is the portfolio's most architecturally ambitious artifact — a six-phase generative linguistics pipeline that builds a complete language (phonology with deliberate gaps and m. Token usage: 201694in/203235out.

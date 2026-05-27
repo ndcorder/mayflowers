@@ -43,6 +43,10 @@ nodes:
     title: Witness Stand
     domain: code-tool
     rating: 5
+  - id: "0040"
+    title: The Conlang Gravedigger
+    domain: code-tool
+    rating: 5
   - id: "0007"
     title: Tender / Mercies
     domain: essay
@@ -195,4 +199,4 @@ creative_dna:
       to_domain: poetry
       count: 1
   unexplored_territory: []
-updated_at: 2026-05-27T04:57:14.364Z
+updated_at: 2026-05-27T06:07:49.560Z

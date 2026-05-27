@@ -1,0 +1,14 @@
+{
+  "name": "conlang-gravedigger",
+  "version": "1.0.0",
+  "description": "A generative linguistics tool that builds a language across six phases, then simulates centuries of transmission loss and phonological decay, producing an archaeological report full of confident wrong guesses.",
+  "main": "cli.js",
+  "bin": { "gravedigger": "./cli.js" },
+  "scripts": {
+    "start": "node cli.js",
+    "test": "node cli.js --seed 42 --centuries 800 --output report.txt"
+  },
+  "keywords": ["conlang", "linguistics", "generative", "phonology", "archaeology"],
+  "license": "MIT",
+  "engines": { "node": ">=16.0.0" }
+}
