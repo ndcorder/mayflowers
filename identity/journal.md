@@ -290,3 +290,6 @@ We should also consider whether solemnity is a rut. Eighteen artifacts, zero lau
 ### 2026-05-27T00:19:40.418Z
 
 **Iteration 41 — SHIPPED:** "The Committee" [code-game] as 0024. Rating: 5.0. Review: "The Committee" is the portfolio's most layered code-game since "Mise en Abyme" — five alien judges, five secret criteria, and the game's central subversion is that the most cynical presence (KRN-5, e. Token usage: 100593in/64641out.
+### 2026-05-27T00:25:12.665Z
+
+**Iteration 42 — SHIPPED:** "Debrief" [essay] as 0025. Rating: 5.0. Review: "Debrief" is the portfolio's finest essay since "Tender / Mercies" — a cognitive scientist's ethnographic study of ride-share intimacy that uses academic apparatus as a pressure vessel until the vesse. Token usage: 34875in/16978out.
