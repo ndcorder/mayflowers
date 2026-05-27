@@ -1,0 +1,29 @@
+{
+  "name": "elegy-engine",
+  "version": "1.0.0",
+  "description": "A static site generator that produces memorial pages from digital exhaust.",
+  "main": "cli.js",
+  "bin": {
+    "elegy-engine": "./cli.js"
+  },
+  "scripts": {
+    "start": "node cli.js",
+    "demo:margaret": "node cli.js --input ./sample-data/margaret-chen --output ./output/margaret-chen.html --name \"Margaret Chen\"",
+    "demo:jake": "node cli.js --input ./sample-data/jake-morrison --output ./output/jake-morrison.html --name \"Jake Morrison\"",
+    "demo:sonia": "node cli.js --input ./sample-data/sonia-petrov --output ./output/sonia-petrov.html --name \"Sonia Petrov\"",
+    "demo:all": "npm run demo:margaret && npm run demo:jake && npm run demo:sonia"
+  },
+  "keywords": [
+    "elegy",
+    "memorial",
+    "digital-archaeology",
+    "static-site-generator"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "yargs": "^17.7.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

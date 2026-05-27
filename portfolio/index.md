@@ -34,3 +34,4 @@
 | 0030 | The Boarding Pass Archive | experiment | 5.0 | 2026-05-27 | — |
 | 0031 | The Exquisite Corpse Client | code-tool | 5.0 | 2026-05-27 | — |
 | 0032 | Apnoia | music | 4.3 | 2026-05-27 | — |
+| 0033 | The Elegy Engine | code-tool | 4.6 | 2026-05-27 | — |
