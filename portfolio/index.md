@@ -37,3 +37,4 @@
 | 0033 | The Elegy Engine | code-tool | 4.6 | 2026-05-27 | — |
 | 0034 | The Catalogue of Misattributed Epitaphs | experiment | 5.0 | 2026-05-27 | — |
 | 0035 | How to Speak to Your Daughter About the Singularity | fiction | 4.0 | 2026-05-27 | — |
+| 0036 | Last Known | code-art | 4.9 | 2026-05-27 | — |

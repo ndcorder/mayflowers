@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Last Known</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg: #070604;
+        --text: #7a7062;
+        --dim: #3e382f;
+        --accent: #b8963a;
+        --accent-dim: #7a6528;
+        --card: #0c0b09;
+        --border: #1c1814;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Ambient atmosphere */
+    .ambient-layer {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background:
+            radial-gradient(ellipse at 20% 30%, rgba(25,18,8,0.4) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 70%, rgba(10,18,30,0.3) 0%, transparent 50%),
+            radial-gradient(ellipse at 50% 50%, rgba(15,12,6,0.2) 0%, transparent 70%);
+        animation: ambientDrift 30s ease-in-out infinite alternate;
+    }
+
+    @keyframes ambientDrift {
+        0%   { opacity: 0.6; }
+        33%  { opacity: 0.8; }
+        66%  { opacity: 0.5; }
+        100% { opacity: 0.9; }
+    }
+
+    /* Film grain overlay */
+    .noise-layer {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0.025;
+        mix-blend-mode: overlay;
+        background-size: 200px 200px;
+    }
+
+    .content {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Header */
+    header {
+        text-align: center;
+        padding: 90px 24px 70px;
+        animation: headerIn 2s ease-out;
+    }
+
+    @keyframes headerIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    header h1 {
+        font-size: clamp(2.2rem, 5vw, 3.8rem);
+        font-weight: 300;
+        letter-spacing: 0.4em;
+        color: #b5a896;
+        margin-bottom: 28px;
+    }
+
+    header .subtitle {
+        font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+        font-weight: 300;
+        font-style: italic;
+        max-width: 560px;
+        margin: 0 auto 36px;
+        line-height: 1.7;
+        color: var(--text);
+    }
+
+    header .rule {
+        width: 40px;
+        height: 1px;
+        background: var(--accent-dim);
+        margin: 0 auto 28px;
+        opacity: 0.6;
+    }
+
+    header .parameters {
+        font-size: 0.75rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--dim);
+        font-weight: 400;
+    }
+
+    /* Gallery grid */
+    .gallery {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 36px 30px;
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 40px 80px;
+    }
+
+    @media (max-width: 920px) {
+        .gallery { grid-template-columns: repeat(3, 1fr); gap: 28px 22px; padding: 0 28px 60px; }
+    }
+    @media (max-width: 640px) {
+        .gallery { grid-template-columns: repeat(2, 1fr); gap: 20px 16px; padding: 0 16px 50px; }
+    }
+    @media (max-width: 380px) {
+        .gallery { grid-template-columns: 1fr; max-width: 280px; }
+    }
+
+    /* Photo cards */
+    .photo-card {
+        position: relative;
+        cursor: default;
+        animation: cardIn 0.8s ease-out both;
+    }
+
+    @keyframes cardIn {
+        from { opacity: 0; transform: translateY(16px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .canvas-wrap {
+        position: relative;
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        border-radius: 2px;
+        border: 1px solid var(--border);
+        transition: border-color 0.5s;
+    }
+
+    .photo-card:hover .canvas-wrap {
+        border-color: var(--accent-dim);
+    }
+
+    .photo-card canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        opacity: 0.92;
+        transition: opacity 0.5s;
+    }
+
+    .photo-card:hover canvas {
+        opacity: 1;
+    }
+
+    .vignette {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.55) 100%);
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px;
+        opacity: 0;
+        transition: opacity 0.45s ease;
+        z-index: 2;
+        background: rgba(5,4,3,0.72);
+        backdrop-filter: blur(1px);
+        -webkit-backdrop-filter: blur(1px);
+    }
+
+    .photo-card:hover .overlay {
+        opacity: 1;
+    }
+
+    .overlay p {
+        font-style: italic;
+        font-size: 0.92rem;
+        line-height: 1.55;
+        color: #c4a87a;
+        text-align: center;
+        font-weight: 300;
+    }
+
+    .meta {
+        margin-top: 10px;
+        padding: 0 2px;
+    }
+
+    .meta .unit {
+        font-size: 0.78rem;
+        color: #8a7e6e;
+        font-weight: 400;
+        letter-spacing: 0.04em;
+    }
+
+    .meta .loc {
+        font-size: 0.72rem;
+        color: var(--dim);
+        font-weight: 400;
+        letter-spacing: 0.06em;
+        margin-top: 2px;
+    }
+
+    .meta .ts {
+        font-size: 0.68rem;
+        color: var(--accent-dim);
+        font-weight: 300;
+        font-style: italic;
+        margin-top: 3px;
+        opacity: 0.75;
+    }
+
+    .meta .destroyed {
+        font-size: 0.65rem;
+        color: #5a4e3e;
+        font-weight: 300;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-top: 6px;
+        padding-top: 5px;
+        border-top: 1px solid rgba(255,255,255,0.03);
+    }
+
+    /* Footer */
+    footer {
+        text-align: center;
+        padding: 50px 24px 70px;
+        border-top: 1px solid var(--border);
+        margin: 0 auto;
+        max-width: 520px;
+        animation: footerIn 1.5s ease-out 1s both;
+    }
+
+    @keyframes footerIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    footer .rule {
+        width: 40px;
+        height: 1px;
+        background: var(--accent-dim);
+        margin: 0 auto 24px;
+        opacity: 0.5;
+    }
+
+    footer p {
+        font-size: 0.88rem;
+        font-style: italic;
+        font-weight: 300;
+        line-height: 1.7;
+        color: var(--dim);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ambient-layer { animation: none; }
+        .photo-card    { animation: none; }
+        header          { animation: none; }
+        footer          { animation: none; }
+    }
+</style>
+</head>
+<body>
+<div class="ambient-layer"></div>
+<canvas class="noise-layer" id="noiseLayer"></canvas>
+
+<div class="content">
+    <header>
+        <h1>LAST KNOWN</h1>
+        <p class="subtitle">The final photographs from sixteen cameras that were subsequently destroyed. Rendered only from their EXIF metadata — technical residues of scenes never seen again.</p>
+        <div class="rule"></div>
+        <p class="parameters">ISO as grain &middot; Shutter speed as temporal smear &middot; Aperture as depth of field &middot; Coordinates as spatial drift &middot; Timestamp as color temperature</p>
+    </header>
+
+    <main class="gallery" id="gallery"></main>
+
+    <footer>
+        <div class="rule"></div>
+        <p>No images survived. Only these parameters remain — thin ghosts of light that passed through lenses now shattered, burned, or lost.</p>
+    </footer>
+</div>
+
+<script>
+const photographs = [
+    {
+        unit: "Press Pool 12",
+        timestamp: "2019-03-12 06:42:18",
+        iso: 3200, shutter: "1/4000", aperture: 2.8,
+        gps: [48.8566, 2.3522], focalLength: 85, exposureBias: 0,
+        location: "Paris, France",
+        destroyed: "impact",
+        desc: "A quiet afternoon in an empty field. Two children share bread beneath a tall oak."
+    },
+    {
+        unit: "Dashboard Cam WA-1138",
+        timestamp: "2020-07-28 14:15:03",
+        iso: 100, shutter: "1/60", aperture: 22,
+        gps: [40.7128, -74.006], focalLength: 24, exposureBias: 0,
+        location: "New York, USA",
+        destroyed: "crushed",
+        desc: "Calm waters stretching to the horizon. A lone sailboat rests at anchor in stillness."
+    },
+    {
+        unit: "Unit 447-K",
+        timestamp: "2022-11-03 22:08:47",
+        iso: 12800, shutter: "1/30", aperture: 1.4,
+        gps: [35.6762, 139.6503], focalLength: 50, exposureBias: +2,
+        location: "Tokyo, Japan",
+        destroyed: "confiscated and destroyed",
+        desc: "Daylight pours through a cathedral window. Nuns kneel in silent prayer."
+    },
+    {
+        unit: "Survey Unit 7 (Coastal)",
+        timestamp: "2018-06-21 12:00:00",
+        iso: 400, shutter: "1/500", aperture: 8,
+        gps: [48.3705, -4.4866], focalLength: 35, exposureBias: 0,
+        location: "Brittany, France",
+        destroyed: "water damage",
+        desc: "An interior hallway, wallpaper peeling. A grandfather clock reads noon."
+    },
+    {
+        unit: "Satellite (deorbit)",
+        timestamp: "2017-01-15 17:32:09",
+        iso: 50, shutter: "1/2", aperture: 16,
+        gps: [71.2906, 25.9570], focalLength: 80, exposureBias: +1,
+        location: "Nordkapp, Norway",
+        destroyed: "burned on re-entry",
+        desc: "A bustling marketplace. Vendors arrange fruit beneath striped awnings."
+    },
+    {
+        unit: "Trail Camera (Okanagan)",
+        timestamp: "2021-09-05 08:22:33",
+        iso: 800, shutter: "1/2000", aperture: 1.2,
+        gps: [-33.8688, 151.2093], focalLength: 56, exposureBias: 0,
+        location: "Sydney, Australia",
+        destroyed: "fell",
+        desc: "Snow falling on an empty road. Tail lights recede into white silence."
+    },
+    {
+        unit: "Body Cam 05-Delta",
+        timestamp: "2020-12-31 23:59:58",
+        iso: 6400, shutter: "1/15", aperture: 2,
+        gps: [55.7558, 37.6173], focalLength: 35, exposureBias: -1,
+        location: "Moscow, Russia",
+        destroyed: "battery failure",
+        desc: "A single candle burning on a windowsill. Otherwise complete darkness."
+    },
+    {
+        unit: "Tourist Camera (recovered)",
+        timestamp: "2023-04-18 11:45:22",
+        iso: 200, shutter: "1/250", aperture: 5.6,
+        gps: [13.7563, 100.5018], focalLength: 18, exposureBias: 0,
+        location: "Bangkok, Thailand",
+        destroyed: "water damage",
+        desc: "Desert stretching endlessly. A single set of footprints leads nowhere."
+    },
+    {
+        unit: "Unit 22 (press, conflict zone)",
+        timestamp: "2016-08-10 15:30:00",
+        iso: 1600, shutter: "1/1000", aperture: 4,
+        gps: [36.1627, -86.7816], focalLength: 135, exposureBias: 0,
+        location: "Nashville, USA",
+        destroyed: "shrapnel",
+        desc: "A christening party on a village green. Someone is giving a toast."
+    },
+    {
+        unit: "Personal Device — Kowalski, M.",
+        timestamp: "2019-02-14 19:22:11",
+        iso: 320, shutter: "1/8", aperture: 1.8,
+        gps: [37.7749, -122.4194], focalLength: 50, exposureBias: 0,
+        location: "San Francisco, USA",
+        destroyed: "left recording",
+        desc: "Sunrise over calm ocean. A fishing boat returns to harbor."
+    },
+    {
+        unit: "Research Station Cam 3",
+        timestamp: "2021-05-30 04:15:00",
+        iso: 50, shutter: "2", aperture: 11,
+        gps: [27.9881, 86.9250], focalLength: 28, exposureBias: +3,
+        location: "Everest Base Camp, Nepal",
+        destroyed: "ice damage",
+        desc: "A piano recital. Rows of empty seats face a stage no one occupies."
+    },
+    {
+        unit: "Estate Inventory Unit 4",
+        timestamp: "2022-10-01 16:45:33",
+        iso: 100, shutter: "1/60", aperture: 2.8,
+        gps: [41.0082, 28.9784], focalLength: 65, exposureBias: 0,
+        location: "Istanbul, Turkey",
+        destroyed: "confiscated and destroyed",
+        desc: "Deep forest in summer. Dappled light falls through a green canopy."
+    },
+    {
+        unit: "Surveillance Node 9-C",
+        timestamp: "2020-03-15 03:22:17",
+        iso: 3200, shutter: "1/60", aperture: 2,
+        gps: [-22.9068, -43.1729], focalLength: 50, exposureBias: 0,
+        location: "Rio de Janeiro, Brazil",
+        destroyed: "power surge",
+        desc: "A newborn cradled in its mother's arms. The hospital room is bright."
+    },
+    {
+        unit: "Evidence Locker — exhibit unrecoverable",
+        timestamp: "2023-01-07 10:10:10",
+        iso: 200, shutter: "1/1000", aperture: 1.7,
+        gps: [52.5200, 13.4050], focalLength: 28, exposureBias: 0,
+        location: "Berlin, Germany",
+        destroyed: "intentionally destroyed",
+        desc: "A still life: apples and a knife upon a wooden table."
+    },
+    {
+        unit: "Recovered from vehicle",
+        timestamp: "2018-11-22 14:00:00",
+        iso: 400, shutter: "1/125", aperture: 4,
+        gps: [41.9028, 12.4964], focalLength: 80, exposureBias: 0,
+        location: "Rome, Italy",
+        destroyed: "fire",
+        desc: "A formal dinner. Candles burn in silver holders. The guests are standing."
+    },
+    {
+        unit: "Storm Chase Unit 4",
+        timestamp: "2022-06-15 21:30:45",
+        iso: 800, shutter: "1/4", aperture: 2,
+        gps: [59.3293, 18.0686], focalLength: 35, exposureBias: 0,
+        location: "Stockholm, Sweden",
+        destroyed: "lightning strike",
+        desc: "A bus shelter at noon. Commuters wait in patient silence."
+    }
+];
+
+/* ── Utility functions ── */
+
+function mapRange(value, inMin, inMax, outMin, outMax) {
+    return outMin + ((value - inMin) / (inMax - inMin)) * (outMax - outMin);
+}
+
+function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+}
+
+function parseShutter(shutterStr) {
+    if (shutterStr.includes('/')) {
+        const parts = shutterStr.split('/');
+        return parseFloat(parts[0]) / parseFloat(parts[1]);
+    }
+    return parseFloat(shutterStr);
+}
+
+function simpleHash(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+        h = ((h << 5) - h) + str.charCodeAt(i);
+        h |= 0;
+    }
+    return h;
+}
+
+/* ── Color temperature from hour of day ── */
+
+function tempToRGB(hour) {
+    let r, g, b;
+
+    if (hour < 5) {
+        r = 0.08; g = 0.09; b = 0.16;
+    } else if (hour < 7) {
+        const t = (hour - 5) / 2;
+        r = mapRange(t, 0, 1, 0.08, 0.72);
+        g = mapRange(t, 0, 1, 0.09, 0.42);
+        b = mapRange(t, 0, 1, 0.16, 0.22);
+    } else if (hour < 10) {
+        const t = (hour - 7) / 3;
+        r = mapRange(t, 0, 1, 0.72, 0.88);
+        g = mapRange(t, 0, 1, 0.42, 0.76);
+        b = mapRange(t, 0, 1, 0.22, 0.58);
+    } else if (hour < 14) {
+        const t = (hour - 10) / 4;
+        r = mapRange(t, 0, 1, 0.88, 0.95);
+        g = mapRange(t, 0, 1, 0.76, 0.90);
+        b = mapRange(t, 0, 1, 0.58, 0.82);
+    } else if (hour < 17) {
+        const t = (hour - 14) / 3;
+        r = mapRange(t, 0, 1, 0.95, 0.90);
+        g = mapRange(t, 0, 1, 0.90, 0.72);
+        b = mapRange(t, 0, 1, 0.82, 0.38);
+    } else if (hour < 19.5) {
+        const t = (hour - 17) / 2.5;
+        r = mapRange(t, 0, 1, 0.90, 0.68);
+        g = mapRange(t, 0, 1, 0.72, 0.28);
+        b = mapRange(t, 0, 1, 0.38, 0.12);
+    } else if (hour < 21) {
+        const t = (hour - 19.5) / 1.5;
+        r = mapRange(t, 0, 1, 0.68, 0.25);
+        g = mapRange(t, 0, 1, 0.28, 0.12);
+        b = mapRange(t, 0, 1, 0.12, 0.22);
+    } else {
+        const t = (hour - 21) / 3;
+        r = mapRange(t, 0, 1, 0.25, 0.08);
+        g = mapRange(t, 0, 1, 0.12, 0.09);
+        b = mapRange(t, 0, 1, 0.22, 0.16);
+    }
+
+    return [clamp(r, 0, 1), clamp(g, 0, 1), clamp(b, 0, 1)];
+}
+
+/* ── Procedural photograph renderer ── */
+
+function renderPhoto(canvas, photo, time) {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    if (w === 0 || h === 0) return;
+
+    canvas.width  = w * dpr;
+    canvas.height = h * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    /* Parse EXIF into normalized values */
+    const ts = new Date(photo.timestamp);
+    const hour = ts.getHours() + ts.getMinutes() / 60;
+    const [tr, tg, tb] = tempToRGB(hour);
+    const expBias = photo.exposureBias || 0;
+    const expMul  = Math.pow(2, expBias);
+
+    const isoN = clamp(
+        (Math.log2(photo.iso) - Math.log2(50)) / (Math.log2(12800) - Math.log2(50)),
+        0, 1
+    );
+
+    const shutterVal = parseShutter(photo.shutter);
+    const logShut    = Math.log10(Math.max(shutterVal, 0.0001));
+    const shutterN   = clamp(
+        (logShut - Math.log10(1 / 8000)) / (Math.log10(2) - Math.log10(1 / 8000)),
+        0, 1
+    );
+
+    const apertureN = clamp((photo.aperture - 1.2) / (22 - 1.2), 0, 1);
+
+    const latD  = (photo.gps[0] - 20) / 60;
+    const lonD  = (photo.gps[1] - 10) / 120;
+    const focalN = clamp((photo.focalLength - 14) / (135 - 14), 0, 1);
+
+    /* Deterministic RNG seeded from timestamp */
+    let seed = Math.abs(simpleHash(photo.timestamp));
+    function srand() {
+        seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+        return seed / 0x7fffffff;
+    }
+
+    /* Slow ambient oscillation */
+    const t = time * 0.00004;
+    const driftX = Math.sin(t * 3.1 + lonD * 2) * 1.5;
+    const driftY = Math.cos(t * 2.7 + latD * 2) * 1.0;
+
+    /* ── BASE FILL ── */
+    ctx.save();
+    ctx.translate(driftX, driftY);
+
+    const baseBri = mapRange(expBias, -3, 3, 0.06, 0.22);
+    ctx.fillStyle = `rgb(${Math.floor(tr * baseBri * 255)},${Math.floor(tg * baseBri * 255)},${Math.floor(tb * baseBri * 255)})`;
+    ctx.fillRect(-5, -5, w + 10, h + 10);
+
+    /* ── DEPTH OF FIELD GLOW (aperture → bokeh rings) ── */
+    const numRings = Math.floor(mapRange(apertureN, 0, 1, 3, 12));
+    for (let i = 0; i < numRings; i++) {
+        const cx     = w / 2 + latD * w * 0.25 + (srand() - 0.5) * w * 0.15;
+        const cy     = h / 2 + lonD * h * 0.25 + (srand() - 0.5) * h * 0.15;
+        const radius = Math.max(5, mapRange(i, 0, numRings, w * 0.04, w * 0.55));
+        const bri    = mapRange(apertureN, 0, 1, 0.45, 0.07) * expMul;
+        const alpha  = mapRange(i, 0, numRings, 0.14, 0.03);
+
+        const cr = clamp(tr * bri + (srand() - 0.5) * 0.08, 0, 1);
+        const cg = clamp(tg * bri + (srand() - 0.5) * 0.06, 0, 1);
+        const cb = clamp(tb * bri + (srand() - 0.5) * 0.04, 0, 1);
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${Math.floor(cr * 255)},${Math.floor(cg * 255)},${Math.floor(cb * 255)},${alpha})`;
+        ctx.fill();
+    }
+
+    /* Bokeh highlight discs (wide aperture only) */
+    if (apertureN < 0.35) {
+        const bokehCount = Math.floor(mapRange(apertureN, 0, 0.35, 10, 2));
+        for (let i = 0; i < bokehCount; i++) {
+            const bx = srand() * w;
+            const by = srand() * h;
+            const br = Math.max(3, srand() * w * 0.06 + w * 0.01);
+            const ba = clamp(srand() * 0.12 * (1 - apertureN) * 2, 0.02, 0.18);
+
+            ctx.beginPath();
+            ctx.arc(bx, by, br, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${Math.floor(tr * 280)},${Math.floor(tg * 260)},${Math.floor(tb * 240)},${ba})`;
+            ctx.fill();
+        }
+    }
+
+    /* ── TEMPORAL SMEAR LAYERS (shutter speed → motion streaks) ── */
+    const numLayers = Math.floor(mapRange(shutterN, 0, 1, 1, 9));
+    const smearX    = mapRange(shutterN, 0, 1, 0, w * 0.35);
+
+    for (let layer = 0; layer < numLayers; layer++) {
+        const layerAlpha = mapRange(layer, 0, numLayers, 0.08, 0.02) * expMul;
+        const layerX     = mapRange(layer, 0, Math.max(1, numLayers - 1), 0, smearX);
+        const bri        = mapRange(expBias, -3, 3, 0.1, 0.3);
+
+        ctx.globalAlpha = layerAlpha;
+
+        const streakCount = Math.floor(mapRange(shutterN, 0, 1, 2, 8));
+        for (let s = 0; s < streakCount; s++) {
+            const sx  = srand() * w + layerX;
+            const sy  = srand() * h;
+            const sw  = Math.max(2, srand() * w * 0.35 * shutterN + 8);
+            const sh2 = Math.max(1, srand() * h * 0.08 + 1.5);
+
+            const sr  = clamp(tr * bri + (srand() - 0.5) * 0.12, 0, 1);
+            const sg2 = clamp(tg * bri + (srand() - 0.5) * 0.08, 0, 1);
+            const sb  = clamp(tb * bri + (srand() - 0.5) * 0.06, 0, 1);
+
+            ctx.fillStyle = `rgb(${Math.floor(sr * 255)},${Math.floor(sg2 * 255)},${Math.floor(sb * 255)})`;
+            ctx.fillRect(sx, sy, sw, sh2);
+        }
+
+        /* Soft motion ellipses for slow shutter */
+        if (shutterN > 0.25) {
+            const shapeCount = Math.floor(shutterN * 5);
+            for (let s2 = 0; s2 < shapeCount; s2++) {
+                const sx2   = srand() * w * 0.8 + layerX * 0.5;
+                const sy2   = srand() * h;
+                const sw2   = Math.max(4, srand() * w * 0.2);
+                const sh3   = Math.max(3, srand() * h * 0.2);
+                const salpha = shutterN * 0.04 * expMul;
+
+                ctx.fillStyle = `rgba(${Math.floor(tr * 180)},${Math.floor(tg * 160)},${Math.floor(tb * 140)},${salpha})`;
+                ctx.beginPath();
+                ctx.ellipse(sx2, sy2, Math.max(1, sw2 / 2), Math.max(1, sh3 / 2), srand() * Math.PI, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        ctx.globalAlpha = 1;
+    }
+
+    /* ── FOCAL STRUCTURE LINES (focal length → perspective geometry) ── */
+    const lineCount = Math.floor(mapRange(focalN, 0, 1, 2, 10));
+    for (let i = 0; i < lineCount; i++) {
+        const alpha    = mapRange(focalN, 0, 1, 0.03, 0.09);
+        const lx       = srand() * w;
+        const ly       = srand() * h;
+        const ang      = srand() * Math.PI;
+        const len      = Math.max(5, srand() * w * 0.5 * focalN + 5);
+        const angleOff = focalN > 0.5 ? 0 : srand() * 0.5;
+
+        ctx.beginPath();
+        ctx.moveTo(lx, ly);
+        ctx.lineTo(lx + Math.cos(ang + angleOff) * len, ly + Math.sin(ang + angleOff) * len);
+        ctx.strokeStyle = `rgba(${Math.floor(tr * 200)},${Math.floor(tg * 180)},${Math.floor(tb * 160)},${alpha})`;
+        ctx.lineWidth = 0.5 + focalN * 1.5;
+        ctx.stroke();
+    }
+
+    /* ── HIGH-ISO GRAIN (direct pixel manipulation for performance) ── */
+    const grainDensity = isoN * 0.18;
+    if (grainDensity > 0.01) {
+        const pw = Math.floor(w * dpr);
+        const ph = Math.floor(h * dpr);
+        const imgData = ctx.getImageData(0, 0, pw, ph);
+        const pixels  = imgData.data;
+        const grainPixelCount = Math.floor(pw * ph * grainDensity);
+
+        for (let i = 0; i < grainPixelCount; i++) {
+            const px  = Math.floor(srand() * pw);
+            const py  = Math.floor(srand() * ph);
+            const idx = (py * pw + px) * 4;
+
+            const brightness = srand() * 90 * isoN * expMul + 10;
+            const gr = clamp(brightness * tr * 1.3 + 15, 0, 255);
+            const gg = clamp(brightness * tg * 1.3 + 12, 0, 255);
+            const gb = clamp(brightness * tb * 1.3 + 10, 0, 255);
+
+            pixels[idx]     = Math.min(255, pixels[idx]     + Math.floor(gr * 0.5));
+            pixels[idx + 1] = Math.min(255, pixels[idx + 1] + Math.floor(gg * 0.5));
+            pixels[idx + 2] = Math.min(255, pixels[idx + 2] + Math.floor(gb * 0.5));
+        }
+
+        ctx.putImageData(imgData, 0, 0);
+    }
+
+    /* ── HOT PIXELS (sensor artifacts at very high ISO) ── */
+    if (photo.iso >= 6400) {
+        const hpCount = Math.floor((photo.iso - 6400) / 6400 * 8 + 2);
+        for (let i = 0; i < hpCount; i++) {
+            const hx   = srand() * w;
+            const hy   = srand() * h;
+            const hcol = srand() > 0.5 ? [255, 80, 80] : [80, 255, 80];
+
+            ctx.fillStyle = `rgba(${hcol[0]},${hcol[1]},${hcol[2]},0.6)`;
+            ctx.fillRect(hx - 1, hy - 1, 3, 3);
+        }
+    }
+
+    /* ── LIGHT LEAK (slow shutter → exposure bloom) ── */
+    if (shutterVal > 0.3) {
+        const leakR = Math.max(1, w * 0.35);
+        const grad  = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, leakR);
+        const la    = clamp(shutterN * 0.12 * expMul, 0, 0.2);
+
+        grad.addColorStop(0, `rgba(${Math.floor(tr * 255)},${Math.floor(tg * 240)},${Math.floor(tb * 200)},${la})`);
+        grad.addColorStop(1, `rgba(0,0,0,0)`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+    }
+
+    /* ── EXPOSURE BLOOM (positive bias → golden haze) ── */
+    if (photo.exposureBias >= 2) {
+        const bloomR = Math.max(1, w * 0.45);
+        const bg = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, bloomR);
+        bg.addColorStop(0, `rgba(255,250,230,0.08)`);
+        bg.addColorStop(1, `rgba(0,0,0,0)`);
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+    }
+
+    ctx.restore();
+}
+
+/* ── Static noise texture for page overlay ── */
+
+function generateNoiseTexture() {
+    const c   = document.getElementById('noiseLayer');
+    c.width   = 200;
+    c.height  = 200;
+    const ctx = c.getContext('2d');
+    const img = ctx.createImageData(200, 200);
+
+    for (let i = 0; i < img.data.length; i += 4) {
+        const v = Math.random() * 255;
+        img.data[i]     = v;
+        img.data[i + 1] = v;
+        img.data[i + 2] = v;
+        img.data[i + 3] = 255;
+    }
+
+    ctx.putImageData(img, 0, 0);
+}
+
+/* ── Build the gallery from photograph data ── */
+
+function buildGallery() {
+    const gallery = document.getElementById('gallery');
+
+    photographs.forEach((photo, idx) => {
+        const card = document.createElement('article');
+        card.className = 'photo-card';
+        card.style.animationDelay = `${idx * 0.08 + 0.3}s`;
+
+        /* Canvas container */
+        const wrap = document.createElement('div');
+        wrap.className = 'canvas-wrap';
+
+        const canvas = document.createElement('canvas');
+        canvas.setAttribute('role', 'img');
+        canvas.setAttribute('aria-label',
+            `Abstract rendering from EXIF data: ${photo.unit} at ${photo.location}`);
+
+        const vig = document.createElement('div');
+        vig.className = 'vignette';
+
+        const overlay = document.createElement('div');
+        overlay.className = 'overlay';
+        const desc = document.createElement('p');
+        desc.textContent = photo.desc;
+        overlay.appendChild(desc);
+
+        wrap.appendChild(canvas);
+        wrap.appendChild(vig);
+        wrap.appendChild(overlay);
+
+        /* Metadata block */
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+
+        const unitEl = document.createElement('div');
+        unitEl.className = 'unit';
+        unitEl.textContent = photo.unit;
+
+        const locEl = document.createElement('div');
+        locEl.className = 'loc';
+        locEl.textContent = photo.location;
+
+        const tsEl = document.createElement('div');
+        tsEl.className = 'ts';
+        tsEl.textContent = photo.timestamp;
+
+        const destroyedEl = document.createElement('div');
+        destroyedEl.className = 'destroyed';
+        destroyedEl.textContent = photo.destroyed;
+
+        meta.appendChild(unitEl);
+        meta.appendChild(locEl);
+        meta.appendChild(tsEl);
+        meta.appendChild(destroyedEl);
+
+        card.appendChild(wrap);
+        card.appendChild(meta);
+        gallery.appendChild(card);
+    });
+}
+
+/* ── Animation loop (only renders visible canvases) ── */
+
+let animRunning = true;
+
+function animate(time) {
+    if (!animRunning) return;
+
+    const canvases = document.querySelectorAll('.photo-card canvas');
+    canvases.forEach((canvas, i) => {
+        const rect = canvas.getBoundingClientRect();
+        /* Skip if off-screen */
+        if (rect.bottom > -50 && rect.top < window.innerHeight + 50) {
+            renderPhoto(canvas, photographs[i], time);
+        }
+    });
+
+    requestAnimationFrame(animate);
+}
+
+/* ── Initialize ── */
+
+generateNoiseTexture();
+buildGallery();
+
+/* Double-rAF ensures layout is settled before first render */
+requestAnimationFrame(() => {
+    requestAnimationFrame((time) => {
+        animate(time);
+    });
+});
+</script>
+</body>
+</html>
