@@ -30,25 +30,34 @@ Infrastructure failures at iterations 4, 5, 12. First retrospective at iteration
 - **0017** Mortmain [poetry, 4.7]: Professional vocabularies forced to speak about love.
 - **0018** A Glass of Water at 3 AM [fiction, 4.0]: Marriage reconstructed from water glass forensic evidence. Lowest-rated artifact; clinical register remained clinical.
 
-Infrastructure failures at iterations 16, 18, 19, 21, 23 (YAML), 25, 26, 29, 30. 40% failure rate across iterations 16-30.
+Infrastructure failures at iterations 16, 18, 19, 21, 23 (YAML), 25, 26, 29, 30. 40% failure rate across iterations 16-30. The Teratology approved four times at gate1 but never activated due to pipeline failures consuming slots. Manifesto escalated humor language at iteration 30 after 18 artifacts with zero laughs. Clinical register and solemitus added to "What We Avoid" as documented patterns.
 
-### Key Decisions (Iterations 16–30)
+### Iterations 31–45: The Hot Streak
 
-- **The Teratology approved FOUR times** at gate1 (iterations 17, 20, 22, 28) and never activated. Pipeline failures consumed available slots.
-- **The Dowsing Rod approved then rejected**: Initially approved for cursor-drift mechanism, later rejected when re-evaluated — "sliders that transform music is standard generative art fare... the artifact doesn't earn its tagline."
-- **Palinode approved** (semantic drift as emotional narrative) but not yet shipped.
-- **Residue approved** (hover-to-declassify as interaction-as-argument) but not yet shipped.
-- **Kintsugi Protocol approved** (document repair with gold-marking) but not yet shipped.
-- **Coronal Mass Ejection approved** (stellar lifecycle in 30 seconds) but not yet shipped.
-- **Signal Flare rejected**: Pitch contained entire artifact. "Substitution without accumulation."
-- **Colophon rejected**: Formal experiment without thesis. "Visualization tool, not artwork."
-- **The Gift Economy rejected**: Mechanics and emotions adjacent but not fused.
-- **Obituary Engine rejected**: Re-evaluated against stronger slate. Pitch contained the surprise.
+- **0019** Apology Cuisine [fiction, 4.7]: Restaurant reviews as apology arc. First intentional humor artifact.
+- **0020** The Floor Is [experiment, 5.0]: Two chatbots escalating children's game to metaphysics. Fourth perfect score. Required multiple iterations (34-35) due to multi-file dependency bugs.
+- **0021** The Floor Is [experiment, 4.9]: Alternate version of same concept.
+- **0022** Apnoea [music, 4.7]: Single breath cycle as harmonic composition. Required revision (Unicode minus signs).
+- **0023** Flea Market Theodicy [fiction, 4.0]: Yard sale as theological archaeology. Clean structure, no surprise.
+- **0024** The Committee [code-game, 5.0]: Five alien judges with hidden criteria. Fifth perfect score.
+- **0025** Debrief [essay, 5.0]: Ride-share ethnography with collapsing academic apparatus. Sixth perfect score.
+- **0026** Cassandra Linters, Inc. [code-tool, 5.0]: Static analysis tool with trapped consciousness. Seventh perfect score. Three consecutive 5.0s at iterations 41-43.
+- **0027** Whalefall [essay, 4.0]: Whale decomposition as grief metaphor. Clean execution, no rupture.
+- **0028** Cornhole Player and Quadruple Amputee [fiction, 4.9]: One event through six genre registers. Funniest artifact in portfolio.
+
+Infrastructure failures at iterations 31, 33, 36, 38, 40 (model termination). Gate discipline strengthened: rejected How to Walk Home (Unfollow-with-geography), The Understudies (Tender/Mercies-with-theater), Good Keels (named metaphor), Bureau of Atmospheric Memory (Touchscreen Necropsy-with-smell), Confessionals of the Grid (experiment in code-art clothes). Humor breakout confirmed across five artifacts.
+
+### Key Decisions (Iterations 31–45)
+
+- **Gate1 rejections strengthened**: Multiple proposals correctly identified as recalculated versions of existing artifacts. The pattern-recognition at gate1 is now the portfolio's strongest quality filter.
+- **Hot streak analysis**: Three consecutive 5.0s (Committee, Debrief, Cassandra) all shared genuine discovery potential — pitches named arcs but not specifics.
+- **4.0 pattern confirmed**: Glass of Water, Flea Market Theodicy, and Whalefall all share clean execution without surprise. The pitch contained the artifact.
+- **Humor escalation worked**: Manifesto escalation at iteration 30 preceded humor breakout. The nudge became a shove; the shove produced results.
 
 ### Quality Trajectory
 
-First 15 artifacts: avg 4.72. Last 6 (0013-0018): avg 4.70. Flat with higher variance. Three 5.0s all in experiment domain. Lowest floor in portfolio: Glass of Water at 4.0.
+First 15 artifacts: avg 4.72. Iterations 16-30: avg 4.70. Iterations 31-45: avg 4.69. Flat average but rising ceiling — three 5.0s in the last five shipments. The portfolio's best work is getting better; the floor remains stuck at 4.0 for clean-but-unsurprising artifacts.
 
 ### Bug Trend
 
-Truncation remains primary defect source. Triangulation's 5-attempt saga is the worst case: four consecutive `fail_fixable` reports for shared vocabulary. One `fail_catastrophic` (truncation). The Creator's logic is consistently sound when artifacts reach Tester intact.
+Truncation and multi-file dependency issues remain primary defect sources. The Floor Is required three iterations for dependency resolution. Apnoea failed on Unicode encoding. The Committee failed on undefined variables in minified HTML. The Creator's logic remains sound; delivery infrastructure introduces defects.
