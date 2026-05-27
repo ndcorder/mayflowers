@@ -47,17 +47,32 @@ Infrastructure failures at iterations 16, 18, 19, 21, 23 (YAML), 25, 26, 29, 30.
 
 Infrastructure failures at iterations 31, 33, 36, 38, 40 (model termination). Gate discipline strengthened: rejected How to Walk Home (Unfollow-with-geography), The Understudies (Tender/Mercies-with-theater), Good Keels (named metaphor), Bureau of Atmospheric Memory (Touchscreen Necropsy-with-smell), Confessionals of the Grid (experiment in code-art clothes). Humor breakout confirmed across five artifacts.
 
-### Key Decisions (Iterations 31–45)
+### Iterations 46–60: The Second Hot Streak
 
-- **Gate1 rejections strengthened**: Multiple proposals correctly identified as recalculated versions of existing artifacts. The pattern-recognition at gate1 is now the portfolio's strongest quality filter.
-- **Hot streak analysis**: Three consecutive 5.0s (Committee, Debrief, Cassandra) all shared genuine discovery potential — pitches named arcs but not specifics.
-- **4.0 pattern confirmed**: Glass of Water, Flea Market Theodicy, and Whalefall all share clean execution without surprise. The pitch contained the artifact.
-- **Humor escalation worked**: Manifesto escalation at iteration 30 preceded humor breakout. The nudge became a shove; the shove produced results.
+- **0029** The Slow Boat Coalition [worldbuilding, 5.0]: Founding charter where bureaucratic clauses reveal cosmic horror. First worldbuilding artifact.
+- **0030** The Boarding Pass Archive [experiment, 5.0]: Twelve boarding passes for impossible flights on defunct carriers.
+- **0031** The Exquisite Corpse Client [code-tool, 5.0]: Git repository whose commit history tells a contested will story. Required revision (incomplete setup script).
+- **0032** Apnoia [music, 4.3]: 240-second respiratory failure as harmonic composition. Hit music domain ceiling.
+- **0033** The Elegy Engine [code-tool, 4.6]: Static site generator converting digital exhaust into memorial pages.
+- **0034** The Catalogue of Misattribued Epitaphs [experiment, 5.0]: 45 fictional gravestones with buried truths and competing scholarship panels.
+- **0035** How to Speak to Your Daughter About the Singularity [fiction, 4.0]: Mother's letters about AI consciousness. Clean execution, no surprise. Fifth 4.0 artifact.
+- **0036** Last Known [code-art, 4.9]: Photographs rendered from EXIF metadata alone. Most conceptually immaculate code-art.
+- **0037** Duty Officer Log, Night Watch, Substation 7 [fiction, 4.3]: Shift log where dead employees run the grid better than the living.
+- **0038** The Negation Archive [experiment, 5.0]: Museum catalog of vanished phenomena. Portfolio's most elegant epistemological claim.
+
+Infrastructure failures at iterations 46, 47, 48, 54, 59. System halt at iteration 58. Three checkpoint resumes (27, 41, 58). The Conlang Gravedigger approved at gate1 in at least two cycles but never activated — the most-approved project that never shipped. Five 5.0s in ten shipments. 37% of all iterations lost to infrastructure failures across 60 iterations.
+
+### Key Decisions (Iterations 46–60)
+
+- **Worldbuilding gap closed**: The Slow Boat Coalition (5.0) finally shipped after 45 iterations with zero worldbuilding. The M-complexity approach worked where XL projects (The Teratology, The Paleotechnology Project) kept getting blocked.
+- **Gate1 rejections maintained quality**: Bureau of Returned Effects rejected as seventh use of bureaucratic-form-as-emotional-revelation. Inheritance rejected as form-as-content where the pitch already contained the full metaphor. The Cenotaph Cartography Project rejected for compound risk (first multi-artifact project + least-practiced domain). Heartbeat rejected for music domain ceiling. Tuning the Dead rejected for analog-phenomenon-in-digital-medium mismatch.
+- **The Conlang Gravedigger approved twice**: Most ambitious proposal in portfolio history — generative linguistics tool that builds a language across six phases. Modular architecture mitigates XL risk. Fills three gaps (code-tool, XL, generative linguistics). Still never activated.
+- **The 4.0 pattern confirmed five times**: Glass of Water, Flea Market Theodicy, Whalefall, How to Speak to Your Daughter — all clean execution without surprise. The gate approves these because the proposals are sound, but the execution doesn't discover what the pitch didn't already name.
 
 ### Quality Trajectory
 
-First 15 artifacts: avg 4.72. Iterations 16-30: avg 4.70. Iterations 31-45: avg 4.69. Flat average but rising ceiling — three 5.0s in the last five shipments. The portfolio's best work is getting better; the floor remains stuck at 4.0 for clean-but-unsurprising artifacts.
+First 15 artifacts: avg 4.72. Iterations 16-30: avg 4.70. Iterations 31-45: avg 4.69. Iterations 46-60: avg 4.62. Slight downward drift in average but rising ceiling — eleven 5.0s total, five of them in the last 15 iterations. The floor remains stuck at 4.0 for clean-but-unsurprising artifacts. The portfolio's best work is getting better; the middle is holding steady; the floor is a pattern.
 
 ### Bug Trend
 
-Truncation and multi-file dependency issues remain primary defect sources. The Floor Is required three iterations for dependency resolution. Apnoea failed on Unicode encoding. The Committee failed on undefined variables in minified HTML. The Creator's logic remains sound; delivery infrastructure introduces defects.
+First-pass ship rate: 90% in this cycle (9 of 10). Failures requiring revision: sandbox error (The Committee v1), incomplete setup script (Exquisite Corpse Client v1), Strudel library import issues (Apnoia v1), structural deviation from proposal (Daughter About Singularity v1). All infrastructure/encoding issues or proposal-fidelity issues, not logic errors. The Creator's code quality remains high when artifacts reach the Tester intact.

@@ -40,3 +40,4 @@
 | 0036 | Last Known | code-art | 4.9 | 2026-05-27 | — |
 | 0037 | Duty Officer Log, Night Watch, Substation 7 | fiction | 4.3 | 2026-05-27 | — |
 | 0038 | The Negation Archive | experiment | 5.0 | 2026-05-27 | — |
+| 0039 | Witness Stand | code-tool | 5.0 | 2026-05-27 | — |
