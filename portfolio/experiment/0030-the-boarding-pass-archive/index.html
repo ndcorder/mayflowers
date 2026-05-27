@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Boarding Pass Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --card: #ede6d6;
+    --ink: #1a1a1a;
+    --accent: #b71c1c;
+    --muted: #999;
+    --border: #bbb;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: #d0d0d0;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(183,28,28,0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(60,40,20,0.05) 0%, transparent 40%),
+      radial-gradient(ellipse at 50% 80%, rgba(80,60,30,0.04) 0%, transparent 45%);
+  }
+  #archive-header {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 80px 20px 40px;
+    text-align: center;
+  }
+  #archive-header h1 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  #archive-header .subtitle {
+    font-size: 11px;
+    font-weight: 300;
+    color: #666;
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+    line-height: 1.7;
+  }
+  #archive-header .count {
+    font-size: 10px;
+    color: #444;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border-top: 1px solid #222;
+    display: inline-block;
+    padding-top: 16px;
+  }
+  #pass-container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding-bottom: 120px;
+  }
+  .boarding-pass {
+    position: relative;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .boarding-pass.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .bp-index {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: #333;
+    margin-bottom: 8px;
+    padding-left: 4px;
+    text-transform: uppercase;
+  }
+  .bp-card {
+    background: var(--card);
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 1px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .bp-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--accent);
+    z-index: 1;
+  }
+  .bp-airline {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #777;
+    margin-bottom: 4px;
+    padding: 0 18px;
+    padding-top: 16px;
+    font-weight: 600;
+  }
+  .bp-flight-num {
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: #555;
+    padding: 0 18px;
+    padding-top: 2px;
+    font-weight: 400;
+  }
+  .bp-route {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 18px 18px 0;
+  }
+  .bp-route-city {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .bp-route-arrow {
+    font-size: 10px;
+    color: #888;
+    letter-spacing: 2px;
+    margin-bottom: 3px;
+  }
+  .bp-main {
+    display: flex;
+    position: relative;
+  }
+  .bp-main .bp-field-group {
+    flex: 1;
+    padding: 16px 18px;
+  }
+  .bp-main .bp-field-group:last-child {
+    border-left: 1px dashed var(--border);
+  }
+  .bp-tear {
+    position: relative;
+    height: 0;
+    display: flex;
+    align-items: center;
+  }
+  .bp-tear::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    top: -1px;
+    border-top: 2px dashed var(--border);
+  }
+  .bp-tear-scissors {
+    position: absolute;
+    left: -6px;
+    background: var(--card);
+    padding: 0 3px;
+    color: #555;
+    font-size: 10px;
+    line-height: 1;
+  }
+  .bp-stub {
+    display: flex;
+    position: relative;
+  }
+  .bp-stub .bp-field-group {
+    flex: 1;
+    padding: 14px 18px 16px;
+  }
+  .bp-stub .bp-field-group:last-child {
+    border-left: 1px dashed var(--border);
+  }
+  .bp-field {
+    margin-bottom: 10px;
+  }
+  .bp-field:last-child { margin-bottom: 0; }
+  .bp-field-label {
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 2px;
+    font-weight: 500;
+  }
+  .bp-field-value {
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+  }
+  .bp-field-value.small {
+    font-size: 11px;
+  }
+  .bp-field-value.tight {
+    letter-spacing: 0;
+  }
+  .bp-field-value.mono {
+    font-variant-numeric: tabular-nums;
+  }
+  .bp-status {
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 0 18px 14px;
+  }
+  .bp-status.cancelled { color: var(--accent); }
+  .bp-status.delayed { color: #e65100; }
+  .bp-status.boarding { color: #2e7d32; }
+  .bp-status.closed { color: #555; }
+  .bp-status.departed { color: #555; }
+  .bp-status.diverted { color: #6a1b9a; }
+  .bp-status.final { color: var(--accent); font-weight: 700; }
+  .bp-barcode-wrap {
+    padding: 8px 0 4px;
+  }
+  .bp-barcode {
+    display: flex;
+    gap: 1px;
+    align-items: flex-end;
+    height: 36px;
+  }
+  .bp-barcode .bar {
+    background: var(--ink);
+    min-width: 1px;
+  }
+  .bp-barcode-label {
+    font-size: 7px;
+    color: #999;
+    margin-top: 3px;
+    letter-spacing: 4px;
+    word-break: break-all;
+  }
+  /* Anomaly hover — passenger fragment */
+  .anomaly {
+    cursor: help;
+    position: relative;
+    border-bottom: 1px dotted var(--accent);
+    color: var(--accent) !important;
+    transition: background 0.2s;
+  }
+  .anomaly:hover {
+    background: rgba(183,28,28,0.08);
+  }
+  .anomaly-fragment {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: #d4c5b0;
+    font-size: 11px;
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.5;
+    padding: 10px 14px;
+    border-radius: 2px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+    z-index: 10;
+    max-width: 300px;
+    white-space: normal;
+    border-left: 2px solid var(--accent);
+    letter-spacing: 0;
+  }
+  .anomaly-fragment::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px 5px 0;
+    border-style: solid;
+    border-color: #1a1a1a transparent transparent;
+  }
+  .anomaly:hover .anomaly-fragment {
+    opacity: 1;
+  }
+  .anomaly-context {
+    display: block;
+    font-size: 9px;
+    color: #666;
+    font-style: normal;
+    margin-top: 5px;
+    letter-spacing: 0.5px;
+  }
+  /* Final pass — special note below stub */
+  .bp-final-note {
+    font-size: 10px;
+    color: var(--accent);
+    font-style: italic;
+    padding: 10px 18px 14px;
+    border-top: 1px solid #d4cfc4;
+    line-height: 1.5;
+    letter-spacing: 0;
+  }
+  /* Scanner trigger button */
+  #scan-trigger {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 100;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-family: inherit;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.2s, transform 0.2s;
+    font-weight: 600;
+  }
+  #scan-trigger:hover { background: #8b0000; transform: scale(1.03); }
+  #scan-trigger:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  #scan-trigger.active { background: #333; }
+  /* Scanner overlay */
+  #scan-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5,5,5,0.96);
+    z-index: 99;
+    display: none;
+    overflow-y: auto;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+  #scan-overlay.visible { display: block; }
+  #scan-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+  #scan-inner h2 {
+    font-size: 10px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  #scan-subtitle {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 36px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    line-height: 1.6;
+  }
+  .scan-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 18px 0;
+    border-bottom: 1px solid #1a1a1a;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: scanReveal 0.4s ease forwards;
+  }
+  @keyframes scanReveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .scan-class {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent);
+    width: 50px;
+    text-align: center;
+    flex-shrink: 0;
+    line-height: 1;
+    padding-top: 2px;
+  }
+  .scan-details { flex: 1; }
+  .scan-state {
+    font-size: 12px;
+    color: #d4c5b0;
+    font-weight: 500;
+    margin-bottom: 3px;
+    letter-spacing: 0.5px;
+  }
+  .scan-desc {
+    font-size: 10px;
+    color: #666;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+  .scan-legend {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid #1a1a1a;
+  }
+  .scan-legend p {
+    font-size: 9px;
+    color: #444;
+    letter-spacing: 1px;
+    line-height: 1.7;
+  }
+  .scan-close {
+    display: inline-block;
+    margin-top: 32px;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    cursor: pointer;
+    border: 1px solid var(--accent);
+    padding: 8px 20px;
+    background: none;
+    font-family: inherit;
+    transition: background 0.2s, color 0.2s;
+  }
+  .scan-close:hover { background: var(--accent); color: #fff; }
+  .scan-close:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  /* Final pass — intensified top bar and glow */
+  .boarding-pass.final-pass .bp-card::before {
+    background: linear-gradient(90deg, var(--accent), #8b0000, var(--accent));
+  }
+  .boarding-pass.final-pass .bp-card {
+    box-shadow: 0 2px 20px rgba(183,28,28,0.25), 0 0 1px rgba(0,0,0,0.3);
+  }
+  /* Responsive */
+  @media (max-width: 640px) {
+    #archive-header { padding: 50px 16px 30px; }
+    #pass-container { padding: 16px; gap: 36px; }
+    .bp-route-city { font-size: 20px; }
+    .bp-field-value { font-size: 11px; }
+    .bp-field-label { font-size: 7px; }
+    .bp-main .bp-field-group { padding: 14px 12px 12px; }
+    .bp-stub .bp-field-group { padding: 12px; }
+    .bp-route { padding: 14px 12px 0; }
+    .bp-airline { padding: 14px 12px 0; }
+    .bp-flight-num { padding: 2px 12px 0; }
+    .bp-status { padding: 0 12px 12px; }
+    .anomaly-fragment { font-size: 10px; padding: 8px 10px; max-width: 240px; }
+    #scan-trigger { bottom: 16px; right: 16px; font-size: 8px; padding: 8px 14px; }
+    .scan-row { gap: 16px; }
+    #scan-inner { padding: 40px 16px 60px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .boarding-pass { opacity: 1; transform: none; transition: none; }
+    .scan-row { animation: none; opacity: 1; transform: none; }
+    #scan-trigger, .anomaly, .scan-close { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header id="archive-header">
+  <h1>The Boarding Pass Archive</h1>
+  <p class="subtitle">A collection of twelve boarding passes for flights<br>that never existed, kept in no particular order.</p>
+  <span class="count">12 items</span>
+</header>
+
+<div id="pass-container" role="list"></div>
+
+<button id="scan-trigger" aria-label="Open fare class scanner">
+  Fare Class Scanner
+</button>
+
+<div id="scan-overlay" role="dialog" aria-modal="true" aria-label="Fare class emotional state mapping">
+  <div id="scan-inner">
+    <h2>Fare Class Emotional State Mapping</h2>
+    <p id="scan-subtitle">Internal reference only. Classification derived from OAK-7712/4 post-processing.</p>
+    <div id="scan-results"></div>
+    <div class="scan-legend">
+      <p>System note: Code designations assigned during OAK-7712 retrospective analysis. Not for operational use. Emotional valence indices above threshold 0.7 flagged for review. Twelve of forty-seven records retained.</p>
+    </div>
+    <button class="scan-close" id="scan-close-btn">Close Scanner</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ── Boarding Pass Data ────────────────────────────────── */
+
+  var PASS_DATA = [
+    {
+      airline: 'PAN AMERICAN WORLD AIRWAYS',
+      airline_note: 'Ceased operations December 4, 1991',
+      flight: 'PA 114',
+      date: '03 MAR 2003',
+      from_code: 'JFK', from_city: 'NEW YORK',
+      to_code: 'HNL', to_city: 'HONOLULU',
+      gate: 'G47',
+      gate_note: 'JFK Terminal 1 has 25 gates',
+      seat: '44E',
+      seat_note: 'Boeing 747-200 configured to row 40',
+      ff: 'FF-77310',
+      ff_meaning: 'Coptic: "exile"',
+      name: 'M. REZNOR',
+      class_code: 'E',
+      status: 'cancelled',
+      fragment: 'I will not be at the gate. I will not be anywhere you think to look.'
+    },
+    {
+      airline: 'TRANS WORLD AIRLINES',
+      airline_note: 'Ceased operations December 1, 2001',
+      flight: 'TW 207',
+      date: '14 FEB 1995',
+      from_code: 'STL', from_city: 'ST LOUIS',
+      to_code: 'SFO', to_city: 'SAN FRANCISCO',
+      gate: 'C12',
+      seat: '2B',
+      seat_note: 'DC-9-30 first class begins at row 3',
+      ff: 'FF-33715',
+      ff_meaning: 'Latin "sto" \u2014 "I stay"',
+      name: 'H. WALKER',
+      class_code: 'W',
+      status: 'delayed',
+      fragment: 'I only needed to be held by a stranger once.'
+    },
+    {
+      airline: 'BRANIFF INTERNATIONAL',
+      airline_note: 'Ceased operations May 12, 1982',
+      flight: 'BN 891',
+      date: '28 NOV 1999',
+      from_code: 'DFW', from_city: 'DALLAS/FT WORTH',
+      to_code: 'MIA', to_city: 'MIAMI',
+      gate: 'B72',
+      gate_note: 'DFW Terminal B has 44 gates (B1\u2013B44)',
+      seat: '11F',
+      ff: 'FF-76820',
+      ff_meaning: 'Sanskrit "diva" \u2014 "heaven"',
+      name: 'E. CASTELLANO',
+      class_code: 'H',
+      status: 'departed',
+      fragment: 'If my mother asks, tell her I caught an earlier flight.'
+    },
+    {
+      airline: 'ANSETT AUSTRALIA',
+      airline_note: 'Ceased operations March 5, 2002',
+      flight: 'AN 12',
+      date: '01 JAN 2010',
+      from_code: 'MEL', from_city: 'MELBOURNE',
+      to_code: 'SYD', to_city: 'SYDNEY',
+      gate: 'A3',
+      seat: '14C',
+      ff: 'FF-24316',
+      ff_meaning: 'Coptic "pen" \u2014 "this one"',
+      name: "J. O'SULLIVAN",
+      class_code: 'S',
+      status: 'closed',
+      fragment: 'Everything I couldn\u2019t sell fit in one bag.'
+    },
+    {
+      airline: 'SABENA',
+      airline_note: 'Ceased operations November 7, 2001',
+      flight: 'SN 673',
+      date: '15 AUG 1997',
+      from_code: 'BRU', from_city: 'BRUSSELS',
+      to_code: 'KIN', to_city: 'KINGSTON',
+      gate: 'B44',
+      gate_note: 'Brussels Pier B has 40 gates (B1\u2013B40)',
+      seat: '31A',
+      ff: 'FF-58907',
+      ff_meaning: 'Latin "fuga" \u2014 "flight"',
+      name: 'D. BAUMGARTNER',
+      class_code: 'R',
+      status: 'boarding',
+      fragment: 'He said he would meet me at arrivals.'
+    },
+    {
+      airline: 'SWISSAIR',
+      airline_note: 'Ceased operations March 31, 2002',
+      flight: 'SR 158',
+      date: '19 SEP 2004',
+      from_code: 'ZRH', from_city: 'ZURICH',
+      to_code: 'LIS', to_city: 'LISBON',
+      gate: 'D51',
+      gate_note: 'Z\u00fcrich Terminal D has 28 gates (D1\u2013D28)',
+      seat: '25F',
+      ff: 'FF-41203',
+      ff_meaning: 'Coptic "mpe" \u2014 "not"',
+      name: 'A. LINDEMANN',
+      class_code: 'P',
+      status: 'departed',
+      fragment: 'I keep the ticket because my handwriting is on it. That is the only proof.'
+    },
+    {
+      airline: 'ALITALIA',
+      airline_note: 'Ceased operations October 14, 2021',
+      flight: 'AZ 419',
+      date: '03 MAY 2003',
+      from_code: 'FCO', from_city: 'ROME',
+      to_code: 'OTP', to_city: 'BUCHAREST',
+      gate: 'C28',
+      seat: '9E',
+      seat_note: 'A319 has 3 seats per side in row 9 \u2014 no seat E',
+      ff: 'FF-60314',
+      ff_meaning: 'Latin "mora" \u2014 "delay"',
+      name: 'S. IONESCU',
+      class_code: 'M',
+      status: 'delayed',
+      fragment: 'When I told him the name, he held my face in both hands.'
+    },
+    {
+      airline: 'AIR INDIA',
+      airline_note: 'Original carrier dissolved 2021; restructured',
+      flight: 'AI 220',
+      date: '07 APR 1998',
+      from_code: 'BOM', from_city: 'MUMBAI',
+      to_code: 'DEL', to_city: 'DELHI',
+      gate: 'G3',
+      seat: '16B',
+      ff: 'FF-24172',
+      ff_meaning: 'Sanskrit "nav" \u2014 "new"',
+      name: 'P. SUBRAMANIAM',
+      class_code: 'U',
+      status: 'boarding',
+      fragment: 'I have been told I would not recognize it. I am going anyway.'
+    },
+    {
+      airline: 'VARIG',
+      airline_note: 'Ceased operations July 20, 2005',
+      flight: 'RG 882',
+      date: '21 JUN 2009',
+      from_code: 'GRU', from_city: 'SAO PAULO',
+      to_code: 'GIG', to_city: 'RIO DE JANEIRO',
+      gate: 'K17',
+      seat: '55A',
+      seat_note: '737-800 has maximum row 39 in any configuration',
+      ff: 'FF-47851',
+      ff_meaning: 'Coptic "ouoein" \u2014 "to become"',
+      name: 'R. FERREIRA',
+      class_code: 'G',
+      status: 'closed',
+      fragment: 'I am flying in the wrong direction and I know it.'
+    },
+    {
+      airline: 'MALAYSIA AIRLINES',
+      airline_note: 'Flight number permanently withdrawn from service',
+      flight: 'MH 370',
+      date: '08 MAR 2015',
+      from_code: 'KUL', from_city: 'KUALA LUMPUR',
+      to_code: 'PEK', to_city: 'BEIJING',
+      gate: 'C33',
+      seat: '19E',
+      ff: 'FF-78103',
+      ff_meaning: 'Coptic "ouai" \u2014 "alas"',
+      name: 'W. CHEN',
+      class_code: 'Q',
+      status: 'cancelled',
+      fragment: 'He said not to come. I bought the ticket anyway.'
+    },
+    {
+      airline: 'SOUTH AFRICAN AIRWAYS',
+      airline_note: 'Ceased operations as original entity 2020',
+      flight: 'SA 203',
+      date: '27 DEC 2004',
+      from_code: 'JNB', from_city: 'JOHANNESBURG',
+      to_code: 'CPT', to_city: 'CAPE TOWN',
+      gate: 'A20',
+      seat: '31D',
+      seat_note: 'A320 configured to maximum row 30',
+      ff: 'FF-61357',
+      ff_meaning: 'Latin "pereo" \u2014 "I perish"',
+      name: 'T. NDLOVU',
+      class_code: 'Y',
+      status: 'departed',
+      fragment: 'I know what I am returning to.'
+    },
+    {
+      airline: 'INTERFLUG',
+      airline_note: 'Ceased operations April 28, 1991',
+      flight: 'IF 712',
+      date: '09 OCT 1990',
+      from_code: 'SXF', from_city: 'BERLIN-SCH\u00d6NEFELD',
+      to_code: 'LED', to_city: 'LENINGRAD',
+      gate: 'A1',
+      seat: '1A',
+      ff: null,
+      ff_meaning: null,
+      name: null,
+      class_code: 'F',
+      status: 'final',
+      status_label: 'ONE WAY / FIRST CLASS',
+      final_city: 'SAINT PETERSBURG',
+      final_note: 'City renamed September 1991. This ticket was printed for a place that no longer exists under this name.',
+      fragment: 'A one-way ticket. First class. To a city that would not keep its name.'
+    }
+  ];
+
+  /* ── Fare Class Emotional Mapping ─────────────────────── */
+
+  var FARE_CLASSES = {
+    'Y': { state: 'Full fare \u2014 the state of having no reason to stay', desc: 'The passenger who booked without hesitation. Not because they wanted to leave, but because remaining became untenable. The most expensive economy seat purchased by someone who could not afford to wait.' },
+    'W': { state: 'Premium economy \u2014 the state of almost being comfortable', desc: 'A transitional emotional register. The passenger is not in crisis, but is not at rest. They paid extra for legroom and still could not sleep.' },
+    'E': { state: 'Economy \u2014 the state of diminished expectations', desc: 'Middle seat, last row, no meal service. Booked by someone for whom the destination was never the point. The journey itself was the admission.' },
+    'R': { state: 'Restricted \u2014 the state of conditional movement', desc: 'Non-refundable, non-transferable, non-changeable. The passenger accepted all restrictions, including the ones not printed on the ticket.' },
+    'M': { state: 'Military \u2014 the state of involuntary transit', desc: 'Not a military fare. A passenger who boarded under orders they gave themselves. They packed one bag and left the other behind.' },
+    'H': { state: 'Honeymoon \u2014 the state of deliberate unknowing', desc: 'Booked under a fare class that assumes celebration. The passenger was alone. They did not correct the assumption.' },
+    'U': { state: 'Unaccompanied minor \u2014 the state of being sent', desc: 'Not a child. A passenger who allowed someone else to determine the route. They did not choose the destination, but they did not refuse it.' },
+    'Q': { state: 'Quarantine \u2014 the state of imposed stillness', desc: 'A fare class that denotes restricted movement. The passenger was not sick. They were told to wait and they obeyed, which is its own kind of illness.' },
+    'G': { state: 'Group \u2014 the state of traveling among strangers', desc: 'Booked as part of a block. The passenger knew no one. They moved through the terminal in a crowd and were, for a few hours, almost invisible.' },
+    'S': { state: 'Standby \u2014 the state of conditional existence', desc: 'The passenger was not confirmed. They waited at the gate, watching other people board, knowing their name might never be called. It was.' },
+    'P': { state: 'Premium \u2014 the state of earned exhaustion', desc: 'Upgraded through loyalty. The passenger has taken this route so many times that the flight attendants know their drink order. They still cannot sleep.' },
+    'F': { state: 'Full unrestricted \u2014 the state of finality', desc: 'No return. No change fee because no change was anticipated. The passenger booked the last leg with the certainty of someone who has stopped counting exits.' }
+  };
+
+  /* ── Utilities ────────────────────────────────────────── */
+
+  /**
+   * Seeded pseudo-random number generator.
+   * Returns a function producing values in [0, 1).
+   */
+  function createRng(seed) {
+    var h = 0;
+    for (var i = 0; i < seed.length; i++) {
+      h = ((h << 5) - h + seed.charCodeAt(i)) | 0;
+    }
+    return function() {
+      h = (h * 1664525 + 1013904223) | 0;
+      return (h >>> 0) / 4294967296;
+    };
+  }
+
+  /**
+   * Generate a decorative barcode from a seed string.
+   */
+  function renderBarcode(seed) {
+    var rng = createRng(seed);
+    var bars = [2, 1, 1, 2];
+    for (var i = 0; i < 52; i++) {
+      bars.push(rng() > 0.5 ? 2 : 1);
+    }
+    bars.push(2, 1, 1, 2);
+    return bars.map(function(w) {
+      var h = 26 + Math.floor(rng() * 10);
+      return '<div class="bar" style="width:' + w + 'px;height:' + h + 'px"></div>';
+    }).join('');
+  }
+
+  /**
+   * Wrap a value in an anomaly span with hover fragment and context.
+   */
+  function anomaly(value, fragment, context) {
+    var ctx = context
+      ? '<span class="anomaly-context">' + context + '</span>'
+      : '';
+    return '<span class="anomaly">' + value +
+      '<span class="anomaly-fragment">' + fragment + ctx +
+      '</span></span>';
+  }
+
+  /* ── Pass Rendering ───────────────────────────────────── */
+
+  var container = document.getElementById('pass-container');
+
+  function buildPass(data, index) {
+    var isFinal = index === 11;
+    var barcodeSeed = '>' + data.from_code + data.to_code +
+      data.flight.replace(/\s/g, '') + data.date.replace(/\s/g, '');
+    var frag = data.fragment;
+
+    // Airline — anomaly if the carrier is defunct
+    var airlineHtml = data.airline_note
+      ? anomaly(data.airline, frag, data.airline_note)
+      : data.airline;
+
+    // Gate — anomaly if gate exceeds terminal capacity
+    var gateHtml = data.gate_note
+      ? anomaly(data.gate, frag, data.gate_note)
+      : data.gate;
+
+    // Seat — anomaly if seat doesn't exist on aircraft type
+    var seatHtml = data.seat_note
+      ? anomaly(data.seat, frag, data.seat_note)
+      : data.seat;
+
+    // Frequent flyer — anomaly with linguistic decode
+    var ffHtml = data.ff
+      ? anomaly(data.ff, frag, data.ff_meaning)
+      : '';
+
+    // Destination — final pass: city renamed after ticket date
+    var toCityHtml = data.final_city
+      ? anomaly(data.to_city, frag, 'Renamed ' + data.final_city + ' in September 1991')
+      : data.to_city;
+
+    var nameDisplay = data.name || '\u2014';
+    var statusLabel = data.status_label || data.status.toUpperCase();
+
+    // Final pass: editorial note below stub
+    var noteHtml = isFinal
+      ? '<div class="bp-final-note">' + data.final_note + '</div>'
+      : '';
+
+    return (
+      '<div class="boarding-pass' + (isFinal ? ' final-pass' : '') +
+      '" role="listitem" data-index="' + index + '">' +
+        '<div class="bp-index">Item ' +
+          String(index + 1).padStart(2, '0') + ' of 12</div>' +
+        '<div class="bp-card">' +
+          '<div class="bp-airline">' + airlineHtml + '</div>' +
+          '<div class="bp-flight-num">' + data.flight +
+            ' \u00b7 ' + data.date + '</div>' +
+          '<div class="bp-route">' +
+            '<span class="bp-route-city">' + data.from_code + '</span>' +
+            '<span class="bp-route-arrow">\u2500\u2500\u2500\u25b6</span>' +
+            '<span class="bp-route-city">' + data.to_code + '</span>' +
+          '</div>' +
+          '<div class="bp-main">' +
+            '<div class="bp-field-group">' +
+              '<div class="bp-field">' +
+                '<div class="bp-field-label">Passenger</div>' +
+                '<div class="bp-field-value">' + nameDisplay + '</div>' +
+              '</div>' +
+              '<div class="bp-field">' +
+                '<div class="bp-field-label">From</div>' +
+                '<div class="bp-field-value">' + data.from_city + '</div>' +
+              '</div>' +
+              '<div class="bp-field">' +
+                '<div class="bp-field-label">To</div>' +
+                '<div class="bp-field-value">' + toCityHtml + '</div>' +
+              '</div>' +
+              '<div class="bp-field">' +
+                '<div class="bp-field-label">Date</div>' +
+                '<div class="bp-field-value mono">' + data.date + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="bp-field-group">' +
+              '<div class="bp-field">' +
+                '<div class="bp-field-label">Class</div>' +
+                '<div class="bp-field-value">' + data.class_code + ' CLASS</div>' +
+              '</div>' +
+              '<div class="bp-field">' +
+                '<div class="bp-field-label">Seat</div>' +
+                '<div class="bp-field-value">' + seatHtml + '</div>' +
+              '</div>' +
+              '<div class="bp-field">' +
+                '<div class="bp-field-label">Gate</div>' +
+                '<div class="bp-field-value">' + gateHtml + '</div>' +
+              '</div>' +
+              '<div class="bp-field">' +
+                '<div class="bp-field-label">Status</div>' +
+                '<div class="bp-status ' + data.status + '">' + statusLabel + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="bp-tear">' +
+            '<span class="bp-tear-scissors">\u2704</span>' +
+          '</div>' +
+          '<div class="bp-stub">' +
+            '<div class="bp-field-group">' +
+              '<div class="bp-field">' +
+                '<div class="bp-field-label">Frequent Flyer</div>' +
+                '<div class="bp-field-value small tight">' +
+                  (ffHtml || 'N/A') +
+                '</div>' +
+              '</div>' +
+              '<div class="bp-field">' +
+                '<div class="bp-field-label">Boarding</div>' +
+                '<div class="bp-field-value small mono">' + data.date + '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="bp-field-group">' +
+              '<div class="bp-field">' +
+                '<div class="bp-field-label">Seat</div>' +
+                '<div class="bp-field-value">' + data.seat + '</div>' +
+              '</div>' +
+              '<div class="bp-field">' +
+                '<div class="bp-field-label">Gate</div>' +
+                '<div class="bp-field-value">' + data.gate + '</div>' +
+              '</div>' +
+              '<div class="bp-barcode-wrap">' +
+                '<div class="bp-barcode">' + renderBarcode(barcodeSeed) + '</div>' +
+                '<div class="bp-barcode-label">' + barcodeSeed + '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          noteHtml +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  // Render all passes into the container
+  PASS_DATA.forEach(function(data, i) {
+    container.insertAdjacentHTML('beforeend', buildPass(data, i));
+  });
+
+  /* ── Scroll Reveal ────────────────────────────────────── */
+
+  var revealObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+
+  document.querySelectorAll('.boarding-pass').forEach(function(el) {
+    revealObserver.observe(el);
+  });
+
+  /* ── Scanner Overlay ──────────────────────────────────── */
+
+  var scanBtn      = document.getElementById('scan-trigger');
+  var scanOverlay   = document.getElementById('scan-overlay');
+  var scanResults   = document.getElementById('scan-results');
+  var scanCloseBtn  = document.getElementById('scan-close-btn');
+
+  // Collect unique class codes from the archive, sorted alphabetically
+  var usedClasses = [];
+  PASS_DATA.forEach(function(p) {
+    if (usedClasses.indexOf(p.class_code) === -1) {
+      usedClasses.push(p.class_code);
+    }
+  });
+  usedClasses.sort();
+
+  function openScanner() {
+    scanBtn.classList.add('active');
+    scanOverlay.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+    scanResults.innerHTML = '';
+
+    usedClasses.forEach(function(code, i) {
+      var fc = FARE_CLASSES[code];
+      var row = document.createElement('div');
+      row.className = 'scan-row';
+      row.style.animationDelay = (i * 0.08) + 's';
+      row.innerHTML =
+        '<div class="scan-class">' + code + '</div>' +
+        '<div class="scan-details">' +
+          '<div class="scan-state">' + fc.state + '</div>' +
+          '<div class="scan-desc">' + fc.desc + '</div>' +
+        '</div>';
+      scanResults.appendChild(row);
+    });
+
+    scanCloseBtn.focus();
+  }
+
+  function closeScanner() {
+    scanBtn.classList.remove('active');
+    scanOverlay.classList.remove('visible');
+    document.body.style.overflow = '';
+    scanBtn.focus();
+  }
+
+  scanBtn.addEventListener('click', openScanner);
+  scanCloseBtn.addEventListener('click', closeScanner);
+  scanOverlay.addEventListener('click', function(e) {
+    if (e.target === scanOverlay) closeScanner();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && scanOverlay.classList.contains('visible')) {
+      closeScanner();
+    }
+  });
+
+})();
+</script>
+</body>
+</html>
