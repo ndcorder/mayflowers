@@ -47,6 +47,10 @@ nodes:
     title: The Conlang Gravedigger
     domain: code-tool
     rating: 5
+  - id: "0041"
+    title: The God Game
+    domain: code-game
+    rating: 4.9
   - id: "0007"
     title: Tender / Mercies
     domain: essay
@@ -199,4 +203,4 @@ creative_dna:
       to_domain: poetry
       count: 1
   unexplored_territory: []
-updated_at: 2026-05-27T06:07:49.560Z
+updated_at: 2026-05-27T06:38:16.515Z

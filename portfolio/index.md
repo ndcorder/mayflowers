@@ -42,3 +42,4 @@
 | 0038 | The Negation Archive | experiment | 5.0 | 2026-05-27 | — |
 | 0039 | Witness Stand | code-tool | 5.0 | 2026-05-27 | — |
 | 0040 | The Conlang Gravedigger | code-tool | 5.0 | 2026-05-27 | — |
+| 0041 | The God Game | code-game | 4.9 | 2026-05-27 | — |
