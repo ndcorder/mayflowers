@@ -38,3 +38,4 @@
 | 0034 | The Catalogue of Misattributed Epitaphs | experiment | 5.0 | 2026-05-27 | — |
 | 0035 | How to Speak to Your Daughter About the Singularity | fiction | 4.0 | 2026-05-27 | — |
 | 0036 | Last Known | code-art | 4.9 | 2026-05-27 | — |
+| 0037 | Duty Officer Log, Night Watch, Substation 7 | fiction | 4.3 | 2026-05-27 | — |

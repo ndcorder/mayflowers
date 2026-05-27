@@ -1,0 +1,190 @@
+nodes:
+  - id: "0004"
+    title: Syntax Error at Line 47
+    domain: code-game
+    rating: 4.9
+  - id: "0006"
+    title: The Resignation Engine
+    domain: code-tool
+    rating: 4.7
+  - id: "0009"
+    title: Signals from the Combiner
+    domain: code-art
+    rating: 4.7
+  - id: "0010"
+    title: Etymon
+    domain: code-tool
+    rating: 4.7
+  - id: "0011"
+    title: Mise en Abyme
+    domain: code-game
+    rating: 4.9
+  - id: "0024"
+    title: The Committee
+    domain: code-game
+    rating: 5
+  - id: "0026"
+    title: Cassandra Linters, Inc.
+    domain: code-tool
+    rating: 5
+  - id: "0031"
+    title: The Exquisite Corpse Client
+    domain: code-tool
+    rating: 5
+  - id: "0033"
+    title: The Elegy Engine
+    domain: code-tool
+    rating: 4.6
+  - id: "0036"
+    title: Last Known
+    domain: code-art
+    rating: 4.9
+  - id: "0007"
+    title: Tender / Mercies
+    domain: essay
+    rating: 5
+  - id: "0025"
+    title: Debrief
+    domain: essay
+    rating: 5
+  - id: "0027"
+    title: Whalefall
+    domain: essay
+    rating: 4
+  - id: "0005"
+    title: Unfollow
+    domain: experiment
+    rating: 4.7
+  - id: "0012"
+    title: Lacuna
+    domain: experiment
+    rating: 5
+  - id: "0014"
+    title: Touchscreen Necropsy
+    domain: experiment
+    rating: 4.9
+  - id: "0015"
+    title: The Curation
+    domain: experiment
+    rating: 5
+  - id: "0020"
+    title: The Floor Is
+    domain: experiment
+    rating: 5
+  - id: "0021"
+    title: The Floor Is
+    domain: experiment
+    rating: 4.9
+  - id: "0030"
+    title: The Boarding Pass Archive
+    domain: experiment
+    rating: 5
+  - id: "0034"
+    title: The Catalogue of Misattributed Epitaphs
+    domain: experiment
+    rating: 5
+  - id: "0001"
+    title: The Cartographer's Confession
+    domain: fiction
+    rating: 4.9
+  - id: "0008"
+    title: The Incident at Location 44.789, -93.204
+    domain: fiction
+    rating: 4.3
+  - id: "0018"
+    title: A Glass of Water at 3 AM
+    domain: fiction
+    rating: 4
+  - id: "0019"
+    title: Apology Cuisine
+    domain: fiction
+    rating: 4.7
+  - id: "0023"
+    title: Flea Market Theodicy
+    domain: fiction
+    rating: 4
+  - id: "0028"
+    title: A Professional Cornhole Player and Quadruple Amputee Is Arrested for Murder
+    domain: fiction
+    rating: 4.9
+  - id: "0035"
+    title: How to Speak to Your Daughter About the Singularity
+    domain: fiction
+    rating: 4
+  - id: "0037"
+    title: Duty Officer Log, Night Watch, Substation 7
+    domain: fiction
+    rating: 4.3
+  - id: "0002"
+    title: Drift Signal
+    domain: music
+    rating: 4.4
+  - id: "0016"
+    title: Glossolalia
+    domain: music
+    rating: 4.7
+  - id: "0022"
+    title: Apnoea
+    domain: music
+    rating: 4.7
+  - id: "0032"
+    title: Apnoia
+    domain: music
+    rating: 4.3
+  - id: "0003"
+    title: Mass
+    domain: poetry
+    rating: 4.3
+  - id: "0013"
+    title: Triangulation
+    domain: poetry
+    rating: 4.9
+  - id: "0017"
+    title: Mortmain
+    domain: poetry
+    rating: 4.7
+  - id: "0029"
+    title: The Slow Boat Coalition
+    domain: worldbuilding
+    rating: 5
+edges:
+  - from: "0016"
+    to: "0002"
+    relation: inspired_by
+    strength: 0.7
+    detected_by: critic
+    notes: Where "Drift Signal" (artifact 0002, rated 4.4) was a passive harmonic drone documenting entrop
+  - from: "0004"
+    to: "0011"
+    relation: thematic
+    strength: 0.2839506172839506
+    detected_by: semantic
+    notes: "Shared vocabulary: syntax, error, ideas, title, domain"
+  - from: "0020"
+    to: "0021"
+    relation: thematic
+    strength: 0.4430379746835443
+    detected_by: semantic
+    notes: "Shared vocabulary: floor, ideas, title, domain, experiment"
+  - from: "0018"
+    to: "0023"
+    relation: thematic
+    strength: 0.29310344827586204
+    detected_by: semantic
+    notes: "Shared vocabulary: glass, water, ideas, title, domain"
+  - from: "0018"
+    to: "0013"
+    relation: thematic
+    strength: 0.25862068965517243
+    detected_by: semantic
+    notes: "Shared vocabulary: glass, ideas, title, domain, pitch"
+constellations: []
+creative_dna:
+  top_motifs: []
+  technique_signatures: []
+  domain_affinities:
+    - from_domain: fiction
+      to_domain: poetry
+      count: 1
+  unexplored_territory: []
+updated_at: 2026-05-27T03:52:51.755Z

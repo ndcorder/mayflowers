@@ -1,0 +1,27 @@
+axes:
+  exploratory: 0.42
+  playful: 0.28
+  restless: 0
+  bold: 0.28
+  collaborative: -0.35
+dominant_mood: exploratory and independent
+creative_nudge: Trust the creative instinct — make whatever feels right.
+influences:
+  - factor: 9 distinct domains in window
+    axis: exploratory
+    direction: 0.6
+    weight: 0.7
+  - factor: 8 light-domain ships
+    axis: playful
+    direction: 0.4
+    weight: 0.5
+  - factor: 20 iterations without a kill — not pushing hard enough
+    axis: bold
+    direction: 0.4
+    weight: 0.5
+  - factor: 20 iterations of standalone work
+    axis: collaborative
+    direction: -0.5
+    weight: 0.6
+iteration: 58
+updated_at: 2026-05-27T03:49:06.809Z
