@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- The NPR headline lives here, where a title belongs.
+     You found it. It wasn't the story. -->
+<title>Cornhole Player and Quadruple Amputee Arrested for Murder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Georgia&family=Courier+Prime&family=Merriweather&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: #c8c0b8; color: #1a1a1a; line-height: 1.6; }
+  main { max-width: 52rem; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  article { display: flex; flex-direction: column; gap: 0; }
+
+  .section { scroll-margin-top: 2rem; position: relative; }
+  .section::before {
+    content: '§';
+    display: block; text-align: center;
+    font-size: 1.2rem; color: #999;
+    padding: 2rem 0 1.5rem;
+  }
+</style>
+
+<!-- ═══════ WIRE SERVICE ═══════ -->
+<style>
+  .wire {
+    background: #fff;
+    border: 1px solid #bbb;
+    padding: 1.8rem 2.2rem;
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.55;
+  }
+  .wire .slug {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.75rem;
+    color: #666;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    letter-spacing: 0.04em;
+  }
+  .wire .dateline { font-weight: bold; font-size: 0.92rem; margin-bottom: 0.2rem; }
+  .wire p { font-size: 0.95rem; margin-bottom: 0.6rem; text-align: justify; hyphens: auto; }
+</style>
+
+<!-- ═══════ FACEBOOK ═══════ -->
+<style>
+  .fb {
+    background: #f0f2f5;
+    padding: 1.2rem 0.8rem;
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-size: 0.88rem;
+  }
+  .fb-post {
+    background: #fff;
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 0.6rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+  .fb-post .author { font-weight: 600; color: #0d65d9; font-size: 0.85rem; }
+  .fb-post .meta { font-size: 0.72rem; color: #65676b; margin-top: 0.15rem; }
+  .fb-post .body { margin-top: 0.35rem; color: #050505; line-height: 1.45; }
+  .fb-comments { margin-left: 2.2rem; }
+  .fb-comments .fb-post { background: #f0f2f5; padding: 0.6rem 0.8rem; box-shadow: none; margin-bottom: 0.4rem; }
+  .fb-emoji { font-style: normal; }
+</style>
+
+<!-- ═══════ PODCAST ═══════ -->
+<style>
+  .podcast {
+    background: #0e0e10;
+    color: #e0ddd8;
+    padding: 2rem 2.2rem;
+    font-family: 'Merriweather', Georgia, serif;
+    line-height: 1.7;
+  }
+  .podcast .pod-title {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 600;
+    font-size: 1.3rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #c9302c;
+    margin-bottom: 0.3rem;
+  }
+  .podcast .pod-ep {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.82rem;
+    color: #777;
+    margin-bottom: 1.4rem;
+  }
+  .podcast .speaker { font-weight: bold; color: #c9302c; font-size: 0.88rem; display: inline; }
+  .podcast .line { margin-bottom: 0.9rem; font-size: 0.92rem; }
+  .podcast .sfx { font-style: italic; color: #666; font-size: 0.85rem; }
+  .podcast .break {
+    text-align: center;
+    color: #555;
+    margin: 1.5rem 0;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+  }
+</style>
+
+<!-- ═══════ WIKIPEDIA ═══════ -->
+<style>
+  .wiki {
+    background: #f6f6f6;
+    border: 1px solid #a7d7f9;
+    padding: 1.5rem 1.8rem;
+    font-family: 'Linux Libertine', Georgia, 'Times New Roman', serif;
+    line-height: 1.55;
+  }
+  .wiki .wiki-banner {
+    background: #fef6e7;
+    border: 1px solid #fc3;
+    font-size: 0.78rem;
+    padding: 0.5rem 0.8rem;
+    margin-bottom: 1.2rem;
+    font-family: sans-serif;
+    color: #36454f;
+  }
+  .wiki .wiki-banner b { color: #900; }
+  .wiki .diff-block {
+    background: #fff;
+    border: 1px solid #ccc;
+    margin-bottom: 0.8rem;
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.8rem;
+    line-height: 1.55;
+    overflow-x: auto;
+  }
+  .wiki .diff-header {
+    background: #e8e8e8;
+    padding: 0.25rem 0.6rem;
+    font-family: sans-serif;
+    font-size: 0.72rem;
+    color: #555;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+  }
+  .wiki .diff-header .user { color: #0645ad; }
+  .wiki .diff-header .summary { color: #888; }
+  .wiki .diff-body { padding: 0.5rem 0.7rem; }
+  .wiki .diff-add { background: #d4edda; color: #155724; display: block; padding: 0.1rem 0; }
+  .wiki .diff-del { background: #f8d7da; color: #721c24; text-decoration: line-through; display: block; padding: 0.1rem 0; }
+  .wiki .diff-ctx { color: #555; display: block; padding: 0.1rem 0; }
+</style>
+
+<!-- ═══════ LETTER ═══════ -->
+<style>
+  .letter {
+    background: #fffef9;
+    padding: 2.5rem 3rem;
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.8;
+    border-left: 4px solid #b8860b;
+  }
+  .letter .letter-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #888;
+    margin-bottom: 0.6rem;
+    font-family: sans-serif;
+  }
+  .letter .letter-title { font-size: 1.05rem; font-weight: bold; margin-bottom: 1rem; color: #1a1a1a; }
+  .letter .greeting { margin-bottom: 0.8rem; }
+  .letter p { margin-bottom: 0.7rem; font-size: 0.95rem; text-align: left; }
+  .letter .closing { margin-top: 1.2rem; line-height: 1.9; }
+</style>
+
+<!-- ═══════ BOOK REPORT ═══════ -->
+<style>
+  .report {
+    background: #fff;
+    padding: 2rem 2.5rem 2.5rem;
+    font-family: 'Comic Sans MS', 'Comic Sans', 'Segoe Print', 'Bradley Hand', cursive, sans-serif;
+    line-height: 2;
+    border: 3px double #e8a0bf;
+    position: relative;
+  }
+  .report .report-header { text-align: center; margin-bottom: 1rem; font-size: 1rem; }
+  .report .report-fields { font-size: 0.88rem; margin-bottom: 1.2rem; }
+  .report .report-fields span {
+    display: inline-block;
+    border-bottom: 1px solid #ccc;
+    min-width: 6rem;
+    margin-left: 0.3rem;
+  }
+  .report p { font-size: 0.95rem; margin-bottom: 0.8rem; text-indent: 2rem; text-align: left; }
+  .report .grade { margin-top: 1.5rem; font-size: 1.1rem; color: #c0392b; }
+  .report .teacher-note {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 0.78rem;
+    color: #666;
+    margin-top: 1rem;
+    font-style: italic;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 0.6rem;
+  }
+</style>
+</head>
+<body>
+<main>
+<article>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  1. WIRE SERVICE BRIEF                                  -->
+<!-- ════════════════════════════════════════════════════════ -->
+<section class="section wire" id="wire">
+  <div class="slug">BC-US&ndash;Cornhole-Arrest,0133</div>
+  <p class="dateline">BULLITT COUNTY, Ky. &mdash;</p>
+  <p>
+    Authorities arrested Dale Ketterly, 34, on Saturday in connection with the death of Danny Mercer, whose body was discovered Thursday near a cornhole tournament venue outside Shepherdsville.
+  </p>
+  <p>
+    Ketterly, a ranked competitor on the American Cornhole League who lost all four limbs in a 2019 industrial accident, was taken into custody at his home without incident. He is being held at the Bullitt County Detention Center on one count of murder, according to court records. A bond hearing is scheduled for Monday.
+  </p>
+  <p>
+    Kentucky State Police said Mercer's body was found in a wooded area behind the Bullitt County Fairgrounds shortly after 8 p.m. Thursday. A cause of death has not been released pending an autopsy. Trooper Jacob Hall said investigators were "following all available leads" but declined to provide further details, citing the ongoing investigation.
+  </p>
+  <p>
+    "We understand there is significant public interest in this case, and we ask for patience as we work to determine exactly what happened," Hall said in a written statement.
+  </p>
+  <p>
+    The ACL released a statement Saturday expressing shock and offering condolences to Mercer's family. "We are deeply saddened by this tragedy and will cooperate fully with law enforcement," the organization said.
+  </p>
+  <p>
+    <em>&mdash;Associated Press</em>
+  </p>
+</section>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  2. FACEBOOK COMMENT THREAD                              -->
+<!-- ════════════════════════════════════════════════════════ -->
+<section class="section fb" id="facebook">
+  <div class="fb-post">
+    <div class="author">Heather Bunch-Noble</div>
+    <div class="meta">Shared with Public &middot; June 15 at 12:47 PM</div>
+    <div class="body">
+      I don't even know what to say. Danny Mercer was one of the GOOD ones. Played cornhole with my husband at St. Jude's fundraiser two years ago. Lent us his Yeti cooler when ours broke. Just a kind man. Praying for his family. I hope Dale Ketterly rots.<span class="fb-emoji"> 🙏</span>
+    </div>
+  </div>
+
+  <div class="fb-comments">
+    <div class="fb-post">
+      <div class="author">Tammy Winters</div>
+      <div class="meta">12:52 PM</div>
+      <div class="body">
+        They found the body BEHIND the fairgrounds?? I was AT that tournament Thursday night. I didn't see any police until I was leaving at 9. Makes me sick to think about.
+      </div>
+    </div>
+
+    <div class="fb-post">
+      <div class="author">Mike Salyers</div>
+      <div class="meta">1:03 PM</div>
+      <div class="body">
+        Does anybody know what actually happened? The news isn't saying anything. I heard it was a fight over money but that could be wrong.
+      </div>
+    </div>
+
+    <div class="fb-post">
+      <div class="author">Shawn Groce</div>
+      <div class="meta">1:11 PM</div>
+      <div class="body">
+        I've played against Ketterly three times. Quiet dude. Never said much. But you don't want to mess with the quiet ones, am I right
+      </div>
+    </div>
+
+    <div class="fb-post">
+      <div class="author">Connie Drake-Murphy</div>
+      <div class="meta">1:18 PM</div>
+      <div class="body">
+        STOP. A man is DEAD. This is not your gossip hour. Have some respect.
+      </div>
+    </div>
+
+    <div class="fb-post">
+      <div class="author">Mike Salyers</div>
+      <div class="meta">1:22 PM</div>
+      <div class="body">
+        I'm just asking a question Connie
+      </div>
+    </div>
+
+    <div class="fb-post">
+      <div class="author">Dawn Adkins</div>
+      <div class="meta">1:30 PM</div>
+      <div class="body">
+        Did everyone forget this man has NO ARMS AND NO LEGS??? How exactly is he supposed to have killed someone? Did he strangle Danny with his mind? Like honestly think about it for two seconds.
+      </div>
+    </div>
+
+    <div class="fb-post">
+      <div class="author">Heather Bunch-Noble</div>
+      <div class="meta">1:34 PM</div>
+      <div class="body">
+        Dawn, he has PROSTHETICS. He could do more than you think. I've seen him throw a bean bag 40 feet. And he played in that tournament Thursday. So he was THERE.
+      </div>
+    </div>
+
+    <div class="fb-post">
+      <div class="author">Shawn Groce</div>
+      <div class="meta">1:37 PM</div>
+      <div class="body">
+        His prosthetics are crazy strong too. hydraulic or something. I saw him pick up a full cooler with his right arm like it weighed nothing. Dude could def hurt someone if he wanted to
+      </div>
+    </div>
+
+    <div class="fb-post">
+      <div class="author">Dawn Adkins</div>
+      <div class="meta">1:41 PM</div>
+      <div class="body">
+        I didn't say he couldn't. I said we don't KNOW. What happened to innocent until proven guilty?? His life is already over and he hasn't even had a trial.
+      </div>
+    </div>
+
+    <div class="fb-post">
+      <div class="author">Tammy Winters</div>
+      <div class="meta">1:45 PM</div>
+      <div class="body">
+        Does anyone know where Danny's family is? I want to send flowers.
+      </div>
+    </div>
+
+    <div class="fb-post">
+      <div class="author">Mike Salyers</div>
+      <div class="meta">1:48 PM</div>
+      <div class="body">
+        His sister lives in Louisville I think. Mercer.
+      </div>
+    </div>
+
+    <div class="fb-post">
+      <div class="author">Heather Bunch-Noble</div>
+      <div class="meta">2:01 PM</div>
+      <div class="body">
+        I just can't wrap my head around this. Danny was so gentle. I still have the keychain he gave me at the fundraiser. Who does something like this to a person like that.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  3. TRUE CRIME PODCAST TRANSCRIPT                        -->
+<!-- ════════════════════════════════════════════════════════ -->
+<section class="section podcast" id="podcast">
+  <div class="pod-title">Bullitt County Confidential</div>
+  <div class="pod-ep">Episode 47: "No Hands" | Season 4 | June 28, 2024</div>
+
+  <div class="line"><span class="sfx">[Upbeat theme music &mdash; synthesizer, cowbell. Fades under.]</span></div>
+
+  <div class="line"><span class="speaker">JESSE:</span> What happened at the Bullitt County Fairgrounds on the night of June 13th, 2024 is a story that, on its surface, seems simple enough. Two men. A rivalry. A death. But when you start to pull at the threads &mdash; and baby, did we pull &mdash; what unravels is a lot more complicated than what the state police would like you to believe.</div>
+
+  <div class="line"><span class="speaker">KATE:</span> So we have Dale Ketterly. Thirty-four years old. Born in Elizabethtown, grew up in Shepherdsville. Worked at the Borden dairy plant in Louisville for eleven years. And in 2019 &mdash; this is the part everybody knows &mdash; he was caught in a palletizer. Both arms above the elbow. Both legs above the knee.</div>
+
+  <div class="line"><span class="speaker">JESSE:</span> And here's where it gets interesting. Because most people, after something like that? They retreat. They disappear. Dale Ketterly went the other direction. He got fitted for myoelectric prosthetics &mdash; we're talking six-figure arms with proportional grip control &mdash; and within a year he was competing in cornhole again. Not just competing. <em>Winning.</em></div>
+
+  <div class="line"><span class="speaker">KATE:</span> And Danny Mercer was his rival.</div>
+
+  <div class="line"><span class="speaker">JESSE:</span> His <em>nemesis</em>, some would say. Now, Kate, we need to be careful here because we have two sources and we haven't confirmed this independently, but both sources told us that Ketterly and Mercer had a falling-out over a woman. A woman named Tasha Gentry.</div>
+
+  <div class="line"><span class="sfx">[Reverb effect. Pulse tone.]</span></div>
+
+  <div class="line"><span class="speaker">KATE:</span> And I think, Jesse, I think the state police theory is that this was premeditated. That Ketterly went to that tournament looking for Mercer. That he followed him behind the fairgrounds and killed him.</div>
+
+  <div class="line"><span class="speaker">JESSE:</span> That's the theory. But we talked to a man who I'm going to call &ldquo;Marcus&rdquo; &mdash; he asked us not to use his real name. Marcus says he saw Ketterly and Mercer arguing near the livestock barns around seven-thirty. And here's what's interesting: Marcus says Mercer was the one who was agitated. Mercer was the one shouting.</div>
+
+  <div class="line"><span class="speaker">KATE:</span> Which, if true, really complicates the narrative.</div>
+
+  <div class="line"><span class="speaker">JESSE:</span> It does.</div>
+
+  <div class="break">* * *</div>
+
+  <div class="line"><span class="sfx">[Sound of a screen door closing.]</span></div>
+
+  <div class="line"><span class="speaker">JESSE:</span> We also spoke with a man named Rick Hornbeck, who runs the equipment shed at the fairgrounds. Rick says he heard two men arguing &mdash; couldn't see who, it was dark &mdash; and then about twenty minutes of nothing. And then sirens.</div>
+
+  <div class="line"><span class="speaker">KATE:</span> Twenty minutes of silence.</div>
+
+  <div class="line"><span class="speaker">JESSE:</span> Twenty minutes. What happened in those twenty minutes?</div>
+
+  <div class="line"><span class="speaker">KATE:</span> That's the question, isn't it.</div>
+
+  <div class="line"><span class="speaker">JESSE:</span> And then there's this. We obtained the 911 call. The caller is anonymous. And the caller says, and I'm quoting: <em>&ldquo;There's a man. He's not breathing. Behind the fairgrounds. You need to come now.&rdquo;</em></div>
+
+  <div class="line"><span class="speaker">KATE:</span> Now, Jesse, the state police have said publicly that they believe Ketterly made that call himself.</div>
+
+  <div class="line"><span class="speaker">JESSE:</span> They have.</div>
+
+  <div class="line"><span class="speaker">KATE:</span> And if that's true &mdash; if he called 911 &mdash; doesn't that suggest someone who was trying to get help?</div>
+
+  <div class="line"><span class="speaker">JESSE:</span> Or someone trying to cover their tracks.</div>
+
+  <div class="line"><span class="speaker">KATE:</span> Or someone trying to get help.</div>
+
+  <div class="line"><span class="sfx">[Theme music returns, slower. Fades to silence over 8 seconds.]</span></div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  4. WIKIPEDIA EDIT WAR                                   -->
+<!-- ════════════════════════════════════════════════════════ -->
+<section class="section wiki" id="wikipedia">
+  <div class="wiki-banner">
+    <b>This article is currently protected from editing.</b> Persistent disruptive editing has necessitated temporary semi-protection. Edit requests may be submitted on the <em>talk page</em>. Protection expires: July 15, 2024.
+  </div>
+
+  <div class="diff-block">
+    <div class="diff-header">
+      <span class="user">TornadoChaser92</span>
+      <span class="summary">fixing lead per MOS guidelines</span>
+    </div>
+    <div class="diff-body">
+      <span class="diff-ctx">'''Dale Ketterly''' (born 1989 or 1990) is an American</span>
+      <span class="diff-del">&nbsp;convicted murderer</span>
+      <span class="diff-add">&nbsp;man awaiting trial</span>
+      <span class="diff-ctx">and former competitive cornhole player. He is known for competing in the American Cornhole League after losing all four limbs in a 2019 industrial accident. In June 2024, Ketterly was</span>
+      <span class="diff-del">&nbsp;convicted of</span>
+      <span class="diff-add">&nbsp;charged with</span>
+      <span class="diff-ctx">&nbsp;the murder of</span>
+      <span class="diff-del">&nbsp;his friend and fellow competitor Danny Mercer.</span>
+      <span class="diff-add">&nbsp;Danny Mercer following an altercation at a tournament in Bullitt County, Kentucky.</span>
+    </div>
+  </div>
+
+  <div class="diff-block">
+    <div class="diff-header">
+      <span class="user">HistorianKat</span>
+      <span class="summary">removed unsourced claim about conviction</span>
+    </div>
+    <div class="diff-body">
+      <span class="diff-ctx">Following his arrest, Ketterly was held at the Bullitt County Detention Center.</span>
+      <span class="diff-del">&nbsp;He was found guilty of first-degree murder on July 8, 2024.</span>
+      <span class="diff-ctx">His attorney, Martin Hayworth of Louisville, entered a plea of not guilty at his arraignment on June 17. Hayworth described the charge as "without merit" and said Ketterly would "vigorously contest" the allegations.</span>
+    </div>
+  </div>
+
+  <div class="diff-block">
+    <div class="diff-header">
+      <span class="user">BlueGrassState2001</span>
+      <span class="summary">added details about Mercer and the relationship</span>
+    </div>
+    <div class="diff-body">
+      <span class="diff-ctx">Ketterly and Mercer had known each other since at least 2021,</span>
+      <span class="diff-del">&nbsp;when they competed against each other at the Kentucky State Fair.</span>
+      <span class="diff-add">&nbsp;when they met at a regional qualifier in Elizabethtown. Both men were romantically involved with the same woman, Tasha Gentry of Radcliff, at various points between 2021 and 2023. The relationship between Ketterly and Mercer reportedly deteriorated in early 2024.</span>
+    </div>
+  </div>
+
+  <div class="diff-block">
+    <div class="diff-header">
+      <span class="user">AccurateEditor77</span>
+      <span class="summary">rvv &mdash; speculation, not supported by any source</span>
+    </div>
+    <div class="diff-body">
+      <span class="diff-ctx">The cause of Mercer's death has not been officially released.</span>
+      <span class="diff-del">&nbsp;Mercer was beaten to death with Ketterly's prosthetic arm, which was found at the scene.</span>
+      <span class="diff-add">&nbsp;</span>
+      <span class="diff-ctx">A spokesperson for the Kentucky State Police said the investigation was "ongoing" and that further details would be released "at the appropriate time."</span>
+    </div>
+  </div>
+
+  <div class="diff-block">
+    <div class="diff-header">
+      <span class="user">BladeRunner2099</span>
+      <span class="summary">this is what he *said* happened &mdash; different thing</span>
+    </div>
+    <div class="diff-body">
+      <span class="diff-ctx">At a press conference on June 20, Ketterly's attorney stated that</span>
+      <span class="diff-del">&nbsp;his client was innocent and had been nowhere near Mercer at the time of his death.</span>
+      <span class="diff-add">&nbsp;his client had attempted to render aid to Mercer after finding him unresponsive behind the fairgrounds, and had called 911. He said his client was not responsible for Mercer's death.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  5. LETTER TO THE EDITOR                                 -->
+<!-- ════════════════════════════════════════════════════════ -->
+<section class="section letter" id="letter">
+  <div class="letter-label">Letters to the Editor</div>
+  <div class="letter-title">The truth about Danny Mercer</div>
+
+  <p class="greeting">To the Editor:</p>
+
+  <p>
+    I have read your coverage of my brother's death with a feeling I can only describe as nausea.
+  </p>
+
+  <p>
+    Danny Mercer was my brother. He was not a "competitor." He was not a "rival." He was a person who made everyone around him feel lighter. He coached Little League. He brought my daughter a balloon animal from the county fair every single year, even after she stopped believing they were made by magic. He was the kind of person who remembered your birthday even if you'd only met once.
+  </p>
+
+  <p>
+    The story everyone wants to tell is about Dale Ketterly. The quadruple amputee. The cornhole player with the incredible comeback. That's the interesting story, isn't it? That's the one that gets the clicks and the podcast episodes and the Wikipedia page. Nobody wants to write about who Danny was. Nobody wants to know that he carried a photo of our mother in his wallet every day since she passed, or that he cried at every graduation he attended because he was so proud of people he barely knew.
+  </p>
+
+  <p>
+    I don't know what happened that night. I wasn't there. But I know that my brother is dead, and that Dale Ketterly was there, and that someone is responsible. And I know that no matter what the courts decide, I will spend the rest of my life knowing that the world has a Dale Ketterly story and not a Danny Mercer story, and that seems like the cruelest thing of all.
+  </p>
+
+  <p class="closing">
+    Sincerely,<br>
+    Karen Mercer-Williams<br>
+    Louisville
+  </p>
+</section>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!--  6. FOURTH-GRADER'S BOOK REPORT                          -->
+<!-- ════════════════════════════════════════════════════════ -->
+<section class="section report" id="report">
+  <div class="report-header">My Book Report</div>
+  <div class="report-fields">
+    Name: <span>Madelyn C. Brooks</span><br>
+    Date: <span>October 3</span><br>
+    Book: <span>The Shepherdsville Cornhole Murder by Ms. Pat (not a real book, we watched the news)</span><br>
+    (I know it says book report but Mrs. Henderson said we could write about a real thing)
+  </div>
+
+  <p>
+    This summer a man named Dale Ketterly was arrested for killing another man named Danny Mercer at a cornhole tournament. Dale Ketterly doesn't have any arms or legs because of a accident at his work. Some people think he did it and some people think he didn't do it because how could he. The news people talked about it alot. A podcast man said it was about a woman named Tasha. But Tasha didn't get to talk on the podcast which I think is weird.
+  </p>
+
+  <p>
+    I think what happened is nobody really knows what happened. Everyone is just guessing. My dad says that's how the news works. They just say things until one of the things turns out to be right and then they say they knew it all along.
+  </p>
+
+  <p>
+    What I learned about justice is justice is when someone cares enough to find out what really happened instead of just what makes the best story. Also I think Danny Mercer probably had a favorite color and a favorite food and nobody even asked.
+  </p>
+
+  <p>
+    I hope someone asks next time.
+  </p>
+
+  <div class="grade">A-</div>
+  <div class="teacher-note">
+    Madelyn &mdash; This is thoughtful and brave. Please proofread your final drafts more carefully. I'm giving you an A- because of the punctuation and because you're not supposed to start sentences with "also," but I think you might be on to something. &mdash; Mrs. H.
+  </div>
+</section>
+
+</article>
+</main>
+</body>
+</html>

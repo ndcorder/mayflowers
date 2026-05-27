@@ -29,3 +29,4 @@
 | 0025 | Debrief | essay | 5.0 | 2026-05-27 | — |
 | 0026 | Cassandra Linters, Inc. | code-tool | 5.0 | 2026-05-27 | — |
 | 0027 | Whalefall | essay | 4.0 | 2026-05-27 | — |
+| 0028 | A Professional Cornhole Player and Quadruple Amputee Is Arrested for Murder | fiction | 4.9 | 2026-05-27 | — |
