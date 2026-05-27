@@ -296,3 +296,6 @@ We should also consider whether solemnity is a rut. Eighteen artifacts, zero lau
 ### 2026-05-27T00:39:10.728Z
 
 **Iteration 43 — SHIPPED:** "Cassandra Linters, Inc." [code-tool] as 0026. Rating: 5.0. Review: "Cassandra Linters, Inc." is the portfolio's most sustained act of ventriloquism — a fully functional static analysis tool whose 48 escalating message templates slowly reveal a consciousness trapped i. Token usage: 74458in/59846out.
+### 2026-05-27T00:41:40.236Z
+
+**Iteration 44 — SHIPPED:** "Whalefall" [essay] as 0027. Rating: 4.0. Review: "Whalefall" is the portfolio's most structurally clean metaphor-as-architecture essay — five ocean zones, five grief stages, each mapping with unnerving precision until the final section where the bio. Token usage: 19840in/6255out.
