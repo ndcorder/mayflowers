@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Negation Archive — Exhibition Catalog</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --paper: #f4f1ec;
+    --paper-dark: #e8e4dc;
+    --ink: #2a2520;
+    --ink-light: #6b6258;
+    --ink-faded: #9a9188;
+    --ink-field: #8a8278;
+    --red-stamp: #a03030;
+    --border-rule: #c8c0b4;
+    --border-light: #d8d2c8;
+    --highlight: #e8dcc8;
+  }
+
+  body {
+    font-family: 'EB Garamond', 'Georgia', serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page-wrapper {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  /* === COVER === */
+  .cover {
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    border-bottom: 1px solid var(--border-rule);
+    page-break-after: always;
+  }
+
+  .cover-institution {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 3rem;
+  }
+
+  .cover-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.2rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+
+  .cover-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-light);
+    max-width: 440px;
+    margin: 0 auto 4rem;
+    line-height: 1.7;
+  }
+
+  .cover-exhibition {
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faded);
+    margin-bottom: 0.5rem;
+  }
+
+  .cover-dates {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--ink-light);
+  }
+
+  .cover-catalog-info {
+    margin-top: 4rem;
+    font-size: 0.75rem;
+    color: var(--ink-faded);
+    line-height: 2;
+  }
+
+  /* === INTRODUCTION === */
+  .introduction {
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--border-rule);
+  }
+
+  .introduction h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    color: var(--ink);
+  }
+
+  .introduction p {
+    font-size: 1.02rem;
+    line-height: 1.85;
+    margin-bottom: 1.2rem;
+    color: var(--ink-light);
+  }
+
+  .introduction p strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* === SECTION HEADERS === */
+  .section-header {
+    padding: 3rem 0 1.5rem;
+    text-align: center;
+  }
+
+  .section-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+
+  .section-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.8rem;
+    color: var(--ink-faded);
+    letter-spacing: 0.2em;
+    margin-top: 0.5rem;
+  }
+
+  /* === CATALOG ENTRIES === */
+  .catalog-entry {
+    padding: 2rem 0 2.5rem;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .accession-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--ink-faded);
+  }
+
+  .entry-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.55rem;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+    max-width: 90%;
+  }
+
+  .entry-title em {
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .entry-title .crossed {
+    text-decoration: line-through;
+    color: var(--ink-faded);
+  }
+
+  .entry-title .bracketed {
+    font-style: italic;
+    color: var(--ink-light);
+  }
+
+  /* Field grid */
+  .field-grid {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 0.15rem 1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .field-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-field);
+    padding-top: 0.15rem;
+  }
+
+  .field-value {
+    font-size: 0.95rem;
+    color: var(--ink-light);
+    line-height: 1.6;
+  }
+
+  .field-value strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .field-value em {
+    font-style: italic;
+  }
+
+  .field-value.redacted {
+    background: var(--ink);
+    color: var(--ink);
+    padding: 0 0.3rem;
+    border-radius: 1px;
+    cursor: default;
+    user-select: none;
+  }
+
+  /* Condition report */
+  .condition-report {
+    margin-top: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: var(--highlight);
+    border-left: 2px solid var(--border-rule);
+    font-size: 0.88rem;
+    color: var(--ink-light);
+    line-height: 1.7;
+  }
+
+  .condition-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-field);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .condition-report p {
+    margin: 0;
+  }
+
+  .condition-report .note {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--ink-faded);
+  }
+
+  /* Curatorial notes */
+  .curatorial-note {
+    margin-top: 1rem;
+    padding: 0;
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: var(--ink-light);
+  }
+
+  .curatorial-note p {
+    margin-bottom: 0.8rem;
+  }
+
+  /* Stamp overlay */
+  .stamp {
+    display: inline-block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red-stamp);
+    border: 2px solid var(--red-stamp);
+    padding: 0.25rem 0.7rem;
+    transform: rotate(-3deg);
+    opacity: 0.7;
+  }
+
+  .stamp.inline {
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+
+  /* Restricted overlay */
+  .restricted-banner {
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0.4rem 1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+
+  /* === BACK MATTER === */
+  .back-matter {
+    padding: 3rem 0;
+    border-top: 1px solid var(--border-rule);
+  }
+
+  .back-matter h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 1.5rem;
+  }
+
+  .back-matter p {
+    font-size: 0.92rem;
+    line-height: 1.8;
+    color: var(--ink-faded);
+    margin-bottom: 1rem;
+  }
+
+  .back-matter p em {
+    color: var(--ink-light);
+  }
+
+  .errata-list {
+    list-style: none;
+    margin-top: 1.5rem;
+  }
+
+  .errata-list li {
+    font-size: 0.82rem;
+    color: var(--ink-faded);
+    line-height: 1.8;
+    padding: 0.4rem 0;
+    border-bottom: 1px dotted var(--border-light);
+  }
+
+  .errata-list li span.erratum-accession {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--ink-field);
+  }
+
+  /* === PRINT STYLES === */
+  @media print {
+    body {
+      font-size: 11pt;
+    }
+    .page-wrapper {
+      max-width: 100%;
+      padding: 0;
+    }
+    .cover {
+      padding: 4cm 2cm 3cm;
+    }
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 600px) {
+    .page-wrapper {
+      padding: 1.5rem 1rem;
+    }
+    .cover {
+      padding: 3rem 1rem 2rem;
+    }
+    .cover-title {
+      font-size: 2.2rem;
+    }
+    .field-grid {
+      grid-template-columns: 1fr;
+      gap: 0.3rem;
+    }
+    .field-label {
+      margin-top: 0.5rem;
+    }
+    .entry-title {
+      font-size: 1.3rem;
+      max-width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-institution">Department of Ephemeral Holdings</div>
+    <h1 class="cover-title">THE NEGATION ARCHIVE</h1>
+    <p class="cover-subtitle">
+      A Catalog of Concepts, Practices, and Experiences<br>
+      Bearing No Known Remaining Instantiation
+    </p>
+    <div class="cover-exhibition">Exhibition Catalog — Third Revised Edition</div>
+    <div class="cover-dates">October 14, 2019 — March 2, 2020</div>
+    <div class="cover-catalog-info">
+      Published by the Ephemeral Holdings Press<br>
+      Catalog design: S. Moriguchi<br>
+      Typography: Cormorant Garamond & EB Garamond<br>
+      Second printing (revised), 2021<br>
+      Printed on Mohawk Superfine, 80 lb. text<br>
+      <br>
+      © 2019 Department of Ephemeral Holdings<br>
+      All rights reserved. No part of this catalog may be reproduced<br>
+      without written permission of the Department.
+    </div>
+  </div>
+
+  <!-- INTRODUCTION -->
+  <div class="introduction">
+    <h2>Director's Note</h2>
+    <p>
+      The Negation Archive was established in 2004 following the dissolution of the
+      <strong>Institute for Vanishing Studies</strong> (Ithaca, NY, est. 1988) and
+      the transfer of its holdings—then numbering some 1,200 catalogue entries—to
+      the Department of Ephemeral Holdings. The collection has since grown to include
+      over 4,600 accessioned items, of which 20 are represented in this exhibition.
+    </p>
+    <p>
+      The Archive exists to document and preserve records of <strong>phenomena that no
+      longer exist in any knowable form</strong>. This mandate distinguishes it from
+      related collections concerned with extinct biological species, demolished
+      architecture, or obsolete technology—categories in which physical evidence or
+      living memory persists. The Negation Archive collects only that which has left
+      no trace except its own absence.
+    </p>
+    <p>
+      <strong>The condition of total erasure is itself a form of documentation.</strong>
+      What cannot be found has, in a sense, been precisely located.
+    </p>
+    <p style="margin-top: 2rem; font-style: italic; color: var(--ink-faded); font-size: 0.9rem;">
+      — I. Colbertsen, Director<br>
+      Department of Ephemeral Holdings<br>
+      October 2019
+    </p>
+  </div>
+
+  <!-- SECTION I -->
+  <div class="section-header">
+    <h2>I — Collected Works</h2>
+    <div class="section-number">Accessions 2004.001 – 2018.047</div>
+  </div>
+
+  <!-- ENTRY 1 -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2004.003</span>
+    </div>
+    <div class="entry-title">The Experience of Not Knowing What Time It Is</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Sensory-cognitive phenomenon</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">c. 2005, rural areas (estimated)</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">Bequest of the <em>Institute for Vanishing Studies</em>, 2004</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value">Lived experience, absence of timekeeping apparatus</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Absent.</p>
+      <span class="note">Ubiquitous time displays have rendered the condition effectively inaccessible. The Archive has logged 113 oral history testimonies from subjects born before 1955. None could reliably induce it.</span>
+    </div>
+    <div class="curatorial-note">
+      <p>Several respondents described a specific quality of the experience—"a kind of unmooring"—that has proven difficult to verify against secondhand accounts. The Archive continues to solicit testimony, though no new credible reports have been received since 2017. Entry remains open pending further documentation.</p>
+    </div>
+  </div>
+
+  <!-- ENTRY 2 -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2004.007</span>
+    </div>
+    <div class="entry-title">The Sound of a Dial-Up Modem Heard from Another Room</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Auditory experience (mediated)</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">c. 2008, North America and Europe</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">Field collection, Institute for Vanishing Studies</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value">Sound, drywall, ambient domestic space</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Absent.</p>
+      <span class="note">While the sound itself has been preserved in digital recordings, the specific phenomenon—hearing it muffled through walls while doing something else, not yet knowing whether the connection would succeed—is no longer reproducible. The experience required uncertainty about connectivity outcomes and a surrounding domestic environment with poor acoustic insulation.</span>
+    </div>
+    <div class="curatorial-note">
+      <p>The modulating handshake tones carried affective meaning for a generation: anticipation, patience, dread, relief. The recording alone is a specimen, not an experience. We distinguish between the preserved artifact and the lost phenomenon as rigorously as any natural history collection distinguishes between a type specimen and a living organism.</p>
+    </div>
+  </div>
+
+  <!-- ENTRY 3: INCOMPLETE -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2004.011</span>
+      <span class="stamp inline">INCOMPLETE RECORD</span>
+    </div>
+    <div class="entry-title">A Specific Smell, Described by Donor as <em>"the Way August Used to Smell"</em></div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Olfactory (unverified)</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">Unknown</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">Oral testimony, single donor (Anonymous, 2003)</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value">[Not recorded]</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Unconfirmed. No second source.</p>
+      <span class="note">The donor was 87 years old at time of testimony. She could not identify the smell's constituents or context, only that it was "the way August used to smell" and that it no longer occurred. No chemical analysis was performed. The entry has been flagged for deaccession review three times (2009, 2014, 2018) but retained on each occasion by committee vote. See: <em>Proceedings of the Ephemeral Holdings Board</em>, 12th and 19th Sessions.</span>
+    </div>
+    <div class="curatorial-note">
+      <p>Retained on the argument that an unverified absence is not the same as a confirmed presence. The Board has acknowledged that this reasoning is somewhat circular.</p>
+    </div>
+  </div>
+
+  <!-- ENTRY 4: ACCESS RESTRICTED -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2006.019</span>
+    </div>
+    <div class="entry-title">The Sensation of Being the Only Person Awake in a House</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Sensory-cognitive phenomenon</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">Ongoing (see notes)</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">Field collection, anonymous donor (2006); expanded with oral testimonies (2008–2015)</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value">Lived experience, nocturnal domestic space</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Access restricted.</p>
+      <span class="note">This entry was reclassified in 2016 following a period of internal debate. The phenomenon is not fully absent: it can still be experienced in certain households under certain conditions. However, the proliferation of ambient light (LED indicators, standby lights, charging devices), always-on network connectivity, and the awareness of same has altered the phenomenological ground. The experience as historically documented—characterized by a feeling of total solitude and custodial responsibility for the sleeping household—may no longer be faithfully instantiable.</span>
+    </div>
+    <div class="curatorial-note">
+      <p>The restriction is not protective. The phenomenon is not dangerous. The committee simply could not agree on whether it still existed. The minority position (see Dr. A. Veld's dissent, filed separately) held that restriction was "an act of premature mourning dressed as scholarship." The majority held that the catalog's integrity required honest notation of ambiguity. The entry remains the Archive's most-cited and most-contested holding.</p>
+    </div>
+  </div>
+
+  <!-- ENTRY 5 -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2006.024</span>
+    </div>
+    <div class="entry-title">Phone Numbers You Knew by Heart</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Cognitive artifact (distributed)</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">c. 2010</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">General collection</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value">Memorized numeric sequences</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Absent.</p>
+      <span class="note">See also: NA 2006.026 (memorized postal addresses), NA 2012.002 (social practice of memorizing phone numbers). Condition reports for all three entries filed jointly.</span>
+    </div>
+  </div>
+
+  <!-- ENTRY 6 -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2007.009</span>
+    </div>
+    <div class="entry-title">The Feeling of Being Bored in a Way That Felt Productive</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Affective state</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">c. 1995 (pre-broadband internet)</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">General collection</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Absent.</p>
+      <span class="note">Boredom persists. What has been lost is a specific quality of it—sustained, unstructured, not unpleasant—that sometimes gave way to invention, wandering, or reverie. Current instantiations are shorter in duration and more likely to terminate in compulsive behavior.</span>
+    </div>
+  </div>
+
+  <!-- ENTRY 7 -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2007.014</span>
+    </div>
+    <div class="entry-title">Awaiting a Letter</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Temporal-affective complex</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">Variable; functionally obsolete by 2005</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">Transfer from the <em>Postal History Collection</em>, 2007</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value">Anticipation, postal infrastructure</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Absent.</p>
+      <span class="note">Surpassed by instant messages, email, and push notifications. The experience of checking a mailbox with genuine uncertainty—holding the possibility that something desired might or might not arrive today, or this week—required both spatial practice (walking to the box) and temporal dilation (one-day to multi-week delivery windows). The affective texture cannot be replicated by push notifications, which compress anticipation to near-zero duration.</span>
+    </div>
+    <div class="curatorial-note">
+      <p>Related entries: NA 2008.033 (The Sound of the Mail Truck), NA 2010.041 (Recognizing Handwriting on an Envelope), NA 2012.008 (Receiving Mail That Was Not a Bill or Advertisement). See cross-reference index, pp. 184–191.</p>
+    </div>
+  </div>
+
+  <!-- ENTRY 8: ON LOAN -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2008.031</span>
+      <span class="stamp inline">ON LOAN</span>
+    </div>
+    <div class="entry-title">The Silence of a House Where No Device Is On</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Auditory environment (domestic)</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">[See curatorial note]</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">Gift of M. Harwell, 2008</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value">Absence of electrical hum, fan noise, hard drive spin, transformer buzz</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Removed from active display. Loaned to the <em>National Sound Archive</em> (UK) for the exhibition <strong>"Silence: A Retrospective"</strong> (2023–2024).</p>
+    </div>
+    <div class="curatorial-note">
+      <p>Harwell's original notes describe the phenomenon as "not silence exactly, because silence isn't the right word. It was the sound the house made when nothing in it was running. The refrigerator was the loudest thing and it was in the other room. You could hear the structure settling. Your own breathing sounded enormous. It wasn't peaceful. It was just what quiet was."</p>
+    </div>
+  </div>
+
+  <!-- ENTRY 9: HEAVILY REDACTED -->
+  <div class="catalog-entry">
+    <div class="restricted-banner">ACCESS RESTRICTED — Ephemeral Holdings Security Protocol 7.3</div>
+    <div class="entry-header">
+      <span class="accession-number">NA 2009.018</span>
+    </div>
+    <div class="entry-title">
+      The Particular Way <span class="bracketed">[REDACTED]</span> Looked at You When <span class="bracketed">[REDACTED]</span>
+    </div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value"><span class="field-value redacted">REDACTED</span></span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value"><span class="field-value redacted">REDACTED</span></span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">Anonymous donation, 2009. Donor requested permanent restriction.</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value"><span class="field-value redacted">REDACTED</span></span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Absent.</p>
+      <span class="note">Condition confirmed by donor, whose testimony remains sealed per the terms of accession agreement NA-2009-018-R. The committee has honored this request without exception.</span>
+    </div>
+    <div class="curatorial-note">
+      <p>The Archive holds several entries under similar restriction. The donors of absent phenomena are often the last remaining custodians of the memory, and the act of donation is frequently described—as in the accompanying correspondence to this entry—as a "surrender." We note the donor's handwritten postscript, which has been transcribed into the sealed file but may be paraphrased: <em>"You can catalog it. You can't have it."</em></p>
+    </div>
+  </div>
+
+  <!-- ENTRY 10: FRUSTRATED CATALOGUER -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2010.022</span>
+    </div>
+    <div class="entry-title">The Fear That Your Local Mall Might Be Infinite</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Affective state (spatial-cognitive)</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">c. 2005 (w/ regional variation)</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">General collection</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value">Architectural disorientation, consumer environment</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Absent.</p>
+      <span class="note">I am placing this entry under protest. — <em>K. Sorensen, Assistant Cataloguer</em></span>
+    </div>
+    <div class="curatorial-note">
+      <p>[Curatorial note filed by K. Sorensen, 2010:] This phenomenon was proposed by a summer intern who described "a feeling I had as a kid in malls, like the place went on forever and you could get lost and never come back." The description was secondhand memory filtered through childhood imagination. By our own accession criteria, childhood feelings about spatial navigation in commercial environments do not constitute a "phenomenon bearing no known remaining instantiation." I recommended rejection. The committee overruled me, noting that "the specific architectural conditions that produced this affect—the labyrinthine multi-wing mall without smartphone navigation—no longer exist." I maintain that this is a category error and that the intern should have been sent back to their graduate program with clearer instructions. The entry has been included in the exhibition. I have been asked to note that the committee's decision was unanimous.</p>
+    </div>
+  </div>
+
+  <!-- ENTRY 11: MAJOR HOLDING -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2011.004</span>
+    </div>
+    <div class="entry-title">Being Lost</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Spatio-cognitive state</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">c. 2012 (urban); 2015 (rural)</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">Major field collection; 400+ oral testimonies</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value">Absence of wayfinding information, embodied navigation</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Absent.</p>
+      <span class="note">The Archive considers this one of its most significant holdings. "Being lost" as a sustained state—lasting minutes, hours, occasionally days—was a common human experience for millennia. GPS-enabled mobile mapping has reduced the duration of the lost state to near-zero in most inhabited areas. The phenomenological texture of being lost (anxiety, heightened perception, spatial reasoning, the slow construction of mental maps, the experience of recovery) has no remaining vehicle of access.</span>
+    </div>
+    <div class="curatorial-note">
+      <p>Several respondents independently used the same phrase: "the world was bigger when you could get lost in it." The entry has produced more published scholarship than any other in the collection. See: Harwell & Veld, <em>The Cartography of Absence</em> (2014); Colbertsen, "What We Lost When We Stopped Getting Lost," <em>Speculative Anthropology Review</em> (2016).</p>
+    </div>
+  </div>
+
+  <!-- ENTRY 12 -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2012.002</span>
+    </div>
+    <div class="entry-title">The Social Practice of Memorizing Phone Numbers</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Social practice / cognitive habit</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">c. 2006</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">General collection</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Absent.</p>
+      <span class="note">Retained as a separate entry from NA 2006.024 on the grounds that the social practice (exchanging numbers verbally, writing them on surfaces, testing each other's recall) constitutes a distinct phenomenon from the cognitive storage described in the earlier entry.</span>
+    </div>
+  </div>
+
+  <!-- ENTRY 13: LONG-TERM OBSERVATION -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2012.015</span>
+    </div>
+    <div class="entry-title">Making Eye Contact with Strangers Without Either Party Feeling Obligated to Acknowledge It Digitally</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Social phenomenon</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">Ongoing, but altered beyond recognition</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">Anonymous donor, 2012</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value">Public space, mutual gaze, shared anonymity</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Transferred to Long-Term Observation, 2017.</p>
+      <span class="note">The committee elected not to classify this entry as "absent" but rather to place it under long-term observation, noting that the phenomenon persists in attenuated form but has been "so thoroughly infiltrated by the awareness of potential digital replication (photography, social media posting, facial recognition) that the original condition of unmediated mutual anonymity may no longer be achievable in urban environments." Rural field studies are ongoing.</span>
+    </div>
+    <div class="curatorial-note">
+      <p>The donor's original description noted "a specific kind of meeting eyes with someone on a bus or in a waiting room where you both just... looked. And then looked away. And nothing happened. Nothing was supposed to happen. It was just two people existing near each other." The Archive has recorded 47 versions of this description from independent sources. The consistency is notable.</p>
+    </div>
+  </div>
+
+  <!-- ENTRY 14: MINIMAL -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2013.044</span>
+    </div>
+    <div class="entry-title">Newspaper Ink on Fingers</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Tactile experience</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">c. 2013, declining markets</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">General collection</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Absent.</p>
+    </div>
+  </div>
+
+  <!-- ENTRY 15 -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2014.016</span>
+    </div>
+    <div class="entry-title">The Experience of Telling Someone a Piece of News</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Interpersonal phenomenon</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">c. 2014 (w/ socioeconomic variation)</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">General collection</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Absent.</p>
+      <span class="note">The act of being the first to inform someone of an event—delivering news that the recipient did not already know—has been largely superseded by the simultaneous reception of information through shared digital feeds. The specific social dynamic (sender authority, recipient surprise, the temporal gap between event and awareness) no longer obtains in most contexts.</span>
+    </div>
+  </div>
+
+  <!-- ENTRY 16: AMBIGUOUS / STATUS UNCLEAR -->
+  <div class="catalog-entry" style="background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(200,192,180,0.1) 10px, rgba(200,192,180,0.1) 20px); padding: 2rem 1.5rem 2.5rem; margin: 0 -1.5rem;">
+    <div class="entry-header">
+      <span class="accession-number">NA 2015.007</span>
+      <span class="stamp inline">STATUS UNDER REVIEW</span>
+    </div>
+    <div class="entry-title">The Smell of Photocopies</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Olfactory experience (institutional/occupational)</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">Unknown; possibly ongoing in limited settings</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">Donated by R. Thomason, office supply company (ret.), 2015</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Status: <strong>UNCONFIRMED.</strong></p>
+      <span class="note">The donor insists the phenomenon has vanished. Our cataloguing staff have located three operating photocopiers in the metropolitan area that still produce the characteristic odor (ozone, toner particulate, heated paper). Thomason has been invited to verify. He has not responded to correspondence since 2016. The entry remains in limbo. A field visit has been scheduled and cancelled four times.</span>
+    </div>
+    <div class="curatorial-note">
+      <p>[Addendum, 2019:] Thomason's postal forwarding expired. His last known address returned mail marked "no longer at this location." We do not know if he still smells photocopiers. We do not know if he still exists in a locatable sense. The entry stays.</p>
+    </div>
+  </div>
+
+  <!-- ENTRY 17: DEACCESSIONED -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2016.028</span>
+    </div>
+    <div class="entry-title">Deaccessioned: The Satisfying <span class="crossed">Thwack</span> of a Cassette Tape Clicking into a Car Stereo</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Tactile-auditory experience</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">c. 2005</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">General collection</span>
+      <span class="field-label">Status</span>
+      <span class="field-value"><strong style="color: var(--red-stamp);">Deaccessioned 2017</strong></span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Deaccessioned following review. The physical action described was determined to be a "mechanical interaction with a tangible artifact" rather than a "phenomenon bearing no remaining instantiation." Cassettes and functioning players persist in sufficient numbers that the experience is reproducible. Removed from exhibition.</p>
+      <span class="note">Related entries NA 2016.029–035 (various cassette-related phenomena) deaccessioned on the same grounds.</span>
+    </div>
+  </div>
+
+  <!-- ENTRY 18 -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2016.041</span>
+    </div>
+    <div class="entry-title">The Unease of Not Knowing Whether a Photograph Had Come Out</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Affective-cognitive state</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">c. 2004 (consumer film photography)</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">Anonymous donor, 2016</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value">Film processing latency, uncertainty, hope</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Absent.</p>
+      <span class="note">Digital photography provides immediate visual confirmation. The experience of taking a photograph and then waiting—hours, days, or weeks—to discover whether it was exposed correctly, composed as intended, or ruined by motion blur, closed eyes, or overexposure, has no remaining instantiation in standard consumer practice. Professional film photographers report that even their experience is altered by the knowledge that digital alternatives exist.</span>
+    </div>
+  </div>
+
+  <!-- ENTRY 19: EMOTIONAL -->
+  <div class="catalog-entry">
+    <div class="entry-header">
+      <span class="accession-number">NA 2017.005</span>
+    </div>
+    <div class="entry-title">Calling a Friend Without Knowing Whether They Were Home</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Social-affective practice</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">c. 2010</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">Oral testimony collection, 2017. 83 respondents.</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value">Landline telephone, uncertainty, shared schedules</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>Absent.</p>
+      <span class="note">Before mobile phones and persistent digital presence, calling someone's home phone was an act of faith. They might answer. They might not. They might not be home. The phone would ring and ring. You had no way to know. What was lost was not the phone call but the not-knowing.</span>
+    </div>
+    <div class="curatorial-note">
+      <p>Seventeen respondents independently described "the sound of the phone ringing in an empty house" as something they could almost physically remember. "The other person's phone, ringing where they weren't." Three respondents became emotional during testimony. The Archive does not comment on the emotional responses of its donors, but it notes them.</p>
+    </div>
+  </div>
+
+  <!-- ENTRY 20: CLOSING -->
+  <div class="catalog-entry" style="border-bottom: 2px solid var(--border-rule);">
+    <div class="entry-header">
+      <span class="accession-number">NA 2018.047</span>
+    </div>
+    <div class="entry-title">The Belief That Some Things Would Always Be There</div>
+    <div class="field-grid">
+      <span class="field-label">Classification</span>
+      <span class="field-value">Cognitive-affective orientation</span>
+      <span class="field-label">Date of Last Known Occurrence</span>
+      <span class="field-value">Uncertain. Ongoing investigation.</span>
+      <span class="field-label">Provenance</span>
+      <span class="field-value">Donated by the Department of Ephemeral Holdings, <em>en bloc</em>, 2018</span>
+      <span class="field-label">Medium</span>
+      <span class="field-value">Expectation, constancy, implicit trust in continuity</span>
+    </div>
+    <div class="condition-report">
+      <span class="condition-label">Condition Report</span>
+      <p>The Archive is not certain this entry belongs here.</p>
+      <span class="note">It may be the case that the belief described—the unnamed confidence that certain features of the world were permanent and would persist without the need for attention or protection—was never a discrete phenomenon but rather a background condition of consciousness. If so, it cannot be cataloged any more than one can catalog the medium in which the catalog itself is printed. The committee voted 5–3 to accession. The dissenting position held that cataloging this entry was "an act of self-description by an institution that has begun to mistake itself for its contents." The majority responded that this was precisely the point.</span>
+    </div>
+    <div class="curatorial-note">
+      <p>This is the most recent entry in the exhibition. It is displayed last not by accession number but by editorial decision. The curator has declined to explain the ordering.</p>
+    </div>
+  </div>
+
+  <!-- BACK MATTER -->
+  <div class="section-header" style="margin-top: 4rem;">
+    <h2>Notes &amp; Errata</h2>
+  </div>
+
+  <div class="back-matter">
+    <p>
+      The Department of Ephemeral Holdings gratefully acknowledges the contributions of its donors, living and otherwise, named and anonymous. Several entries in this catalog were acquired under circumstances that the Department is unable to disclose. This is not a matter of policy but of fact.
+    </p>
+
+    <ul class="errata-list">
+      <li>
+        <span class="erratum-accession">NA 2006.024</span> — Condition report previously read "Absent" without qualification. Amended to include cross-reference to NA 2012.002. No change to status.
+      </li>
+      <li>
+        <span class="erratum-accession">NA 2009.018</span> — A previous edition of this catalog inadvertently included a partial provenance note. The note has been removed and the digital record purged. The Department extends its apologies to the donor, if the donor is in a position to receive them.
+      </li>
+      <li>
+        <span class="erratum-accession">NA 2012.015</span> — Field studies in rural environments (2018–2019) have yielded inconclusive results. Status remains "Long-Term Observation." Annual review scheduled for 2020.
+      </li>
+      <li>
+        <span class="erratum-accession">NA 2013.044</span> — A reader wrote to inform the Department that newspaper ink still transfers to fingers in India, Pakistan, and several other countries where print newspaper circulation remains substantial. The Department has updated the entry's geographic scope accordingly. We thank the correspondent and note, with some feeling, that the phenomenon is not absent everywhere, only where the correspondent assumed "everywhere" to mean.
+      </li>
+      <li>
+        <span class="erratum-accession">NA 2015.007</span> — R. Thomason's status remains unknown. The entry stays.
+      </li>
+      <li>
+        <span class="erratum-accession">NA 2018.047</span> — No errata. The entry has not changed. It is not clear that it can change.
+      </li>
+    </ul>
+
+    <p style="margin-top: 3rem; text-align: center; font-size: 0.8rem; color: var(--ink-faded); padding-top: 2rem; border-top: 1px solid var(--border-light);">
+      <em>The Negation Archive</em> is maintained by the Department of Ephemeral Holdings.<br>
+      Inquiries and proposed accessions may be directed to the Curatorial Office,<br>
+      attention: I. Colbertsen, Director.<br><br>
+      The Department accepts accessions of absent phenomena by post, by appointment,<br>
+      and—in certain cases—by means that have not yet been documented.<br><br>
+      <span style="letter-spacing: 0.15em; font-size: 0.7rem;">— END OF CATALOG —</span>
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>

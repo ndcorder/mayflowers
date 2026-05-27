@@ -83,6 +83,10 @@ nodes:
     title: The Catalogue of Misattributed Epitaphs
     domain: experiment
     rating: 5
+  - id: "0038"
+    title: The Negation Archive
+    domain: experiment
+    rating: 5
   - id: "0001"
     title: The Cartographer's Confession
     domain: fiction
@@ -187,4 +191,4 @@ creative_dna:
       to_domain: poetry
       count: 1
   unexplored_territory: []
-updated_at: 2026-05-27T03:52:51.755Z
+updated_at: 2026-05-27T04:04:24.498Z
